@@ -1,8 +1,6 @@
-# Bitfive Monorepo
+# Bitfive (DevOps Project) 1.0.0v
 
-Plataforma web de administracion para operaciones agropecuarias. Actualmente implementa el **modulo de identidad y control de acceso (IAM)**: registro de usuarios, autenticacion JWT, y gestion de roles y permisos (RBAC). Los modulos de negocio del dominio operativo estan pendientes de desarrollo.
-
-El sistema se compone de una **API REST** (Express 5 + TypeScript + PostgreSQL) y una **SPA** (React 18 + Vite).
+Monorepo fullstack compuesto por un backend REST en **Node.js + TypeScript + Express 5 + PostgreSQL** y un frontend en **Vite + React**. El proyecto implementa un sistema completo de autenticación y autorización basado en roles y permisos, con una arquitectura modular en capas y un ORM personalizado construido desde cero.
 
 ### Que se puede hacer hoy
 
