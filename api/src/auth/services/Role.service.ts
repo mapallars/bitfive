@@ -5,6 +5,7 @@ import Role from "../entities/Role.entity.js"
 import { NotFoundError } from "../../core/errors/NotFound.error.js"
 import { ForbiddenError } from "../../core/errors/Forbidden.error.js"
 import { ROLES } from "../constants/authorities.js"
+import { AlreadyExistError } from "../../core/errors/AlreadyExist.error.js"
 
 @Service()
 export class RoleService {
@@ -43,7 +44,7 @@ export class RoleService {
     async create(role: Partial<Role>) {
         const roleExists = await this.roleRepository.findOneBy('name', role.name)
 
-        if (roleExists) throw new Error(`El rol "${role.name}" ya existe`)
+        if (roleExists) throw new AlreadyExistError(`El rol "${role.name}" ya existe`)
 
         return this.roleRepository.create(role)
     }

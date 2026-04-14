@@ -5,6 +5,7 @@ import Permission from "../entities/Permission.entity.js"
 import { NotFoundError } from "../../core/errors/NotFound.error.js"
 import { ROLES } from "../constants/authorities.js"
 import { ForbiddenError } from "../../core/errors/Forbidden.error.js"
+import { AlreadyExistError } from "../../core/errors/AlreadyExist.error.js"
 
 @Service()
 export class PermissionService {
@@ -47,7 +48,7 @@ export class PermissionService {
     async create(permission: Partial<Permission>) {
         const permissionExists = await this.permissionRepository.findOneBy('name', permission.name)
 
-        if (permissionExists) throw new Error(`El permiso "${permission.name}" ya existe`)
+        if (permissionExists) throw new AlreadyExistError(`El permiso "${permission.name}" ya existe`)
 
         return this.permissionRepository.create(permission)
     }
