@@ -29,7 +29,7 @@ export class UserController {
 
         const user = await this.userService.findByUsername(username)
 
-        return response.status(200).json(user)
+        return response.status(200).json(new UserDTO(user))
     }
 
     @Post('/')
@@ -49,7 +49,7 @@ export class UserController {
 
         const user = await this.userService.register({ name, username, documentType, documentNumber, gender, country, city, address, phoneNumber, email, password, birthdate, image })
 
-        return response.status(200).json(user)
+        return response.status(200).json(new UserDTO(user))
     }
 
     @Put('/:username')
@@ -69,7 +69,7 @@ export class UserController {
 
         const user = await this.userService.update(username, { name, username, documentType, documentNumber, gender, country, city, address, phoneNumber, email, birthdate, image })
 
-        return response.status(200).json(user)
+        return response.status(200).json(new UserDTO(user))
     }
 
     @Delete('/:username')
@@ -79,9 +79,9 @@ export class UserController {
 
         Validator.required({ username })
 
-        const user = await this.userService.delete(username)
+        await this.userService.delete(username)
 
-        return response.status(200).json(user)
+        return response.status(200).json({ message: `Usuario "${username}" eliminado correctamente` })
     }
 
 }
