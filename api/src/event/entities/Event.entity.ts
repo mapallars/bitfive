@@ -1,4 +1,5 @@
-import {Entity, Id, Column} from "../../core/orm/decorators/decorators.js"
+import User from "../../auth/entities/User.entity.js"
+import { Entity, Id, Column, ManyToMany } from "../../core/orm/decorators/decorators.js"
 
 @Entity('Events')
 export class Event {
@@ -14,7 +15,7 @@ export class Event {
 
     @Column({ type: 'date', nullable: false })
     date: Date
-    
+
     @Column({ type: 'string', nullable: false })
     dateTime: Date
 
@@ -29,7 +30,6 @@ export class Event {
 
     @Column({ type: 'boolean', default: false })
     parkingSlots: boolean
-
 
     isActive: boolean
 
@@ -46,6 +46,18 @@ export class Event {
     deletedAt: Date
 
     deletedBy: string
+
+    @ManyToMany(() => User, {
+        joinTable: {
+            name: "UsersEvents",
+            joinColumn: "eventId",
+            inverseJoinColumn: "userId"
+        },
+        owner: true,
+        eager: true
+    })
+    organizers: User[]
+
 }
 
 export default Event
