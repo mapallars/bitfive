@@ -1,8 +1,9 @@
 import { Column } from "../../core/orm/decorators/column.decorator.js"
-import { ManyToOne, OneToMany } from "../../core/orm/decorators/decorators.js"
+import { ManyToOne } from "../../core/orm/decorators/decorators.js"
 import { Entity } from "../../core/orm/decorators/entity.decorator.js"
 import { Id } from "../../core/orm/decorators/id.decorator.js"
-import Event from "./Event.entity.js"
+import Event from "../../event/entitys/Event.entity.js"
+
 
 @Entity('parkings')
 export class Parking {
@@ -11,12 +12,16 @@ export class Parking {
   id: string
 
   @Column({ type: 'string', nullable: false })
-  slotCode: string
+  eventId: string
+
+  @Column({ type: 'string' })
+  location: string
+
+  @Column({ type: 'number', nullable: false, default: 0 })
+  capacity: number
 
   @Column({ type: 'boolean', nullable: false, default: true })
   isAvailable: boolean
-
-  status: string
 
   isActive: boolean
 
@@ -34,8 +39,8 @@ export class Parking {
 
   deletedBy: string
 
-  @OneToMany(() => Event, 'parkingId')
-  events: Event[]
+  @ManyToOne(() => Event, { joinColumn: 'eventId', eager: true })
+  event: Event
 }
 
 export default Parking
