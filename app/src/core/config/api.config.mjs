@@ -1,8 +1,10 @@
-export const IS_DEV_MODE = true
-const URL_BASE_DEV_MODE = 'http://localhost:3000/api/v1'
-const URL_BASE_PRODUCTION = ''
+const ENV = import.meta.env;
 
-export const URL_BASE = IS_DEV_MODE ? URL_BASE_DEV_MODE : URL_BASE_PRODUCTION
+export const IS_DEV_MODE = ENV.VITE_IS_DEV_MODE === 'true';
+
+export const URL_BASE = IS_DEV_MODE
+    ? ENV.VITE_API_URL_DEV
+    : ENV.VITE_API_URL_PROD;
 
 class EndpointGroup {
     constructor(base = '', paths = {}) {
