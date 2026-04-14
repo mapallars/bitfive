@@ -1,0 +1,40 @@
+export const IS_DEV_MODE = true
+const URL_BASE_DEV_MODE = 'http://localhost:3000/api/v1'
+const URL_BASE_PRODUCTION = ''
+
+export const URL_BASE = IS_DEV_MODE ? URL_BASE_DEV_MODE : URL_BASE_PRODUCTION
+
+class EndpointGroup {
+    constructor(base = '', paths = {}) {
+        this.BASE = base
+        this.ENDPOINTS = {
+            BASE: base
+        }
+        Object.keys(paths).forEach(path => {
+            this.ENDPOINTS[path] = this.BASE + `/${paths[path]}`
+        })
+    }
+}
+
+export const API = {
+    AUTH: new EndpointGroup(`${URL_BASE}/auth`, {
+        SIGNIN: 'login',
+        SIGNOUT: 'logout',
+        SIGNUP: 'register',
+        SESSION: 'session',
+        REFRESH: 'refresh',
+        ROLES: 'roles',
+        ASSIGN_ROLE_TO_USER: 'assign/roles',
+        REVOKE_ROLE_FROM_USER: 'revoke/roles',
+        ACTIVATE_ROLE: 'activate/roles',
+        DEACTIVATE_ROLE: 'deactivate/roles',
+        PERMISSIONS: 'permissions',
+        ASSIGN_PERMISSION_TO_ROLE: 'assign/permissions',
+        REVOKE_PERMISSION_FROM_ROLE: 'revoke/permissions',
+        USERS: 'users',
+        AUTHORIZE: 'authorize',
+        DISAUTHORIZE: 'disauthorize',
+    })
+}
+
+export default API
