@@ -108,19 +108,23 @@ export class RoleService {
         const userFound = await this.userRepository.findOneBy('username', username)
         if (!userFound) throw new NotFoundError(`El usuario "${username}" al que intenta asignarle roles no existe`)
 
-        const rolesFounds = []
+        const rolesFounds = await Promise.all(
+            roles.map(role => this.roleRepository.findOneBy('name', role))
+        )
 
-        for (const role of roles) {
-            const roleFound = await this.roleRepository.findOneBy('name', role)
-            if (!roleFound) throw new NotFoundError(`El rol "${role}" que intenta asignar al usuario "${username}" no existe`)
-            rolesFounds.push(roleFound)
+        const missingRoleIndex = rolesFounds.findIndex(roleFound => !roleFound)
+        if (missingRoleIndex !== -1) {
+            const role = roles[missingRoleIndex]
+            throw new NotFoundError(`El rol "${role}" que intenta asignar al usuario "${username}" no existe`)
         }
 
-        for (const roleFound of rolesFounds) {
-            if (userFound.roles.find(p => p.id === roleFound.id)) throw new ForbiddenError(`El usuario "${userFound.name}" ya tiene el rol "${roleFound.name}" asignado`)
+        const resolvedRoles = rolesFounds as Role[]
+
+        for (const roleFound of resolvedRoles) {
+            if (userFound.roles.find(p => p.id === roleFound.id)) throw new NotFoundError(`El usuario "${userFound.name}" ya tiene el rol "${roleFound.name}" asignado`)
         }
 
-        await this.userRepository.update(userFound.id, { ...userFound, roles: [...userFound.roles, ...rolesFounds] })
+        await this.userRepository.update(userFound.id, { ...userFound, roles: [...userFound.roles, ...resolvedRoles] })
     }
 
     async revoke(roles: string[], username: string) {
