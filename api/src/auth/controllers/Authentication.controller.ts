@@ -86,8 +86,8 @@ export class AuthenticationController {
             .isAlfaNumeric({ username })
             .email({ email })
             .length({ username }, 2, 50)
-            .isDate({ birthdate })
 
+        if (birthdate !== undefined) Validator.isDate({ birthdate })
         if (image) Validator.url({ image })
 
         const user = await this.userService.modify(request.user, { name, username, documentType, documentNumber, gender, country, city, address, phoneNumber, email, birthdate, image })
