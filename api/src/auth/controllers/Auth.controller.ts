@@ -9,10 +9,6 @@ export class AuthController {
         private blockedTokenService: BlockedTokenService
     ) { }
 
-    async auth(request) {
-        console.log(await this.blockedTokenService.findAll())
-    }
-
     @Public()
     @Get('/')
     async index(request, response) {
