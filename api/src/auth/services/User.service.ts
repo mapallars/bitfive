@@ -112,8 +112,15 @@ export class UserService {
     }
 
     async logout(token: string, userId: string) {
-        await this.blockedTokenRepository.create({ token, expiration: new Date() })
+        const decoded = jwt.decode(token)
+        const expiration =
+            decoded &&
+            typeof decoded !== 'string' &&
+            typeof decoded.exp === 'number'
+                ? new Date(decoded.exp * 1000)
+                : new Date()
 
+        await this.blockedTokenRepository.create({ token, expiration })
         const user = await this.userRepository.findById(userId)
 
         if (user) await this.userRepository.update(user.id, { ...user, isOnline: false })
