@@ -22,9 +22,19 @@ INSERT INTO "Permissions" ("id", "name", "alias", "description", "type") VALUES
 ('9f1a0b3e-5c14-40e9-bf8e-0e9f1a0b3e5c',  'CreateUsers',               'Crear Usuarios',             'Permite la creación de usuarios.', 'Create'),
 ('a0b3e5c1-4d7b-40e9-b3e0-3b8e5c14d7b3',  'UpdateUsers',               'Actualizar Usuarios',        'Permite la actualización de usuarios.', 'Update'),
 ('b3e0c1f6-3455-40e9-8067-153303c737f5',  'DeleteUsers',               'Eliminar Usuarios',          'Permite la eliminación de usuarios.', 'Delete'),
+('a7c9b8c2-5c6f-4c4a-9d2a-2f8d9c1a7e31',  'ReadEvents',           'Leer Eventos',              'Permite la lectura de eventos.', 'Read'),
+('d3f1a6e4-8b2c-4f1e-9a77-6c0b3d2e5f90',  'CreateEvents',         'Crear Eventos',             'Permite la creación de eventos.', 'Create'),
+('5e2a9c44-1d7f-4b6a-b3e1-9f8c2d7a6b55',  'UpdateEvents',         'Actualizar Eventos',        'Permite la actualización de eventos.', 'Update'),
+('c8b4f2d1-3a9e-4e7b-8c6d-1a2f5e9b7c03',  'DeleteEvents',         'Eliminar Eventos',          'Permite la eliminación de eventos.', 'Delete'),
+('b1f3a9c7-6d2e-4a5b-8c1f-3e7d9a2b4c10',  'ReadParkings',           'Leer Parkings',              'Permite la lectura de parkings.', 'Read'),
+('9c7e2d4a-5b8f-4f1c-a3d6-7b2e1a9c6f33',  'CreateParkings',         'Crear Parkings',             'Permite la creación de parkings.', 'Create'),
+('2d5b7c9e-1a3f-4e6c-b8a1-5f9d2c7b3e44',  'UpdateParkings',         'Actualizar Parkings',        'Permite la actualización de parkings.', 'Update'),
+('7a4e1c2b-9d6f-4b3a-8c5e-2f1d7a9b6c88',  'DeleteParkings',         'Eliminar Parkings',          'Permite la eliminación de parkings.', 'Delete'),
 ('b6c3df60-1e9d-4ffc-bd45-6d7b0cf7f801', 'AccessDashboard', 'Acceso al Panel Principal', 'Permite acceder al panel principal.', 'Access'),
 ('8a1259bf-5649-45a7-8a72-865f38e81920', 'AccessAuthorization', 'Acceso a Autorizaciones', 'Permite acceder a la gestión de autorizaciones.', 'Access'),
-('c33acfe7-b6f0-4c8f-980e-2f3f953e03a8', 'AccessUsers', 'Acceso a Usuarios', 'Permite acceder a la gestión de usuarios.', 'Access');
+('c33acfe7-b6f0-4c8f-980e-2f3f953e03a8', 'AccessUsers', 'Acceso a Usuarios', 'Permite acceder a la gestión de usuarios.', 'Access'),
+('e6a88034-e65d-49f2-bbd2-e59f405c5073', 'AccessEvent', 'Acceso a Eventos', 'Permite acceder a la gestión de evenetos.', 'Access');
+
 
 INSERT INTO "RolesPermissions" ("roleId", "permissionId") VALUES
 ('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '039e767c-1f63-455b-b9d0-153303c737f5'),
