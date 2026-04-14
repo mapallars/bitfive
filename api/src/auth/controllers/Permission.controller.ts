@@ -102,7 +102,7 @@ export class PermissionController {
         return response.status(200).json({ message: `Permisos "${permissions.join(',')}" revocados correctamente del rol "${role}"` })
     }
 
-    @Get('/check/permissions')
+    @Post('/check/permissions')
     @Permissions([PERMISSIONS.PERMISSION.CHECK_ON_ROLE])
     async check(request, response) {
         const { permissions, role } = request.body || {}

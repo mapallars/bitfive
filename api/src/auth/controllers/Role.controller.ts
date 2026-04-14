@@ -120,7 +120,7 @@ export class RoleController {
         return response.status(200).json({ message: `Roles "${roles.join(',')}" revocados correctamente del usuario "${username}"` })
     }
 
-    @Get('/check/roles')
+    @Post('/check/roles')
     @Permissions([PERMISSIONS.ROLE.CHECK_ON_USER])
     async check(request, response) {
         const { roles, username } = request.body || {}
