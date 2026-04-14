@@ -92,6 +92,15 @@ export class User {
     })
     roles: Role[]
 
+    @ManyToMany(() => Event, {
+        joinTable: {
+            name: "UsersEvents",
+            joinColumn: "userId",
+            inverseJoinColumn: "roleId"
+        }
+    })
+    organizedEvents: Event[]
+
 }
 
 export default User
