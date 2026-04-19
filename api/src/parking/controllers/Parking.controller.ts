@@ -48,21 +48,18 @@ export class ParkingController {
     @Post('/')
     @Permissions([PERMISSIONS.PARKING.CREATE])
     async create(request, response) {
-        const { location, capacity, isAvailable } = request.body || {}
+        const { name, description, type, location, capacity, isAvailable } = request.body || {}
 
         Validator
-            .required({ location, capacity })
+            .required({ name, location, capacity, isAvailable })
             .isInteger({ capacity })
+            .isBoolean({ isAvailable })
 
         if (Number(capacity) <= 0) {
-            throw new InvalidFormatError('capacity debe ser mayor a 0')
+            throw new InvalidFormatError('El campo "capacity" debe ser mayor a 0')
         }
 
-        if (isAvailable !== undefined) {
-            Validator.isBoolean({ isAvailable })
-        }
-
-        const parking = await this.parkingService.create({ location, capacity, isAvailable })
+        const parking = await this.parkingService.create({ name, description, type, location, capacity, isAvailable })
 
         return response.status(201).json(new ParkingDTO(parking))
     }
@@ -95,23 +92,18 @@ export class ParkingController {
     @Permissions([PERMISSIONS.PARKING.UPDATE])
     async update(request, response) {
         const { id } = request.params || {}
-        const { location, capacity, isAvailable } = request.body || {}
+        const { name, description, type, location, capacity, isAvailable } = request.body || {}
 
-        Validator.required({ id })
+        Validator
+            .required({ id, name, location, capacity, isAvailable })
+            .isInteger({ capacity })
+            .isBoolean({ isAvailable })
 
-        if (capacity !== undefined) {
-            Validator.isInteger({ capacity })
-            
-            if (Number(capacity) <= 0) {
-                throw new InvalidFormatError('capacity debe ser mayor a 0')
-            }
+        if (Number(capacity) <= 0) {
+            throw new InvalidFormatError('El campo "capacity" debe ser mayor a 0')
         }
 
-        if (isAvailable !== undefined) {
-            Validator.isBoolean({ isAvailable })
-        }
-
-        const parking = await this.parkingService.update(id, { location, capacity, isAvailable })
+        const parking = await this.parkingService.update(id, { name, description, type, location, capacity, isAvailable })
 
         return response.status(200).json(new ParkingDTO(parking))
     }

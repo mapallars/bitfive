@@ -14,14 +14,32 @@ export class Event {
     @Column({ type: 'string' })
     description: string
 
+    @Column({ type: 'string' })
+    category: string
+
+    @Column({ type: 'string' })
+    cover: string
+
+    @Column({ type: 'string' })
+    color: string
+
     @Column({ type: 'string', nullable: false })
     location: string
 
     @Column({ type: 'date', nullable: false })
-    date: Date
+    startAt: Date
+
+    @Column({ type: 'date', nullable: false })
+    endAt: Date
 
     @Column({ type: 'string', nullable: false })
-    dateTime: Date
+    timezone: string
+
+    @Column({ type: 'string' })
+    type: string
+
+    @Column({ type: 'string' })
+    visibility: string
 
     @Column({ type: 'boolean', default: false })
     eventStatus: boolean
@@ -31,6 +49,9 @@ export class Event {
 
     @Column({ type: 'boolean', default: false })
     hasParking: boolean
+
+    @Column({ type: 'number', default: 0 })
+    price: number
 
     isActive: boolean
 

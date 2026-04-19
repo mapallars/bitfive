@@ -45,22 +45,25 @@ export class ParkingService {
         const event = await this.eventRepository.findById(eventId)
         if (!event) throw new NotFoundError(`El evento con id "${eventId}" no existe`)
 
-        const events = parking.events || []
-        const alreadyLinked = events.some(e => e.id === eventId)
+        const parkings = event.parkings || []
+        const alreadyLinked = parkings.some(p => p.id === parkingId)
         if (!alreadyLinked) {
-            events.push(event)
+            parkings.push(parking)
         }
 
-        return await this.parkingRepository.update(parkingId, { events } as Partial<Parking>)
+        return await this.eventRepository.update(eventId, { parkings })
     }
 
     async removeEvent(parkingId: string, eventId: string) {
         const parking = await this.parkingRepository.findById(parkingId)
         if (!parking) throw new NotFoundError(`El parqueadero con id "${parkingId}" no existe`)
 
-        const events = (parking.events || []).filter(e => e.id !== eventId)
+        const event = await this.eventRepository.findById(eventId)
+        if (!event) throw new NotFoundError(`El evento con id "${eventId}" no existe`)
 
-        return await this.parkingRepository.update(parkingId, { events } as Partial<Parking>)
+        const parkings = (event.parkings || []).filter(p => p.id !== parkingId)
+
+        return await this.eventRepository.update(eventId, { parkings })
     }
 
     async update(id: string, data: Partial<Parking>) {

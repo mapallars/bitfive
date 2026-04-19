@@ -9,6 +9,15 @@ export class Parking {
   id: string
 
   @Column({ type: 'string', nullable: false })
+  name: string
+
+  @Column({ type: 'string', nullable: true })
+  description: string
+
+  @Column({ type: 'string', nullable: true })
+  type: string
+
+  @Column({ type: 'string', nullable: false })
   location: string
 
   @Column({ type: 'number', nullable: false, default: 0 })
@@ -38,7 +47,7 @@ export class Parking {
       name: "EventsParkings",
       joinColumn: "parkingId",
       inverseJoinColumn: "eventId"
-    },
+    }
   })
   events: Event[]
 }
