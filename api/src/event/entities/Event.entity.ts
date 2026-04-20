@@ -41,8 +41,8 @@ export class Event {
     @Column({ type: 'string' })
     visibility: string
 
-    @Column({ type: 'boolean', default: false })
-    eventStatus: boolean
+    @Column({ type: 'string', default: 'AVAILABLE' })
+    eventStatus: string
 
     @Column({ type: 'number' })
     maxCapacity: number
