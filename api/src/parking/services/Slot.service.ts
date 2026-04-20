@@ -36,7 +36,7 @@ export class SlotService {
     }
 
     async create(data: Partial<Slot> & { parkingId?: string }) {
-        const parkingId = (data as any).parkingId
+        const { parkingId } = data
 
         if (!parkingId) throw new InvalidFormatError('El campo "parkingId" es obligatorio')
 
@@ -98,22 +98,26 @@ export class SlotService {
         const slot = await this.slotRepository.findById(id)
         if (!slot) throw new NotFoundError(`El sitio con id "${id}" no existe`)
 
-        if (slot.isOccupied) {
+        const updated = await this.slotRepository.occupyById(id)
+
+        if (!updated) {
             throw new InvalidFormatError(`El sitio "${slot.code}" ya está ocupado`)
         }
 
-        return await this.slotRepository.update(id, { isOccupied: true })
+        return updated
     }
 
     async free(id: string) {
         const slot = await this.slotRepository.findById(id)
         if (!slot) throw new NotFoundError(`El sitio con id "${id}" no existe`)
 
-        if (!slot.isOccupied) {
+        const updated = await this.slotRepository.freeById(id)
+
+        if (!updated) {
             throw new InvalidFormatError(`El sitio "${slot.code}" ya está libre`)
         }
 
-        return await this.slotRepository.update(id, { isOccupied: false })
+        return updated
     }
 
     async update(id: string, data: Partial<Slot>) {
