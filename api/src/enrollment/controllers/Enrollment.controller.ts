@@ -16,7 +16,7 @@ export class EnrollmentController {
     ) { }
 
     @Get('/')
-    @Permissions([PERMISSIONS.EVENT.READ])
+    @Permissions([PERMISSIONS.ENROLLMENT.READ])
     async findAll(request, response) {
         const enrollments = await this.enrollmentService.findAll()
 
@@ -24,7 +24,7 @@ export class EnrollmentController {
     }
 
     @Get('/my')
-    @Permissions([PERMISSIONS.EVENT.READ])
+    @Permissions([PERMISSIONS.ENROLLMENT.READ])
     async findMyEnrollments(request, response) {
         const enrollments = await this.enrollmentService.findManyByUserId(request.user.id)
 
@@ -32,7 +32,7 @@ export class EnrollmentController {
     }
 
     @Get('/user/:id')
-    @Permissions([PERMISSIONS.EVENT.READ])
+    @Permissions([PERMISSIONS.ENROLLMENT.READ])
     async findByUserId(request, response) {
         const { id } = request.params || {}
 
@@ -44,7 +44,7 @@ export class EnrollmentController {
     }
 
     @Get('/event/:id')
-    @Permissions([PERMISSIONS.EVENT.READ])
+    @Permissions([PERMISSIONS.ENROLLMENT.READ])
     async findByEventId(request, response) {
         const { id } = request.params || {}
 
@@ -56,7 +56,7 @@ export class EnrollmentController {
     }
 
     @Get('/:id')
-    @Permissions([PERMISSIONS.EVENT.READ])
+    @Permissions([PERMISSIONS.ENROLLMENT.READ])
     async findById(request, response) {
         const { id } = request.params || {}
 
@@ -68,7 +68,7 @@ export class EnrollmentController {
     }
 
     @Post('/')
-    @Permissions([PERMISSIONS.EVENT.CREATE])
+    @Permissions([PERMISSIONS.ENROLLMENT.CREATE])
     async create(request, response) {
         const { eventId, enrollmentStatus } = request.body
 
@@ -82,7 +82,7 @@ export class EnrollmentController {
     }
 
     @Put('/:id')
-    @Permissions([PERMISSIONS.EVENT.UPDATE])
+    @Permissions([PERMISSIONS.ENROLLMENT.UPDATE])
     async update(request, response) {
         const { id } = request.params
         const { enrollmentStatus } = request.body
@@ -97,7 +97,7 @@ export class EnrollmentController {
     }
 
     @Put('/:id/cancel')
-    @Permissions([PERMISSIONS.EVENT.UPDATE])
+    @Permissions([PERMISSIONS.ENROLLMENT.UPDATE])
     async cancel(request, response) {
         const { id } = request.params
 
@@ -109,7 +109,7 @@ export class EnrollmentController {
     }
 
     @Delete('/:id')
-    @Permissions([PERMISSIONS.EVENT.DELETE])
+    @Permissions([PERMISSIONS.ENROLLMENT.DELETE])
     async delete(request, response) {
         const { id } = request.params
 
