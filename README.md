@@ -1,4 +1,4 @@
-# Bitfive (DevOps Project) 2.0.0v
+# Bitfive (DevOps Project) 2.0.1v
 
 Monorepo fullstack compuesto por un backend REST en **Node.js + TypeScript + Express 5 + PostgreSQL** y un frontend en **Vite + React**. El proyecto implementa un sistema completo de autenticación y autorización basado en roles y permisos, con una arquitectura modular en capas y un ORM personalizado construido desde cero.
 
