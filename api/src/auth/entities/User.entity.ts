@@ -1,4 +1,5 @@
 import { Entity, Id, Column, OneToMany, ManyToMany } from "../../core/orm/decorators/decorators.js"
+import Event from "../../event/entities/Event.entity.js"
 import BlockedToken from "./BlockedToken.entity.js"
 import Role from "./Role.entity.js"
 
@@ -59,10 +60,6 @@ export class User {
     @Column({ type: 'boolean', nullable: false, default: false })
     isOnline: boolean
 
-
-    @OneToMany(() => BlockedToken, 'userId')
-    blockedTokens: BlockedToken[]
-
     status: string
 
     isActive: boolean
@@ -81,6 +78,12 @@ export class User {
 
     deletedBy: string
 
+    @OneToMany(() => BlockedToken, 'userId')
+    blockedTokens: BlockedToken[]
+
+    @OneToMany(() => Event, 'ownerId')
+    ownedEvents: Event[]
+
     @ManyToMany(() => Role, {
         joinTable: {
             name: "UsersRoles",
@@ -91,6 +94,15 @@ export class User {
         eager: true
     })
     roles: Role[]
+
+    @ManyToMany(() => Event, {
+        joinTable: {
+            name: "UsersEvents",
+            joinColumn: "userId",
+            inverseJoinColumn: "eventId"
+        }
+    })
+    organizedEvents: Event[]
 
 }
 

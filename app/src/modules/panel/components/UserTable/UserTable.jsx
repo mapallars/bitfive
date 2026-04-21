@@ -1,6 +1,5 @@
 import './UserTable.css'
 import Table from "../../../../core/components/Table/Table"
-import Switch from '../../../../core/components/Switch/Switch'
 import SatatusTag from '../../../../core/components/StatusTag/StatusTag'
 import { dateCountdown } from '../../../../core/utils/dateCountdown.mjs'
 

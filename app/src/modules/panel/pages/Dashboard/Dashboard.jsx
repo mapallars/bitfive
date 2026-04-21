@@ -1,10 +1,10 @@
 import './Dashboard.css'
 import { timeFormatter, dateFormatter } from '../../../../core/utils/novato.mjs'
 import { useAuth } from '../../../../core/contexts/AuthContext'
-import Brand from '../../../../core/components/Brand/Brand'
+import Logo from '../../../../core/components/Logo/Logo'
 
 const Dashboard = () => {
-    const {session} = useAuth()
+    const { session } = useAuth()
 
     return (session && <>
         <div className='lx-p-dashboard'>
@@ -13,7 +13,7 @@ const Dashboard = () => {
                 <h1>{timeFormatter()}, {session.user.name || 'Rewearer'}</h1>
             </div>
             <div className='lx-p-dashboard-body'>
-                <Brand color='ghost' size='xxxl' />
+                <Logo color='ghost' size='xxxl' />
             </div>
         </div>
     </>)

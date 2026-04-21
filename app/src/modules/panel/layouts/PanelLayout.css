@@ -80,6 +80,10 @@
     font-size: .5rem;
 }
 
+.lx-l-panel-sidebar-brand-logo {
+    filter: drop-shadow(0px 0px 10px var(--lx-color-white-dimed));
+}
+
 .lx-l-panel-sidebar-brand:hover .lx-l-panel-sidebar-odd {
     opacity: 1;
 }
@@ -301,7 +305,7 @@
     height: 5px;
     max-height: 5px;
     min-height: 5px;
-    background:var(--lx-color-warning);
+    background: var(--lx-color-warning);
     border-radius: var(--lx-border-radius-full);
     position: absolute;
     top: 5px;

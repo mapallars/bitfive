@@ -36,6 +36,13 @@ export const API = {
         USERS: 'users',
         AUTHORIZE: 'authorize',
         DISAUTHORIZE: 'disauthorize',
+    }),
+    EVENT: new EndpointGroup(`${URL_BASE}/events`, {
+        EVENTS: '',
+        MY_EVENTS: 'my',
+        CREATE: '',
+        UPDATE: '',
+        DELETE: ''
     })
 }
 

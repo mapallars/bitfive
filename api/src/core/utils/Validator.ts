@@ -132,6 +132,22 @@ export class Validator {
         return this
     }
 
+    static isDateTime(fields, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}(:?\d{2})?)?$/
+            if (!dateTimeRegex.test(fields[key])) {
+                throw new error(`El campo ${key} debe ser una fecha y hora válida (ej: YYYY-MM-DDTHH:mm o YYYY-MM-DDTHH:mm:ssZ)`)
+            }
+
+            const dateTime = new Date(fields[key])
+            if (isNaN(dateTime.getTime())) {
+                throw new error(`El campo ${key} no corresponde a una fecha y hora válida`)
+            }
+        })
+        return this
+    }
+
     static isStrongPassword(fields, error = InvalidFormatError) {
         if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
         Object.keys(fields).forEach((key) => {

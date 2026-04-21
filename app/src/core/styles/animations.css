@@ -3,6 +3,7 @@
     transform: scale(0);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -13,6 +14,7 @@
   from {
     transform: translateY(30px);
   }
+
   to {
     transform: translateY(0);
   }
@@ -22,6 +24,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -31,31 +34,32 @@
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
 }
 
 @keyframes pulse {
-    0% {
-        opacity: 0.5;
-        transform: scale(0.95);
-        filter: blur(5px);
-    }
+  0% {
+    opacity: 0.5;
+    transform: scale(0.95);
+    filter: blur(5px);
+  }
 
-    30% {
-        opacity: 0.75;
-        transform: scale(1);
-    }
+  30% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
 
-    100% {
-        opacity: 1;
-        transform: scale(0.95);
-    }
+  100% {
+    opacity: 1;
+    transform: scale(0.95);
+  }
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
