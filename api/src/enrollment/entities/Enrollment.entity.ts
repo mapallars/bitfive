@@ -1,11 +1,12 @@
 import User from "../../auth/entities/User.entity.js";
+import Event from "../../event/entities/Event.entity.js";
 import { Column } from "../../core/orm/decorators/column.decorator.js";
 import { ManyToOne } from "../../core/orm/decorators/decorators.js";
 import { Entity } from "../../core/orm/decorators/entity.decorator.js";
 import { Id } from "../../core/orm/decorators/id.decorator.js";
 
 
-@Entity('Enrollment')
+@Entity('Enrollments')
 export class Enrollment {
 
     @Id()
@@ -48,7 +49,7 @@ export class Enrollment {
         joinColumn: 'eventId',
         owner: true,
         eager: false
-    })enrollments
+    })
     event: any
     
 }
