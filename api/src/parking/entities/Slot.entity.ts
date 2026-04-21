@@ -36,7 +36,7 @@ export class Slot {
         owner: true,
         eager: false
     })
-    parking: Parking
+    parking: any
 }
 
 export default Slot

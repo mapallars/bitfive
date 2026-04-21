@@ -75,7 +75,7 @@ export class Event {
         owner: true,
         eager: true
     })
-    owner: User
+    owner: any
 
     @ManyToMany(() => User, {
         joinTable: {
