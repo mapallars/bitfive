@@ -33,7 +33,8 @@ INSERT INTO "Permissions" ("id", "name", "alias", "description", "type") VALUES
 ('b6c3df60-1e9d-4ffc-bd45-6d7b0cf7f801', 'AccessDashboard', 'Acceso al Panel Principal', 'Permite acceder al panel principal.', 'Access'),
 ('8a1259bf-5649-45a7-8a72-865f38e81920', 'AccessAuthorization', 'Acceso a Autorizaciones', 'Permite acceder a la gestión de autorizaciones.', 'Access'),
 ('c33acfe7-b6f0-4c8f-980e-2f3f953e03a8', 'AccessUsers', 'Acceso a Usuarios', 'Permite acceder a la gestión de usuarios.', 'Access'),
-('e6a88034-e65d-49f2-bbd2-e59f405c5073', 'AccessEvent', 'Acceso a Eventos', 'Permite acceder a la gestión de evenetos.', 'Access');
+('e6a88034-e65d-49f2-bbd2-e59f405c5073', 'AccessEvents', 'Acceso a Eventos', 'Permite acceder a la gestión de evenetos.', 'Access'),
+('c73beb80-5bba-4b79-bd9d-96206a8273bf', 'AccessParkings', 'Acceso a Parqueaderos', 'Permite acceder a la gestión de parqueaderos.', 'Access');
 
 
 INSERT INTO "RolesPermissions" ("roleId", "permissionId") VALUES
