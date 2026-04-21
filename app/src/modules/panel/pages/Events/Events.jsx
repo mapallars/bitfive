@@ -34,7 +34,6 @@ const Events = () => {
     const reset = () => {
         setMode(null)
         setEvent(null)
-        console.log(tab)
     }
 
     const onDelete = async (event) => {
@@ -58,7 +57,7 @@ const Events = () => {
     }
 
     const eventFormHandler = (result) => {
-        syncEvents(result, 'create')
+        syncEvents(result, event ? 'update' : 'create')
         reset()
     }
 

@@ -45,8 +45,8 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
         ], 'Event')
     }
 
-    const submit = async (event) => {
-        event.preventDefault()
+    const submit = async (e) => {
+        e.preventDefault()
 
         if (!validate()) return
 
@@ -140,7 +140,6 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                                 value={form.name}
                                 onChange={handleChange}
                                 error={errors.name}
-                                disabled={!!event}
                             />
                         </InputGroup>
                         <InputGroup columns={2}>

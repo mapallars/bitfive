@@ -2,8 +2,6 @@ import { Entity, Id, Column, OneToMany, ManyToMany } from "../../core/orm/decora
 import Event from "../../event/entities/Event.entity.js"
 import BlockedToken from "./BlockedToken.entity.js"
 import Role from "./Role.entity.js"
-import Event from "../../event/entities/Event.entity.js"
-
 
 @Entity('Users')
 export class User {

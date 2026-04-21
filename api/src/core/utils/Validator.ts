@@ -135,9 +135,9 @@ export class Validator {
     static isDateTime(fields, error = InvalidFormatError) {
         if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
         Object.keys(fields).forEach((key) => {
-            const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/
+            const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}(:?\d{2})?)?$/
             if (!dateTimeRegex.test(fields[key])) {
-                throw new error(`El campo ${key} debe ser una fecha y hora válida en formato YYYY-MM-DDTHH:MM:SS`)
+                throw new error(`El campo ${key} debe ser una fecha y hora válida (ej: YYYY-MM-DDTHH:mm o YYYY-MM-DDTHH:mm:ssZ)`)
             }
 
             const dateTime = new Date(fields[key])

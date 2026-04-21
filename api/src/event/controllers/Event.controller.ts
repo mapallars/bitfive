@@ -64,8 +64,8 @@ export class EventController {
 
         Validator
             .required({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
-            .isDateTime({ startAt, endAt })
             .isNumeric({ maxCapacity, price })
+            .isDateTime({ startAt, endAt })
             .isIn({ eventStatus }, ['AVAILABLE', 'FINISHED', 'CANCELLED'])
 
         if (Number(maxCapacity) <= 0) {
@@ -76,19 +76,7 @@ export class EventController {
             throw new InvalidFormatError('El campo "price" debe ser mayor o igual a 0')
         }
 
-        const startDate = new Date(startAt)
-        if (startDate <= new Date()) {
-            throw new InvalidFormatError('La fecha del evento debe ser futura')
-        }
-
-        const endDate = new Date(endAt)
-        if (endDate <= startDate) {
-            throw new InvalidFormatError('La fecha de fin del evento debe ser mayor a la fecha de inicio')
-        }
-
-        if (startDate > endDate) {
-            throw new InvalidFormatError('La fecha de inicio del evento debe ser menor a la fecha de fin')
-        }
+        this._validateEventDates(startAt, endAt)
 
         const event = await this.eventService.create({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price }, request.user)
 
@@ -103,8 +91,8 @@ export class EventController {
 
         Validator
             .required({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
-            .isDateTime({ startAt, endAt })
             .isNumeric({ maxCapacity, price })
+            .isDateTime({ startAt, endAt })
             .isIn({ eventStatus }, ['AVAILABLE', 'FINISHED', 'CANCELLED'])
 
         if (Number(maxCapacity) <= 0) {
@@ -115,19 +103,7 @@ export class EventController {
             throw new InvalidFormatError('El campo "price" debe ser mayor o igual a 0')
         }
 
-        const startDate = new Date(startAt)
-        if (startDate <= new Date()) {
-            throw new InvalidFormatError('La fecha del evento debe ser futura')
-        }
-
-        const endDate = new Date(endAt)
-        if (endDate <= startDate) {
-            throw new InvalidFormatError('La fecha de fin del evento debe ser mayor a la fecha de inicio')
-        }
-
-        if (startDate > endDate) {
-            throw new InvalidFormatError('La fecha de inicio del evento debe ser menor a la fecha de fin')
-        }
+        this._validateEventDates(startAt, endAt)
 
         const event = await this.eventService.update(id, { name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price }, request.user)
 
@@ -196,6 +172,19 @@ export class EventController {
         await this.eventService.delete(id, request.user)
 
         return response.status(204).json({ message: `Evento "${id}" eliminado correctamente` })
+    }
+
+    private _validateEventDates(startAt: string, endAt: string) {
+        const startDate = new Date(startAt)
+        const endDate = new Date(endAt)
+
+        if (startDate.getTime() <= Date.now()) {
+            throw new InvalidFormatError('La fecha del evento debe ser futura')
+        }
+
+        if (endDate.getTime() <= startDate.getTime()) {
+            throw new InvalidFormatError('La fecha de fin del evento debe ser mayor a la fecha de inicio')
+        }
     }
 
 }

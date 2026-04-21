@@ -20,7 +20,7 @@ class EventRequester extends Requester {
     }
 
     static async updateEvent(event) {
-        const result = await super.put(`${API.EVENT.ENDPOINTS.EVENTS}/${event.eventname}`, event)
+        const result = await super.put(`${API.EVENT.ENDPOINTS.EVENTS}${event.id}`, event)
 
         if (result.message) {
             Notify.notice(
@@ -33,7 +33,7 @@ class EventRequester extends Requester {
     }
 
     static async deleteEvent(event) {
-        const result = await super.delete(`${API.EVENT.ENDPOINTS.EVENTS}/${event.eventname}`)
+        const result = await super.delete(`${API.EVENT.ENDPOINTS.EVENTS}${event.id}`)
 
         if (result.message) {
             Notify.notice(
