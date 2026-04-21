@@ -34,11 +34,11 @@ INSERT INTO "Permissions" ("id", "name", "alias", "description", "type") VALUES
 ('8a1259bf-5649-45a7-8a72-865f38e81920', 'AccessAuthorization', 'Acceso a Autorizaciones', 'Permite acceder a la gestión de autorizaciones.', 'Access'),
 ('c33acfe7-b6f0-4c8f-980e-2f3f953e03a8', 'AccessUsers', 'Acceso a Usuarios', 'Permite acceder a la gestión de usuarios.', 'Access'),
 ('e6a88034-e65d-49f2-bbd2-e59f405c5073', 'AccessEvents', 'Acceso a Eventos', 'Permite acceder a la gestión de evenetos.', 'Access'),
-('c73beb80-5bba-4b79-bd9d-96206a8273bf', 'AccessParkings', 'Acceso a Parqueaderos', 'Permite acceder a la gestión de parqueaderos.', 'Access');
-('6e4ba1df-4b49-4e3f-8d8d-9e44ecb97879', 'CreateEnrollments', 'Crear Enrollment', 'Permite la creacion de Enrollment.', 'Create');
-('87ad4527-4595-4860-a3f5-cad1f6918dba', 'ReadEnrollments', 'Leer Enrollment', 'Permite la lectura de Enrollment.', 'Read');
-('fb73562e-9b45-4109-b87a-078b98a015d8', 'DeleteEnrollments', 'Eliminar Enrollment', 'Permite la eliminación de Enrollment.', 'Delete');
-('a2e8730f-f0cb-43d6-98e7-1db914adb6ca', 'UpdateEnrollments', 'Actualizar Enrollment', 'Permite la actualización de Enrollment.', 'Create');
+('c73beb80-5bba-4b79-bd9d-96206a8273bf', 'AccessParkings', 'Acceso a Parqueaderos', 'Permite acceder a la gestión de parqueaderos.', 'Access'),
+('6e4ba1df-4b49-4e3f-8d8d-9e44ecb97879', 'CreateEnrollments', 'Crear Enrollment', 'Permite la creacion de Enrollment.', 'Create'),
+('87ad4527-4595-4860-a3f5-cad1f6918dba', 'ReadEnrollments', 'Leer Enrollment', 'Permite la lectura de Enrollment.', 'Read'),
+('fb73562e-9b45-4109-b87a-078b98a015d8', 'DeleteEnrollments', 'Eliminar Enrollment', 'Permite la eliminación de Enrollment.', 'Delete'),
+('a2e8730f-f0cb-43d6-98e7-1db914adb6ca', 'UpdateEnrollments', 'Actualizar Enrollment', 'Permite la actualización de Enrollment.', 'Update');
 
 
 INSERT INTO "RolesPermissions" ("roleId", "permissionId") VALUES
