@@ -62,9 +62,7 @@ export class EventService {
         if (!existingEvent) {
             throw new NotFoundError("El evento no existe")
         }
-        if (existingEvent.owner.id !== user.id || !existingEvent.organizers.some(organizer => organizer.id === user.id)) {
-            throw new ForbiddenError("No puedes editar este evento porque no eres el dueño o colaborador")
-        }
+        this._checkEventPermissions(existingEvent, user, "No puedes editar este evento porque no eres el dueño o colaborador")
         return await this.eventRepository.update(id, { ...event, updatedAt: new Date(), updatedBy: user.username })
     }
 
@@ -73,9 +71,7 @@ export class EventService {
         if (!existingEvent) {
             throw new NotFoundError("El evento no existe")
         }
-        if (existingEvent.owner.id !== user.id || !existingEvent.organizers.some(organizer => organizer.id === user.id)) {
-            throw new ForbiddenError("No puedes eliminar este evento porque no eres el dueño o colaborador")
-        }
+        this._checkEventPermissions(existingEvent, user, "No puedes eliminar este evento porque no eres el dueño o colaborador")
         return await this.eventRepository.delete(id, user.username)
     }
 
@@ -84,9 +80,7 @@ export class EventService {
         if (!existingEvent) {
             throw new NotFoundError("El evento no existe")
         }
-        if (existingEvent.owner.id !== user.id || !existingEvent.organizers.some(organizer => organizer.id === user.id)) {
-            throw new ForbiddenError("No puedes asignar un parking a este evento porque no eres el dueño o colaborador")
-        }
+        this._checkEventPermissions(existingEvent, user, "No puedes asignar un parking a este evento porque no eres el dueño o colaborador")
         const existingParking = await this.parkingRepository.findById(parkingId)
         if (!existingParking) {
             throw new NotFoundError("El parking no existe")
@@ -99,9 +93,7 @@ export class EventService {
         if (!existingEvent) {
             throw new NotFoundError("El evento no existe")
         }
-        if (existingEvent.owner.id !== user.id || !existingEvent.organizers.some(organizer => organizer.id === user.id)) {
-            throw new ForbiddenError("No puedes desasignar un parking de este evento porque no eres el dueño o colaborador")
-        }
+        this._checkEventPermissions(existingEvent, user, "No puedes desasignar un parking de este evento porque no eres el dueño o colaborador")
         const existingParking = await this.parkingRepository.findById(parkingId)
         if (!existingParking) {
             throw new NotFoundError("El parking no existe")
@@ -114,9 +106,7 @@ export class EventService {
         if (!existingEvent) {
             throw new NotFoundError("El evento no existe")
         }
-        if (existingEvent.owner.id !== user.id || !existingEvent.organizers.some(organizer => organizer.id === user.id)) {
-            throw new ForbiddenError("No puedes asignar un organizador a este evento porque no eres el dueño o colaborador")
-        }
+        this._checkEventPermissions(existingEvent, user, "No puedes asignar un organizador a este evento porque no eres el dueño o colaborador")
         const existingOrganizer = await this.userRepository.findById(organizerId)
         if (!existingOrganizer) {
             throw new NotFoundError("El organizador no existe")
@@ -129,14 +119,21 @@ export class EventService {
         if (!existingEvent) {
             throw new NotFoundError("El evento no existe")
         }
-        if (existingEvent.owner.id !== user.id || !existingEvent.organizers.some(organizer => organizer.id === user.id)) {
-            throw new ForbiddenError("No puedes desasignar un organizador de este evento porque no eres el dueño o colaborador")
-        }
+        this._checkEventPermissions(existingEvent, user, "No puedes desasignar un organizador de este evento porque no eres el dueño o colaborador")
         const existingOrganizer = await this.userRepository.findById(organizerId)
         if (!existingOrganizer) {
             throw new NotFoundError("El organizador no existe")
         }
         return await this.eventRepository.update(id, { organizers: existingEvent.organizers.filter(o => o.id !== organizerId), updatedAt: new Date(), updatedBy: user.username })
+    }
+
+    private _checkEventPermissions(event: Event, user: User, message: string) {
+        const isOwner = event.owner.id === user.id
+        const isOrganizer = (event.organizers || []).some(organizer => organizer.id === user.id)
+
+        if (!isOwner && !isOrganizer) {
+            throw new ForbiddenError(message)
+        }
     }
 
 }
