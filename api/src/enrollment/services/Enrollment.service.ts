@@ -68,7 +68,7 @@ export class EnrollmentService {
             throw new NotFoundError("La inscripción no existe")
         }
         this._checkEnrollmentPermissions(existingEnrollment, user, "No puedes cancelar esta inscripción porque no eres el dueño")
-        return await this.enrollmentRepository.update(id, { ...existingEnrollment, enrollmentStatus: 'CANCELLED', updatedAt: new Date(), updatedBy: user.username })
+        return await this.enrollmentRepository.update(id, { enrollmentStatus: 'CANCELLED', updatedAt: new Date(), updatedBy: user.username })
     }
 
     async delete(id: string, user: User) {
