@@ -1,6 +1,6 @@
 export const PERMISSIONS = {
 
-    EVENT: {
+    ENROLLMENT: {
         READ: 'ReadEnrollments',
         CREATE: 'CreateEnrollments',
         UPDATE: 'UpdateEnrollments',
