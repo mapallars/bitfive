@@ -1,4 +1,5 @@
 import { Entity, Id, Column, OneToMany, ManyToMany } from "../../core/orm/decorators/decorators.js"
+import Event from "../../event/entities/Event.entity.js"
 import BlockedToken from "./BlockedToken.entity.js"
 import Role from "./Role.entity.js"
 
@@ -79,6 +80,9 @@ export class User {
 
     @OneToMany(() => BlockedToken, 'userId')
     blockedTokens: BlockedToken[]
+
+    @OneToMany(() => Event, 'ownerId')
+    ownedEvents: Event[]
 
     @ManyToMany(() => Role, {
         joinTable: {
