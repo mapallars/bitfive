@@ -7,7 +7,7 @@ export class Validator {
         fields = null,
         translator = FIELDS_TRANSLATION,
         prefix = '',
-        errorHandler = () => {}
+        errorHandler = () => { }
     } = {}) {
         this.translator = translator
         this.fields = fields
@@ -29,6 +29,7 @@ export class Validator {
         }
         catch (error) {
             if ($field) $field.focus()
+            console.log($field)
             this.field
                 ? this.errorHandler(prev => ({ ...prev, [this.field]: error.message }))
                 : Notify.notice(error.message, 'warning')

@@ -4,7 +4,7 @@ import { useForm } from '../../core/hooks/useForm'
 import { LOGIN } from './constants/login.mjs'
 import Validator from '../../core/utils/validator.mjs'
 import Notify from '../../core/lib/notify.mjs'
-import Brand from '../../core/components/Brand/Brand'
+import Logo from '../../core/components/Logo/Logo'
 import Button from '../../core/components/Button/Button'
 import Icon from '../../core/components/Icon/Icon'
 import googleIcon from '../../assets/google.png'
@@ -53,7 +53,7 @@ const LoginForm = ({ authenticationMode, setAuthenticationMode, signIn }) => {
     const handleRegister = () => {
         resetForm()
         setIsLoginWithCredentials(false)
-        setAuthenticationMode('register') 
+        setAuthenticationMode('register')
     }
 
     return (
@@ -62,10 +62,10 @@ const LoginForm = ({ authenticationMode, setAuthenticationMode, signIn }) => {
                 <div className='lx-m-authentication-login-content'>
                     <div className='lx-m-authentication-login-form-greatings'>
                         <span className='lx-m-authentication-login-form-logo'>
-                            <Brand size='l' className='lx-m-authentication-login-form-logo-svg' />
+                            <Logo size='s' className='lx-m-authentication-login-form-logo-svg' />
                         </span>
                         <br />
-                        <p>Accede al sistema para gestionar tus porcinos</p>
+                        <p>Accede al sistema para gestionar tus eventos</p>
                     </div>
                     <form className='lx-m-authentication-login-form'>
                         {isLoginWithCredentials && (
