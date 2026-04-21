@@ -43,7 +43,7 @@
     width: fit-content;
 }
 
-.lx-c-user-card-head { 
+.lx-c-user-card-head {
     width: 100%;
     display: grid;
     place-content: center;
@@ -119,9 +119,9 @@
 .lx-c-user-card-content .--username {
     width: fit-content;
     color: var(--lx-color-text-soft);
-    padding: 4px 8px; 
-    font-weight: 500; 
-    font-size: 14px; 
+    padding: 4px 8px;
+    font-weight: 500;
+    font-size: 14px;
     border-radius: 8px 8px 8px 0;
 }
 
@@ -129,6 +129,7 @@
     font-size: 1.5rem;
     font-weight: 600;
     letter-spacing: -.25pt;
+    text-align: center;
 }
 
 .lx-c-user-card-content .--description {

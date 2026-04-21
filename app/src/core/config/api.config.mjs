@@ -39,6 +39,7 @@ export const API = {
     }),
     EVENT: new EndpointGroup(`${URL_BASE}/events`, {
         EVENTS: '',
+        MY_EVENTS: 'my',
         CREATE: '',
         UPDATE: '',
         DELETE: ''

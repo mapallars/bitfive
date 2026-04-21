@@ -9,6 +9,11 @@ class EventRequester extends Requester {
         return result.data
     }
 
+    static async getMyEvents() {
+        const result = await super.get(API.EVENT.ENDPOINTS.MY_EVENTS)
+        return result.data
+    }
+
     static async createEvent(event) {
         const result = await super.post(API.EVENT.ENDPOINTS.EVENTS, event)
         return result.data
@@ -32,7 +37,7 @@ class EventRequester extends Requester {
 
         if (result.message) {
             Notify.notice(
-                result.message || 'No se pudo eliminar el usuario',
+                result.message || 'No se pudo eliminar el evento',
                 result.ok ? 'info' : 'error'
             )
         }

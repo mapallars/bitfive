@@ -125,3 +125,7 @@
     box-shadow: .2em -.2em 0 0 currentcolor;
   }
 }
+
+.lx-c-loader-spin {
+  animation: pulse 1s ease-in-out infinite;
+}

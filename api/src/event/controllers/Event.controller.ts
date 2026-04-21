@@ -25,6 +25,14 @@ export class EventController {
         return response.status(200).json(events.map(event => new EventDTO(event)))
     }
 
+    @Get('/my')
+    @Permissions([PERMISSIONS.EVENT.READ])
+    async findMyEvents(request, response) {
+        const events = await this.eventService.findMyEvents(request.user.id)
+
+        return response.status(200).json(events.map(event => new EventDTO(event)))
+    }
+
     @Get('/:id')
     @Permissions([PERMISSIONS.EVENT.READ])
     async findById(request, response) {
@@ -56,7 +64,7 @@ export class EventController {
 
         Validator
             .required({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
-            .isDate({ startAt, endAt })
+            .isDateTime({ startAt, endAt })
             .isNumeric({ maxCapacity, price })
             .isIn({ eventStatus }, ['AVAILABLE', 'FINISHED', 'CANCELLED'])
 
@@ -82,7 +90,7 @@ export class EventController {
             throw new InvalidFormatError('La fecha de inicio del evento debe ser menor a la fecha de fin')
         }
 
-        const event = await this.eventService.create({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
+        const event = await this.eventService.create({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price }, request.user)
 
         return response.status(201).json(new EventDTO(event))
     }
@@ -95,7 +103,7 @@ export class EventController {
 
         Validator
             .required({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
-            .isDate({ startAt, endAt })
+            .isDateTime({ startAt, endAt })
             .isNumeric({ maxCapacity, price })
             .isIn({ eventStatus }, ['AVAILABLE', 'FINISHED', 'CANCELLED'])
 
@@ -121,7 +129,7 @@ export class EventController {
             throw new InvalidFormatError('La fecha de inicio del evento debe ser menor a la fecha de fin')
         }
 
-        const event = await this.eventService.update(id, { name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
+        const event = await this.eventService.update(id, { name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price }, request.user)
 
         return response.status(200).json(new EventDTO(event))
     }
@@ -134,7 +142,7 @@ export class EventController {
 
         Validator.required({ id, parkingId })
 
-        const event = await this.eventService.assignParking(id, parkingId)
+        const event = await this.eventService.assignParking(id, parkingId, request.user)
 
         return response.status(200).json(new EventDTO(event))
     }
@@ -147,7 +155,7 @@ export class EventController {
 
         Validator.required({ id, parkingId })
 
-        const event = await this.eventService.unassignParking(id, parkingId)
+        const event = await this.eventService.unassignParking(id, parkingId, request.user)
 
         return response.status(200).json(new EventDTO(event))
     }
@@ -160,7 +168,7 @@ export class EventController {
 
         Validator.required({ id, organizerId })
 
-        const event = await this.eventService.assignOrganizer(id, organizerId)
+        const event = await this.eventService.assignOrganizer(id, organizerId, request.user)
 
         return response.status(200).json(new EventDTO(event))
     }
@@ -173,7 +181,7 @@ export class EventController {
 
         Validator.required({ id, organizerId })
 
-        const event = await this.eventService.unassignOrganizer(id, organizerId)
+        const event = await this.eventService.unassignOrganizer(id, organizerId, request.user)
 
         return response.status(200).json(new EventDTO(event))
     }
@@ -185,7 +193,7 @@ export class EventController {
 
         Validator.required({ id })
 
-        await this.eventService.delete(id)
+        await this.eventService.delete(id, request.user)
 
         return response.status(204).json({ message: `Evento "${id}" eliminado correctamente` })
     }

@@ -100,11 +100,10 @@ function PanelLayout({ menu }) {
             <div className='lx-l-panel-sidebar-brand'>
               <div className='lx-l-panel-sidebar-brand-mark'>
                 <div className='lx-l-panel-sidebar-brand-icon'>
-                  <Logo color='white' size='xs' />
+                  <Logo color='white' className='lx-l-panel-sidebar-brand-logo' size='xs' />
                 </div>
                 <div className='lx-l-panel-sidebar-brand-name'>
-                  <div className='--subtitle'>POWERED BY</div>
-                  <div className='--title'>Bitfive<strong style={{ fontWeight: 200 }}>Team</strong></div>
+                  <div className='--title'>Bitfive <strong style={{ fontWeight: 200 }}>#devops</strong></div>
                 </div>
                 <div className='lx-l-panel-sidebar-odd'>
                   <Button color='danger' variant='plain' icon onClick={signOut}>

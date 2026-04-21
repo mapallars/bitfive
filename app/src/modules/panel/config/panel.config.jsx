@@ -11,8 +11,8 @@ export const AUTHORITIES = {
 
 export const MENU = [
   {
-    label: 'Dashboard',
-    icon: 'dashboard',
+    label: 'Descubrir',
+    icon: 'explore',
     description: 'Resumen general del sistema',
     to: '',
     path: '',
@@ -46,16 +46,28 @@ export const MENU = [
       permissions: ['AccessUsers']
     },
     items: []
-  }, 
+  },
   {
     label: 'Eventos',
     icon: 'event',
     description: 'Gestión de eventos',
-    to: 'Events',
+    to: 'events',
     path: 'events/:eventId?',
     element: <Events />,
     authorities: {
       permissions: ['AccessEvents']
+    },
+    items: []
+  },
+  {
+    label: 'Parqueaderos',
+    icon: 'parking_sign',
+    description: 'Gestión de parqueaderos',
+    to: 'parkings',
+    path: 'parkings/:parkingId',
+    element: <Events />,
+    authorities: {
+      permissions: ['AccessParkings']
     },
     items: []
   }

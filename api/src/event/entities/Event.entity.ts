@@ -1,6 +1,6 @@
 import User from "../../auth/entities/User.entity.js"
 import Parking from "../../parking/entities/Parking.entity.js"
-import { Entity, Id, Column, ManyToMany } from "../../core/orm/decorators/decorators.js"
+import { Entity, Id, Column, ManyToMany, ManyToOne } from "../../core/orm/decorators/decorators.js"
 
 @Entity('Events')
 export class Event {
@@ -68,6 +68,14 @@ export class Event {
     deletedAt: Date
 
     deletedBy: string
+
+    @ManyToOne(() => User, {
+        inverse: 'ownedEvents',
+        joinColumn: 'ownerId',
+        owner: true,
+        eager: true
+    })
+    owner: User
 
     @ManyToMany(() => User, {
         joinTable: {

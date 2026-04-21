@@ -1,6 +1,6 @@
 import './RegisterForm.css'
 import { useEffect, useRef, useState } from 'react'
-import { useForm } from '../../core/hooks/useForm' 
+import { useForm } from '../../core/hooks/useForm'
 import { REGISTER } from './constants/register.mjs'
 import Validator from '../../core/utils/validator.mjs'
 import Notify from '../../core/lib/notify.mjs'
@@ -139,7 +139,7 @@ const RegisterForm = ({ authenticationMode, setAuthenticationMode, signUp }) => 
                 <div className='lx-m-authentication-register-content'>
                     <div className='lx-m-authentication-register-form-greatings'>
                         <span className='lx-m-authentication-register-form-logo'>
-                            <Brand size='xl' className='lx-m-authentication-register-form-logo-svg' />
+                            <Logo size='s' className='lx-m-authentication-register-form-logo-svg' />
                         </span>
                         <br />
                         <div className='lx-m-authentication-register-progress'>

@@ -137,12 +137,60 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
         }
     }
 
-    private async syncRelations(entityId: string, data: Partial<T>) {
+    private async syncRelations(entityId: string, data: Partial<T>, insertData?: Record<string, any>) {
         const relations: Record<string, RelationConfig> = Metadata.get(this.entityClass, METADATA_KEYS.RELATIONS) || {};
 
         for (const [propName, relConfig] of Object.entries(relations)) {
             if (data[propName] === undefined) continue;
 
+            // ── ManyToOne / OneToOne (owner side): write FK into insertData ──────────
+            if (
+                relConfig.type === 'ManyToOne' ||
+                (relConfig.type === 'OneToOne' && !relConfig.inverse)
+            ) {
+                if (!insertData) continue; // update path: FK already set via buildFkFromRelation
+                const fkCol = relConfig.joinColumn || `${propName}Id`;
+                const relValue = (data as any)[propName];
+                if (relValue && typeof relValue === 'object' && !Array.isArray(relValue)) {
+                    const targetClass = relConfig.target();
+                    const targetIdField = Metadata.get(targetClass, METADATA_KEYS.ID) || 'id';
+                    insertData[fkCol] = relValue[targetIdField] ?? null;
+                } else if (typeof relValue === 'string' || typeof relValue === 'number') {
+                    // Caller passed the raw ID directly
+                    insertData[fkCol] = relValue;
+                }
+                continue;
+            }
+
+            // ── OneToMany: update each child's FK to point to the parent ─────────────
+            if (relConfig.type === 'OneToMany') {
+                const children = (data as any)[propName];
+                if (!Array.isArray(children) || children.length === 0) continue;
+
+                const targetClass = relConfig.target();
+                const targetEntityConfig: EntityConfig | undefined = Metadata.get(targetClass, METADATA_KEYS.ENTITY);
+                if (!targetEntityConfig) continue;
+
+                const targetTableName = targetEntityConfig.tableName;
+                const targetIdField = Metadata.get(targetClass, METADATA_KEYS.ID) || 'id';
+                // The FK column on the child side that references this entity.
+                // Convention: use relConfig.inverse if supplied, otherwise `${this.tableName}Id`.
+                const fkCol = relConfig.inverse || `${this.tableName}Id`;
+
+                for (const child of children) {
+                    const childId = child[targetIdField];
+                    if (!childId) continue;
+                    try {
+                        await this.db.query(
+                            `UPDATE "${targetTableName}" SET "${fkCol}" = $1, "updatedAt" = NOW() WHERE "${targetIdField}" = $2`,
+                            [entityId, childId]
+                        );
+                    } catch (e: any) { } // Suppress if column doesn't exist yet
+                }
+                continue;
+            }
+
+            // ── ManyToMany (owner side): diff-based sync on join table ───────────────
             if (relConfig.type === 'ManyToMany' && relConfig.owner) {
                 const targetElements = data[propName] as any[];
                 if (!Array.isArray(targetElements)) continue;
@@ -202,6 +250,31 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
         }
     }
 
+    /**
+     * Extracts FK columns from ManyToOne / OneToOne relations present in `data`
+     * and injects them into `insertData` so they are included in INSERT/UPDATE.
+     */
+    private buildFkFromRelations(data: Partial<T>, insertData: Record<string, any>) {
+        const relations: Record<string, RelationConfig> = Metadata.get(this.entityClass, METADATA_KEYS.RELATIONS) || {};
+        for (const [propName, relConfig] of Object.entries(relations)) {
+            if (data[propName] === undefined) continue;
+            if (
+                relConfig.type === 'ManyToOne' ||
+                (relConfig.type === 'OneToOne' && !relConfig.inverse)
+            ) {
+                const fkCol = relConfig.joinColumn || `${propName}Id`;
+                const relValue = (data as any)[propName];
+                if (relValue && typeof relValue === 'object' && !Array.isArray(relValue)) {
+                    const targetClass = relConfig.target();
+                    const targetIdField = Metadata.get(targetClass, METADATA_KEYS.ID) || 'id';
+                    insertData[fkCol] = relValue[targetIdField] ?? null;
+                } else if (typeof relValue === 'string' || typeof relValue === 'number') {
+                    insertData[fkCol] = relValue;
+                }
+            }
+        }
+    }
+
     public async findAll(includeDeleted = false, options?: FindOptions): Promise<T[]> {
         let sql = `SELECT * FROM "${this.tableName}"`
         if (!includeDeleted) {
@@ -253,8 +326,12 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
 
         const insertData = {} as any
         for (const key of Object.keys(data)) {
+            // Skip relation properties — FKs are resolved below via buildFkFromRelations
             if (!relations[key]) insertData[key] = (data as any)[key]
         }
+
+        // Resolve ManyToOne / OneToOne FK columns from relation objects passed in data
+        this.buildFkFromRelations(data, insertData);
 
         if (!insertData[idField]) {
             insertData[idField] = uuidv4()
@@ -275,6 +352,7 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
         const result = await this.db.query(sql, values)
         const createdEntity = result.rows[0] as T
 
+        // syncRelations handles ManyToMany (join table) and OneToMany (child FK updates)
         await this.syncRelations(createdEntity[idField], data)
         return createdEntity
     }
@@ -283,9 +361,19 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
         const relations: Record<string, RelationConfig> = Metadata.get(this.entityClass, METADATA_KEYS.RELATIONS) || {};
 
         const updateKeys = Object.keys(data).filter(k => k !== 'updatedAt' && !relations[k])
+        const updateData = { ...data, updatedAt: new Date() } as any
+
+        // Resolve ManyToOne / OneToOne FK columns from relation objects passed in data
+        const fkData: Record<string, any> = {}
+        this.buildFkFromRelations(data, fkData)
+        for (const [fkCol, fkVal] of Object.entries(fkData)) {
+            if (!updateKeys.includes(fkCol)) {
+                updateKeys.push(fkCol)
+                updateData[fkCol] = fkVal
+            }
+        }
 
         if (updateKeys.length > 0) {
-            const updateData = { ...data, updatedAt: new Date() } as any
             updateKeys.push('updatedAt')
 
             const setString = updateKeys.map((k, i) => `"${k}" = $${i + 1}`).join(', ')
@@ -308,11 +396,21 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
         const relations: Record<string, RelationConfig> = Metadata.get(this.entityClass, METADATA_KEYS.RELATIONS) || {};
 
         const updateKeys = Object.keys(data).filter(k => k !== 'updatedAt' && !relations[k])
+        const updateData = { ...data, updatedAt: new Date() } as any
         const targetEntities = await this.findManyBy(field, value);
         const selfIdField = Metadata.get(this.entityClass, METADATA_KEYS.ID) || 'id';
 
+        // Resolve ManyToOne / OneToOne FK columns from relation objects passed in data
+        const fkData: Record<string, any> = {}
+        this.buildFkFromRelations(data, fkData)
+        for (const [fkCol, fkVal] of Object.entries(fkData)) {
+            if (!updateKeys.includes(fkCol)) {
+                updateKeys.push(fkCol)
+                updateData[fkCol] = fkVal
+            }
+        }
+
         if (updateKeys.length > 0) {
-            const updateData = { ...data, updatedAt: new Date() } as any
             updateKeys.push('updatedAt')
 
             const setString = updateKeys.map((k, i) => `"${k}" = $${i + 1}`).join(', ')

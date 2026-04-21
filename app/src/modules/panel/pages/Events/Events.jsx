@@ -6,22 +6,24 @@ import EventRequester from '../../services/EventRequester.mjs'
 import Loader from '../../../../core/components/Loader/Loader'
 import TabGroup from '../../../../core/components/TabGroup/TabGroup'
 import Icon from '../../../../core/components/Icon/Icon'
+import Button from '../../../../core/components/Button/Button.jsx'
 import EventCards from '../../components/EventCards/EventCards.jsx'
-import EventTable from '../../components/EventTable/EventsTable.jsx'
+import EventTable from '../../components/EventTable/EventTable.jsx'
 import Footer from '../../../../core/components/Footer/Footer'
 import Modal from '../../../../core/components/Modal/Modal'
 import EventDetails from '../../components/EventDetails/EventDetails.jsx'
 import EventDeleteForm from '../../components/EventDeleteForm/EventDeleteForm.jsx'
+import EventForm from '../../components/EventForm/EventForm.jsx'
 
 const Events = () => {
     const [mode, setMode] = useState(null)
-    const [tab, setTab] = useState('events')
+    const [tab, setTab] = useState('cards')
     const [event, setEvent] = useState(null)
     const { state: events, set: setEvents, sync: syncEvents } = useSync()
     const { loading, withLoad } = useLoad(true)
 
     const load = useCallback(() => withLoad(async () => {
-        const events = await EventRequester.getEvents()
+        const events = await EventRequester.getMyEvents()
         setEvents(events ?? [])
     }), [withLoad, setEvents])
 
@@ -32,11 +34,17 @@ const Events = () => {
     const reset = () => {
         setMode(null)
         setEvent(null)
+        console.log(tab)
     }
 
     const onDelete = async (event) => {
         setEvent(event)
         setMode('delete')
+    }
+
+    const onEdit = async (event) => {
+        setEvent(event)
+        setMode('form')
     }
 
     const onView = (event) => {
@@ -49,68 +57,87 @@ const Events = () => {
         reset()
     }
 
+    const eventFormHandler = (result) => {
+        syncEvents(result, 'create')
+        reset()
+    }
+
     return (<>
-        <div className='lx-p-events'>
-            <Loader loading={loading} background='special' />
-            <div className='lx-p-events-header'>
-                <div className='info'>
-                    <h1 className='--name'>Eventos</h1>
-                    <p className='--description'>Administre los eventos del sistema</p>
-                    <div className='--overview'>
-                        <div className='summary'>
-                            {events.length} eventos registrados
+        {mode === 'form'
+            ? <EventForm event={event} onCancel={reset} handler={eventFormHandler} />
+            : <div className='lx-p-events'>
+                <Loader loading={loading} background='special' />
+                <div className='lx-p-events-header'>
+                    <div className='info'>
+                        <h1 className='--name'>Eventos</h1>
+                        <p className='--description'>Administra los eventos del sistema</p>
+                        <div className='--overview'>
+                            <div className='summary'>
+                                {events.length} eventos registrados
+                            </div>
                         </div>
                     </div>
+                    <div className='actions'>
+                        <Button onClick={() => setMode('form')}>
+                            <Icon name='calendar_add_on' />
+                            Crear evento
+                        </Button>
+                    </div>
                 </div>
+                <div className='lx-p-events-content'>
+                    <div className='lx-p-events-actions'>
+                        <TabGroup
+                            tabs={[
+                                <>Tarjetas <Icon name='square' /></>,
+                                <>Tabla <Icon name='table' /></>
+                            ]}
+                            options={['cards', 'table']}
+                            onClick={(option) => {
+                                setTab(option)
+                            }}
+                            active={tab}
+                        />
+                    </div>
+                    <div className='lx-p-events-container'>
+                        {tab === 'cards' && (
+                            <div className='lx-p-events-cards'>
+                                {
+                                    <EventCards
+                                        events={events}
+                                        onEdit={onEdit}
+                                        onDelete={onDelete}
+                                        onView={onView}
+                                    />
+                                }
+                            </div>
+                        )}
+                        {tab === 'table' && (
+                            <div className='lx-p-events-table'>
+                                {
+                                    <EventTable
+                                        events={events}
+                                        onEdit={onEdit}
+                                        onDelete={onDelete}
+                                        onView={onView}
+                                    />
+                                }
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <Footer />
             </div>
-            <div className='lx-p-events-content'>
-                <div className='lx-p-events-actions'>
-                    <TabGroup
-                        tabs={[
-                            <>Tarjetas <Icon name='square' /></>,
-                            <>Tabla <Icon name='table' /></>
-                        ]}
-                        options={['cards', 'table']}
-                        onClick={(option) => {
-                            setTab(option)
-                        }}
-                    />
-                </div>
-                <div className='lx-p-events-container'>
-                    {tab === 'cards' && (
-                        <div className='lx-p-events-cards'>
-                            {
-                                <EventCards
-                                    events={events}
-                                    onDelete={onDelete}
-                                    onView={onView}
-                                />
-                            }
-                        </div>
-                    )}
-                    {tab === 'table' && (
-                        <div className='lx-p-events-table'>
-                            {
-                                <EventTable
-                                    events={events}
-                                    onView={onView}
-                                />
-                            }
-                        </div>
-                    )}
-                </div>
-            </div>
-            <Footer />
-        </div>
+        }
 
         <Modal
             show={mode === 'view'}
             title='Detalles del evento'
-            size='large'
+            size='standar'
             position='right'
             onClose={reset}
+            isLocal={true}
             children={
-                <EventDetails event={event} onDelete={onDelete} />
+                <EventDetails event={event} onEdit={onEdit} onDelete={onDelete} />
             }
         />
 
