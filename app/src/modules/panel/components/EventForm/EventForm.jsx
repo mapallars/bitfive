@@ -37,10 +37,8 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
             ['Description', () => validator.set({ description }).required().length(1, 500)],
             ['Type', () => validator.set({ type }).required().isIn(EVENT.OPTIONS.TYPE.map(v => v.value))],
             ['Location', () => validator.set({ location }).required().length(2, 100)],
-            ['MaxCapacity', () => validator.set({ maxCapacity }).required()],
-            ['Price', () => validator.set({ price }).required()],
-            ['Cover', () => validator.set({ cover }).required()],
-            ['Timezone', () => validator.set({ timezone }).required()],
+            ['MaxCapacity', () => validator.set({ maxCapacity }).required().isInteger().isGreaterThan(0)],
+            ['Price', () => validator.set({ price }).required().isInteger()],
             ['EventStatus', () => validator.set({ eventStatus }).required().isIn(EVENT.OPTIONS.EVENT_STATUS.map(v => v.value))],
         ], 'Event')
     }

@@ -88,7 +88,7 @@ export class Validator {
     static isInteger(fields, error = InvalidFormatError) {
         if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
         Object.keys(fields).forEach((key) => {
-            if (!Number.isInteger(fields[key])) {
+            if (!/^-?\d+$/.test(String(fields[key]))) {
                 throw new error(`El campo ${key} debe ser un número entero`)
             }
         })

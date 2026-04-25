@@ -16,6 +16,14 @@ class EventRequester extends Requester {
 
     static async createEvent(event) {
         const result = await super.post(API.EVENT.ENDPOINTS.EVENTS, event)
+
+        if (result.message) {
+            Notify.notice(
+                result.message || 'No se pudo crear el evento',
+                result.ok ? 'info' : 'error'
+            )
+        }
+
         return result.data
     }
 

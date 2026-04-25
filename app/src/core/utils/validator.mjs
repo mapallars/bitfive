@@ -136,9 +136,9 @@ export class Validator {
     isInteger(error = Error) {
         if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
         Object.keys(this.fields).forEach((key) => {
-            if (!Number.isInteger(this.fields[key])) {
+            if (!/^-?\d+$/.test(String(this.fields[key]))) {
                 this.field = key
-                throw new error(`Este campo debe ser un número entero`)
+                throw new error('Este campo debe ser un número entero')
             }
             this.field = null
         })
@@ -282,6 +282,175 @@ export class Validator {
         })
         return this
     }
+
+    isNegativeInteger(error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (!Number.isInteger(parseInt(this.fields[key])) || this.fields[key] > 0) {
+                this.field = key
+                throw new error(`Este campo debe ser un número entero negativo`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isGreaterThan(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] <= value) {
+                this.field = key
+                throw new error(`Este campo debe ser mayor a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isLessThan(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] >= value) {
+                this.field = key
+                throw new error(`Este campo debe ser menor a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isGreaterThanOrEqual(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] < value) {
+                this.field = key
+                throw new error(`Este campo debe ser mayor o igual a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isLessThanOrEqual(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] > value) {
+                this.field = key
+                throw new error(`Este campo debe ser menor o igual a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isDateGreaterThan(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] <= value) {
+                this.field = key
+                throw new error(`Este campo debe ser mayor a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isDateLessThan(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] >= value) {
+                this.field = key
+                throw new error(`Este campo debe ser menor a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isDateGreaterThanOrEqual(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] < value) {
+                this.field = key
+                throw new error(`Este campo debe ser mayor o igual a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isDateLessThanOrEqual(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] > value) {
+                this.field = key
+                throw new error(`Este campo debe ser menor o igual a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isTimeGreaterThan(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] <= value) {
+                this.field = key
+                throw new error(`Este campo debe ser mayor a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isTimeLessThan(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] >= value) {
+                this.field = key
+                throw new error(`Este campo debe ser menor a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isTimeGreaterThanOrEqual(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] < value) {
+                this.field = key
+                throw new error(`Este campo debe ser mayor o igual a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isTimeLessThanOrEqual(value, error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (this.fields[key] > value) {
+                this.field = key
+                throw new error(`Este campo debe ser menor o igual a ${value}`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
+    isBoolean(error = Error) {
+        if (!(this.fields instanceof Object)) throw new Error('No hay campos válidos')
+        Object.keys(this.fields).forEach((key) => {
+            if (typeof this.fields[key] !== 'boolean') {
+                this.field = key
+                throw new error(`Este campo debe ser un booleano`)
+            }
+            this.field = null
+        })
+        return this
+    }
+
 }
 
 export default Validator
