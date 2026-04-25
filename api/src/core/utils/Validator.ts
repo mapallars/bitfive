@@ -180,6 +180,94 @@ export class Validator {
         return this
     }
 
+    static isGreaterThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] <= value) {
+                throw new error(`El campo ${key} debe ser mayor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isLessThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] >= value) {
+                throw new error(`El campo ${key} debe ser menor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isGreaterThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] < value) {
+                throw new error(`El campo ${key} debe ser mayor o igual a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isLessThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] > value) {
+                throw new error(`El campo ${key} debe ser menor o igual a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateGreaterThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date <= valueDate) {
+                throw new error(`El campo ${key} debe ser mayor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateLessThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date >= valueDate) {
+                throw new error(`El campo ${key} debe ser menor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateGreaterThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date < valueDate) {
+                throw new error(`El campo ${key} debe ser mayor o igual a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateLessThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date > valueDate) {
+                throw new error(`El campo ${key} debe ser menor o igual a ${value}`)
+            }
+        })
+        return this
+    }
+
 }
 
 export default Validator
