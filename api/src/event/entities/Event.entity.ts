@@ -1,7 +1,7 @@
-import User from "../../auth/entities/User.entity.js"
-import Parking from "../../parking/entities/Parking.entity.js"
-import { Entity, Id, Column, ManyToMany, ManyToOne, OneToMany } from "../../core/orm/decorators/decorators.js"
-import Enrollment from "../../enrollment/entities/Enrollment.entity.js"
+import User from '../../auth/entities/User.entity.js'
+import Parking from '../../parking/entities/Parking.entity.js'
+import { Entity, Id, Column, ManyToMany, ManyToOne, OneToMany } from '../../core/orm/decorators/decorators.js'
+import Enrollment from '../../enrollment/entities/Enrollment.entity.js'
 
 @Entity('Events')
 export class Event {
@@ -80,9 +80,9 @@ export class Event {
 
     @ManyToMany(() => User, {
         joinTable: {
-            name: "UsersEvents",
-            joinColumn: "eventId",
-            inverseJoinColumn: "userId"
+            name: 'UsersEvents',
+            joinColumn: 'eventId',
+            inverseJoinColumn: 'userId'
         },
         owner: true,
         eager: true
@@ -91,9 +91,9 @@ export class Event {
 
     @ManyToMany(() => Parking, {
         joinTable: {
-            name: "EventsParkings",
-            joinColumn: "eventId",
-            inverseJoinColumn: "parkingId"
+            name: 'EventsParkings',
+            joinColumn: 'eventId',
+            inverseJoinColumn: 'parkingId'
         },
         owner: true,
         eager: true

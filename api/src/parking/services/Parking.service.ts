@@ -1,9 +1,9 @@
-import { Inject, Service } from "../../core/decorators/decorators.js"
-import ParkingRepository from "../repositories/Parking.repository.js"
-import Parking from "../entities/Parking.entity.js"
-import { NotFoundError } from "../../core/errors/NotFound.error.js"
-import EventRepository from "../../event/repositories/Event.repository.js"
-import SlotService from "./Slot.service.js"
+import { Inject, Service } from '../../core/decorators/decorators.js'
+import ParkingRepository from '../repositories/Parking.repository.js'
+import Parking from '../entities/Parking.entity.js'
+import { NotFoundError } from '../../core/errors/NotFound.error.js'
+import EventRepository from '../../event/repositories/Event.repository.js'
+import SlotService from './Slot.service.js'
 
 @Service()
 export class ParkingService {

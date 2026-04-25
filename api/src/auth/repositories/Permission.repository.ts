@@ -1,6 +1,6 @@
-import { Repository } from "../../core/decorators/decorators.js"
-import BaseRepository from "../../core/orm/repository/Base.repository.js"
-import Permission from "../entities/Permission.entity.js"
+import { Repository } from '../../core/decorators/decorators.js'
+import BaseRepository from '../../core/orm/repository/Base.repository.js'
+import Permission from '../entities/Permission.entity.js'
 
 @Repository()
 export class PermissionRepository extends BaseRepository<Permission> {

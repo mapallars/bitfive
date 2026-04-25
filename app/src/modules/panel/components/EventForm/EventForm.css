@@ -8,6 +8,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    animation: fromDownAppear .5s ease-in-out;
 }
 
 .lx-f-event-section-header {

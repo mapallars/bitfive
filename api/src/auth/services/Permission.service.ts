@@ -1,11 +1,11 @@
-import { Inject, Service } from "../../core/decorators/decorators.js"
-import PermissionRepository from "../repositories/Permission.repository.js"
-import RoleRepository from "../repositories/Role.repository.js"
-import Permission from "../entities/Permission.entity.js"
-import { NotFoundError } from "../../core/errors/NotFound.error.js"
-import { ROLES } from "../constants/authorities.js"
-import { ForbiddenError } from "../../core/errors/Forbidden.error.js"
-import { AlreadyExistError } from "../../core/errors/AlreadyExist.error.js"
+import { Inject, Service } from '../../core/decorators/decorators.js'
+import PermissionRepository from '../repositories/Permission.repository.js'
+import RoleRepository from '../repositories/Role.repository.js'
+import Permission from '../entities/Permission.entity.js'
+import { NotFoundError } from '../../core/errors/NotFound.error.js'
+import { ROLES } from '../constants/authorities.js'
+import { ForbiddenError } from '../../core/errors/Forbidden.error.js'
+import { AlreadyExistError } from '../../core/errors/AlreadyExist.error.js'
 
 @Service()
 export class PermissionService {

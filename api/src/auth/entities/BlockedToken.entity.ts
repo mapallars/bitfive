@@ -1,5 +1,5 @@
-import { Entity, Id, Column, ManyToOne } from "../../core/orm/decorators/decorators.js"
-import User from "./User.entity.js"
+import { Entity, Id, Column, ManyToOne } from '../../core/orm/decorators/decorators.js'
+import User from './User.entity.js'
 
 @Entity('BlockedTokens')
 export class BlockedToken {

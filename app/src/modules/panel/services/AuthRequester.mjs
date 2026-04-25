@@ -16,6 +16,14 @@ class AuthRequester extends Requester {
 
     static async createRole(role) {
         const result = await super.post(API.AUTH.ENDPOINTS.ROLES, role)
+
+        if (result.message) {
+            Notify.notice(
+                result.message || 'No se pudo crear el rol',
+                result.ok ? 'info' : 'error'
+            )
+        }
+
         return result.data
     }
 
@@ -110,6 +118,14 @@ class AuthRequester extends Requester {
 
     static async createUser(user) {
         const result = await super.post(API.AUTH.ENDPOINTS.USERS, user)
+
+        if (result.message) {
+            Notify.notice(
+                result.message || 'No se pudo crear el usuario',
+                result.ok ? 'info' : 'error'
+            )
+        }
+
         return result.data
     }
 

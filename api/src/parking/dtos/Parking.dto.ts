@@ -1,4 +1,4 @@
-import DTO from "../../core/orm/dto/Base.dto.js"
+import DTO from '../../core/orm/dto/Base.dto.js'
 import Parking from '../entities/Parking.entity.js'
 
 export class ParkingDTO extends DTO<Parking> {

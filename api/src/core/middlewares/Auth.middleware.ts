@@ -1,13 +1,13 @@
-import jwt from "jsonwebtoken"
-import { Inject, Middleware } from "../decorators/decorators.js"
-import BlockedTokenService from "../../auth/services/BlockedToken.service.js"
-import PermissionService from "../../auth/services/Permission.service.js"
-import RoleService from "../../auth/services/Role.service.js"
-import UserService from "../../auth/services/User.service.js"
-import { TokenRequiredError } from "../errors/TokenRequired.error.js"
-import { UnauthorizedError } from "../errors/Unauthorized.error.js"
-import UserDTO from "../../auth/dtos/User.dto.js"
-import HandleableError from "../errors/Handleable.error.js"
+import jwt from 'jsonwebtoken'
+import { Inject, Middleware } from '../decorators/decorators.js'
+import BlockedTokenService from '../../auth/services/BlockedToken.service.js'
+import PermissionService from '../../auth/services/Permission.service.js'
+import RoleService from '../../auth/services/Role.service.js'
+import UserService from '../../auth/services/User.service.js'
+import { TokenRequiredError } from '../errors/TokenRequired.error.js'
+import { UnauthorizedError } from '../errors/Unauthorized.error.js'
+import UserDTO from '../../auth/dtos/User.dto.js'
+import HandleableError from '../errors/Handleable.error.js'
 
 @Middleware()
 export class AuthMiddleware {

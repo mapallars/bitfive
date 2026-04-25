@@ -1,9 +1,9 @@
-import User from "../../auth/entities/User.entity.js";
-import Event from "../../event/entities/Event.entity.js";
-import { Column } from "../../core/orm/decorators/column.decorator.js";
-import { ManyToOne } from "../../core/orm/decorators/decorators.js";
-import { Entity } from "../../core/orm/decorators/entity.decorator.js";
-import { Id } from "../../core/orm/decorators/id.decorator.js";
+import User from '../../auth/entities/User.entity.js'
+import Event from '../../event/entities/Event.entity.js'
+import { Column } from '../../core/orm/decorators/column.decorator.js'
+import { ManyToOne } from '../../core/orm/decorators/decorators.js'
+import { Entity } from '../../core/orm/decorators/entity.decorator.js'
+import { Id } from '../../core/orm/decorators/id.decorator.js'
 
 
 @Entity('Enrollments')
@@ -12,11 +12,11 @@ export class Enrollment {
     @Id()
     id: string
 
-    @Column({type: 'date' , nullable: false , default: 'NOW()' })
+    @Column({ type: 'date', nullable: false, default: 'NOW()' })
     date: Date
 
-    @Column({type: 'string', nullable: false })
-    enrollmentStatus : string
+    @Column({ type: 'string', nullable: false })
+    enrollmentStatus: string
 
     status: string
 
@@ -51,7 +51,7 @@ export class Enrollment {
         eager: false
     })
     event: any
-    
+
 }
 
 export default Enrollment

@@ -1,6 +1,6 @@
-import { Repository } from "../../core/decorators/decorators.js"
-import BaseRepository from "../../core/orm/repository/Base.repository.js"
-import Enrollment from "../entities/Enrollment.entity.js"
+import { Repository } from '../../core/decorators/decorators.js'
+import BaseRepository from '../../core/orm/repository/Base.repository.js'
+import Enrollment from '../entities/Enrollment.entity.js'
 
 @Repository()
 export class EnrollmentRepository extends BaseRepository<Enrollment> {

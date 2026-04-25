@@ -1,8 +1,8 @@
-import { Entity, Id, Column, OneToMany, ManyToMany } from "../../core/orm/decorators/decorators.js"
-import Enrollment from "../../enrollment/entities/Enrollment.entity.js"
-import Event from "../../event/entities/Event.entity.js"
-import BlockedToken from "./BlockedToken.entity.js"
-import Role from "./Role.entity.js"
+import { Entity, Id, Column, OneToMany, ManyToMany } from '../../core/orm/decorators/decorators.js'
+import Enrollment from '../../enrollment/entities/Enrollment.entity.js'
+import Event from '../../event/entities/Event.entity.js'
+import BlockedToken from './BlockedToken.entity.js'
+import Role from './Role.entity.js'
 
 @Entity('Users')
 export class User {
@@ -87,9 +87,9 @@ export class User {
 
     @ManyToMany(() => Role, {
         joinTable: {
-            name: "UsersRoles",
-            joinColumn: "userId",
-            inverseJoinColumn: "roleId"
+            name: 'UsersRoles',
+            joinColumn: 'userId',
+            inverseJoinColumn: 'roleId'
         },
         owner: true,
         eager: true
@@ -98,9 +98,9 @@ export class User {
 
     @ManyToMany(() => Event, {
         joinTable: {
-            name: "UsersEvents",
-            joinColumn: "userId",
-            inverseJoinColumn: "eventId"
+            name: 'UsersEvents',
+            joinColumn: 'userId',
+            inverseJoinColumn: 'eventId'
         }
     })
     organizedEvents: Event[]

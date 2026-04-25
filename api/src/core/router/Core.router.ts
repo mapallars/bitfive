@@ -92,6 +92,7 @@ export class CoreRouter {
 
         return files
     }
+
 }
 
 export default CoreRouter

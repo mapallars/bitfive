@@ -1,11 +1,11 @@
-import { Permissions } from "../../core/decorators/auth.decorator.js"
-import { Controller } from "../../core/decorators/controller.decorator.js"
-import { Inject } from "../../core/decorators/inject.decorator.js"
-import { Delete, Get, Post, Put } from "../../core/decorators/route.decorator.js"
-import Validator from "../../core/utils/Validator.js"
-import { PERMISSIONS } from "../constants/authorities.js"
-import EnrollmentDTO from "../dtos/Enrollment.dto.js"
-import EnrollmentService from "../services/Enrollment.service.js"
+import { Permissions } from '../../core/decorators/auth.decorator.js'
+import { Controller } from '../../core/decorators/controller.decorator.js'
+import { Inject } from '../../core/decorators/inject.decorator.js'
+import { Delete, Get, Post, Put } from '../../core/decorators/route.decorator.js'
+import Validator from '../../core/utils/Validator.js'
+import { PERMISSIONS } from '../constants/authorities.js'
+import EnrollmentDTO from '../dtos/Enrollment.dto.js'
+import EnrollmentService from '../services/Enrollment.service.js'
 
 @Controller('/enrollments')
 export class EnrollmentController {

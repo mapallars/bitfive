@@ -26,6 +26,14 @@ class EnrollmentRequester extends Requester {
 
     static async createEnrollment(enrollment) {
         const result = await super.post(API.ENROLLMENT.ENDPOINTS.ENROLLMENTS, enrollment)
+
+        if (result.message) {
+            Notify.notice(
+                result.message || 'No se pudo crear la inscripcion',
+                result.ok ? 'info' : 'error'
+            )
+        }
+
         return result.data
     }
 
