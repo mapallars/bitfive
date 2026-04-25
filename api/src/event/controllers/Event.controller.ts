@@ -1,13 +1,13 @@
-import { Permissions } from "../../core/decorators/auth.decorator.js"
-import { Controller } from "../../core/decorators/controller.decorator.js"
-import { Inject } from "../../core/decorators/inject.decorator.js"
-import { Delete, Get, Post, Put } from "../../core/decorators/route.decorator.js"
-import Validator from "../../core/utils/Validator.js"
-import { InvalidFormatError } from "../../core/errors/InvalidFormat.error.js"
-import { PERMISSIONS } from "../constants/authorities.js"
-import EventDTO from "../dtos/Event.dto.js"
-import EventService from "../services/Event.service.js"
-import ParkingDTO from "../../parking/dtos/Parking.dto.js"
+import { Permissions } from '../../core/decorators/auth.decorator.js'
+import { Controller } from '../../core/decorators/controller.decorator.js'
+import { Inject } from '../../core/decorators/inject.decorator.js'
+import { Delete, Get, Post, Put } from '../../core/decorators/route.decorator.js'
+import Validator from '../../core/utils/Validator.js'
+import { InvalidFormatError } from '../../core/errors/InvalidFormat.error.js'
+import { PERMISSIONS } from '../constants/authorities.js'
+import EventDTO from '../dtos/Event.dto.js'
+import EventService from '../services/Event.service.js'
+import ParkingDTO from '../../parking/dtos/Parking.dto.js'
 
 @Controller('/events')
 export class EventController {
@@ -159,7 +159,7 @@ export class EventController {
 
         await this.eventService.delete(id, request.user)
 
-        return response.status(204).json({ message: `Evento "${id}" eliminado correctamente` })
+        return response.status(204).json({ message: `Evento '${id}' eliminado correctamente` })
     }
 
     private _validateEventDates(startAt: string, endAt: string) {

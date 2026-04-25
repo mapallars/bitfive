@@ -1,9 +1,9 @@
-import { Inject, Service } from "../../core/decorators/decorators.js"
-import SlotRepository from "../repositories/Slot.repository.js"
-import ParkingRepository from "../repositories/Parking.repository.js"
-import Slot from "../entities/Slot.entity.js"
-import { NotFoundError } from "../../core/errors/NotFound.error.js"
-import { InvalidFormatError } from "../../core/errors/InvalidFormat.error.js"
+import { Inject, Service } from '../../core/decorators/decorators.js'
+import SlotRepository from '../repositories/Slot.repository.js'
+import ParkingRepository from '../repositories/Parking.repository.js'
+import Slot from '../entities/Slot.entity.js'
+import { NotFoundError } from '../../core/errors/NotFound.error.js'
+import { InvalidFormatError } from '../../core/errors/InvalidFormat.error.js'
 
 @Service()
 export class SlotService {
