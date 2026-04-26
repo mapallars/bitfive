@@ -40,7 +40,12 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
         const selfIdField = Metadata.get(this.entityClass, METADATA_KEYS.ID) || 'id';
         const entityIds = entities.map(e => e[selfIdField]);
 
+        // Detect if parent instructed us to auto-skip an inverse back-reference
+        const ignoreInverseProp = (entities[0] as any)?.__ignoreInverseProp;
+
         for (const [propName, relConfig] of Object.entries(relations)) {
+            if (ignoreInverseProp === propName) continue; // AUTO-SKIP INVERSE BIDIRECTIONAL RELATION
+
             let shouldLoad = false;
             if (typeof relationsOption === 'boolean' && relationsOption) {
                 shouldLoad = true;
@@ -51,12 +56,37 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
             }
             if (!shouldLoad) continue;
 
+            let childRelationsOption: boolean | string[] | undefined = relationsOption;
+            if (Array.isArray(relationsOption)) {
+                const prefix = `${propName}.`;
+                const nestedOpts = relationsOption
+                    .filter(opt => opt.startsWith(prefix))
+                    .map(opt => opt.substring(prefix.length));
+                childRelationsOption = nestedOpts.length > 0 ? nestedOpts : [];
+            }
+
             const targetClass = relConfig.target();
             const targetEntityConfig: EntityConfig | undefined = Metadata.get(targetClass, METADATA_KEYS.ENTITY);
             if (!targetEntityConfig) continue;
 
             const targetTableName = targetEntityConfig.tableName;
             const targetIdField = Metadata.get(targetClass, METADATA_KEYS.ID) || 'id';
+
+            // ---> CALCULATE INVERSE PROP TO SKIP <---
+            const targetRelations: Record<string, RelationConfig> = Metadata.get(targetClass, METADATA_KEYS.RELATIONS) || {};
+            let inversePropToSkip: string | null = null;
+            if (typeof relConfig.inverse === 'string' && targetRelations[relConfig.inverse]) {
+                inversePropToSkip = relConfig.inverse;
+            } else {
+                for (const [childProp, childRel] of Object.entries(targetRelations)) {
+                    if (childRel.inverse === propName) {
+                        inversePropToSkip = childProp;
+                        break;
+                    } else if (!inversePropToSkip && childRel.target() === this.entityClass) {
+                        inversePropToSkip = childProp; // Fallback
+                    }
+                }
+            }
 
             if (relConfig.type === 'ManyToOne' || (relConfig.type === 'OneToOne' && !relConfig.inverse)) {
                 const fkCol = relConfig.joinColumn || `${propName}Id`;
@@ -69,6 +99,14 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
                 const placeholders = targetIdsToFetch.map((_, i) => `$${i + 1}`).join(',');
                 const sql = `SELECT * FROM "${targetTableName}" WHERE "${targetIdField}" IN (${placeholders})`;
                 const result = await this.db.query(sql, targetIdsToFetch);
+
+                if (result.rows.length > 0) {
+                    if (inversePropToSkip) {
+                        result.rows.forEach((row: any) => Object.defineProperty(row, '__ignoreInverseProp', { value: inversePropToSkip, enumerable: false, configurable: true }));
+                    }
+                    const targetRepo = new BaseRepository<any>(targetClass);
+                    await targetRepo.loadRelations(result.rows, childRelationsOption);
+                }
 
                 const targetMap = new Map();
                 result.rows.forEach(te => targetMap.set(te[targetIdField], te));
@@ -83,6 +121,14 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
                 const placeholders = entityIds.map((_, i) => `$${i + 1}`).join(',');
                 const sql = `SELECT * FROM "${targetTableName}" WHERE "${fkCol}" IN (${placeholders})`;
                 const result = await this.db.query(sql, entityIds);
+
+                if (result.rows.length > 0) {
+                    if (inversePropToSkip) {
+                        result.rows.forEach((row: any) => Object.defineProperty(row, '__ignoreInverseProp', { value: inversePropToSkip, enumerable: false, configurable: true }));
+                    }
+                    const targetRepo = new BaseRepository<any>(targetClass);
+                    await targetRepo.loadRelations(result.rows, childRelationsOption);
+                }
 
                 for (const entity of entities) {
                     const matched = result.rows.filter(te => te[fkCol] === (entity as any)[selfIdField]);
@@ -125,6 +171,14 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
                 const trgPlh = targetIdsToFetch.map((_, i) => `$${i + 1}`).join(',');
                 const targetSql = `SELECT * FROM "${targetTableName}" WHERE "${targetIdField}" IN (${trgPlh})`;
                 const targetResult = await this.db.query(targetSql, targetIdsToFetch);
+
+                if (targetResult.rows.length > 0) {
+                    if (inversePropToSkip) {
+                        targetResult.rows.forEach((row: any) => Object.defineProperty(row, '__ignoreInverseProp', { value: inversePropToSkip, enumerable: false, configurable: true }));
+                    }
+                    const targetRepo = new BaseRepository<any>(targetClass);
+                    await targetRepo.loadRelations(targetResult.rows, childRelationsOption);
+                }
 
                 const targetMap = new Map();
                 targetResult.rows.forEach(te => targetMap.set(te[targetIdField], te));
