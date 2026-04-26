@@ -3,7 +3,7 @@ import Icon from '../../../../core/components/Icon/Icon'
 import Button from '../../../../core/components/Button/Button'
 import Divider from '../../../../core/components/Divider/Divider'
 import StatusTag from '../../../../core/components/StatusTag/StatusTag'
-import { EVENT } from '../../constants/event.contants'
+import { EVENT } from '../../constants/event.constant.mjs'
 
 const EventDetails = ({ event, onEdit, onDelete }) => {
     if (!event) return null

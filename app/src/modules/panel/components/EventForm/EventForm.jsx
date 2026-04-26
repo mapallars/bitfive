@@ -10,7 +10,7 @@ import Icon from '../../../../core/components/Icon/Icon'
 import Logo from '../../../../core/components/Logo/Logo'
 import Switch from '../../../../core/components/Switch/Switch'
 import Select from '../../../../core/components/Select/Select'
-import { EVENT } from '../../constants/event.contants'
+import { EVENT } from '../../constants/event.constant.mjs'
 
 const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) => {
 
@@ -150,7 +150,7 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                                 autoComplete='off'
                                 minLength={2}
                                 maxLength={100}
-                                value={form.startAt}
+                                value={event ? new Date(form.startAt).toISOString().slice(0, 16) : form.startAt}
                                 onChange={handleChange}
                                 error={errors.startAt}
                             />
@@ -163,7 +163,7 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                                 autoComplete='off'
                                 minLength={2}
                                 maxLength={100}
-                                value={form.endAt}
+                                value={event ? new Date(form.endAt).toISOString().slice(0, 16) : form.endAt}
                                 onChange={handleChange}
                                 error={errors.endAt}
                             />
