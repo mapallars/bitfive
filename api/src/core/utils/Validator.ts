@@ -88,7 +88,7 @@ export class Validator {
     static isInteger(fields, error = InvalidFormatError) {
         if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
         Object.keys(fields).forEach((key) => {
-            if (!Number.isInteger(fields[key])) {
+            if (!/^-?\d+$/.test(String(fields[key]))) {
                 throw new error(`El campo ${key} debe ser un número entero`)
             }
         })
@@ -175,6 +175,94 @@ export class Validator {
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
             if (!uuidRegex.test(fields[key])) {
                 throw new error(`El campo ${key} debe ser un UUID válido`)
+            }
+        })
+        return this
+    }
+
+    static isGreaterThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] <= value) {
+                throw new error(`El campo ${key} debe ser mayor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isLessThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] >= value) {
+                throw new error(`El campo ${key} debe ser menor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isGreaterThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] < value) {
+                throw new error(`El campo ${key} debe ser mayor o igual a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isLessThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            if (fields[key] > value) {
+                throw new error(`El campo ${key} debe ser menor o igual a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateGreaterThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date <= valueDate) {
+                throw new error(`El campo ${key} debe ser mayor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateLessThan(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date >= valueDate) {
+                throw new error(`El campo ${key} debe ser menor a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateGreaterThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date < valueDate) {
+                throw new error(`El campo ${key} debe ser mayor o igual a ${value}`)
+            }
+        })
+        return this
+    }
+
+    static isDateLessThanOrEqual(fields, value, error = InvalidFormatError) {
+        if (!(fields instanceof Object)) throw new InvalidFormatError('No hay campos válidos')
+        Object.keys(fields).forEach((key) => {
+            const date = new Date(fields[key])
+            const valueDate = new Date(value)
+            if (date > valueDate) {
+                throw new error(`El campo ${key} debe ser menor o igual a ${value}`)
             }
         })
         return this

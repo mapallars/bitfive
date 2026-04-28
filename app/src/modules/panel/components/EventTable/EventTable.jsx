@@ -1,9 +1,11 @@
 import './EventTable.css'
-import Table from "../../../../core/components/Table/Table"
+import Table from '../../../../core/components/Table/Table'
 import Icon from '../../../../core/components/Icon/Icon'
 import Button from '../../../../core/components/Button/Button'
+import Constant from '../../constants/constant.mjs'
+import { EVENT } from '../../constants/event.constant.mjs'
 
-const EventTable = ({ events, onView = () => { }, onEdit = () => { }, onDelete = () => { } }) => {
+const EventTable = ({ events, onView = () => { }, onEdit, onDelete }) => {
     return <Table
         objects={events}
         mapper={(event) => ({
@@ -20,11 +22,11 @@ const EventTable = ({ events, onView = () => { }, onEdit = () => { }, onDelete =
 
                     <span className='--tag'>
                         <Icon name='co_present' size='s' />
-                        {event.type || 'Sin tipo'}
+                        {Constant.fromValue(EVENT.OPTIONS.TYPE, event.type) || 'Sin tipo'}
                     </span>
                     <span className='--tag'>
                         <Icon name='lock' size='s' />
-                        {event.visibility || 'Sin visibilidad'}
+                        {Constant.fromValue(EVENT.OPTIONS.VISIBILITY, event.visibility) || 'Sin visibilidad'}
                     </span>
                     <span className='--tag'>
                         <Icon name='tag' size='s' />
@@ -32,7 +34,7 @@ const EventTable = ({ events, onView = () => { }, onEdit = () => { }, onDelete =
                     </span>
                 </div>
             </div>,
-            price: <center className='lx-text-color-gray'>{(event.price || 0).toLocaleString("es-CO", { style: "currency", currency: "COP" })} COP</center>,
+            price: <center className='lx-text-color-gray'>{(event.price || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP' })} COP</center>,
             maxCapacity: <center className='lx-t-events-capacity'><Icon name='event_seat' />{event.maxCapacity}</center>,
             location: <div className='lx-t-events-location'>
                 <div className='--location'>
@@ -41,12 +43,12 @@ const EventTable = ({ events, onView = () => { }, onEdit = () => { }, onDelete =
                 </div>
             </div>,
             '': <div className='lx-t-events-actions'>
-                <Button color='auto' variant='bordered' size='s' icon onClick={() => onEdit(event)}>
+                {onEdit && <Button color='auto' variant='bordered' size='s' icon onClick={() => onEdit(event)}>
                     <Icon name='edit' />
-                </Button>
-                <Button color='danger' variant='dimed' size='s' icon onClick={() => onDelete(event)}>
+                </Button>}
+                {onDelete && <Button color='danger' variant='dimed' size='s' icon onClick={() => onDelete(event)}>
                     <Icon name='delete' />
-                </Button>
+                </Button>}
             </div>
         })}
         translation={{
@@ -60,7 +62,7 @@ const EventTable = ({ events, onView = () => { }, onEdit = () => { }, onDelete =
             price: 'Precio'
         }}
         sort={['price', 'location', 'startAt', 'name', 'maxCapacity']}
-        filters={['type', 'category']}
+        filters={['category']}
         selectionable={false}
         onClick={(event) => onView(event)}
     />

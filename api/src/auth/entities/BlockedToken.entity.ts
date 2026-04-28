@@ -1,5 +1,5 @@
-import { Entity, Id, Column, ManyToOne } from "../../core/orm/decorators/decorators.js"
-import User from "./User.entity.js"
+import { Entity, Id, Column, ManyToOne } from '../../core/orm/decorators/decorators.js'
+import User from './User.entity.js'
 
 @Entity('BlockedTokens')
 export class BlockedToken {
@@ -32,7 +32,7 @@ export class BlockedToken {
     deletedBy: string
 
     @ManyToOne(() => User, {
-        inverse: 'blockedTokens',
+        inverse: 'userId',
         joinColumn: 'userId',
         owner: true,
         eager: true

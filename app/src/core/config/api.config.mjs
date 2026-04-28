@@ -43,6 +43,13 @@ export const API = {
         CREATE: '',
         UPDATE: '',
         DELETE: ''
+    }),
+    ENROLLMENT: new EndpointGroup(`${URL_BASE}/enrollments`, {
+        ENROLLMENTS: '',
+        MY_ENROLLMENTS: 'my',
+        CREATE: '',
+        UPDATE: '',
+        DELETE: ''
     })
 }
 

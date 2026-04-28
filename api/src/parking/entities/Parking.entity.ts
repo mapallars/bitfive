@@ -1,6 +1,6 @@
-import { Entity, ManyToMany, OneToMany, Id, Column } from "../../core/orm/decorators/decorators.js"
-import Event from "../../event/entities/Event.entity.js"
-import Slot from "./Slot.entity.js"
+import { Entity, ManyToMany, OneToMany, Id, Column } from '../../core/orm/decorators/decorators.js'
+import Event from '../../event/entities/Event.entity.js'
+import Slot from './Slot.entity.js'
 
 
 @Entity('Parkings')
@@ -45,9 +45,9 @@ export class Parking {
 
   @ManyToMany(() => Event, {
     joinTable: {
-      name: "EventsParkings",
-      joinColumn: "parkingId",
-      inverseJoinColumn: "eventId"
+      name: 'EventsParkings',
+      joinColumn: 'parkingId',
+      inverseJoinColumn: 'eventId'
     }
   })
   events: Event[]

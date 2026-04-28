@@ -1,5 +1,5 @@
-import { Entity, Id, Column, ManyToOne } from "../../core/orm/decorators/decorators.js"
-import Parking from "./Parking.entity.js"
+import { Entity, Id, Column, ManyToOne } from '../../core/orm/decorators/decorators.js'
+import Parking from './Parking.entity.js'
 
 
 @Entity('Slots')
@@ -31,7 +31,7 @@ export class Slot {
     deletedBy: string
 
     @ManyToOne(() => Parking, {
-        inverse: 'slots',
+        inverse: 'parkingId',
         joinColumn: 'parkingId',
         owner: true,
         eager: false

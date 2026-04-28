@@ -1,0 +1,107 @@
+﻿.lx-c-nearby-event-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.lx-c-nearby-event-card {
+    background-color: var(--lx-color-background-primary);
+    border: var(--lx-primary-border);
+    border-radius: var(--lx-border-radius-l);
+    padding: var(--lx-padding-l);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-m);
+}
+
+.lx-c-nearby-event-card:hover {
+    border-color: var(--lx-color-accent);
+    box-shadow: 0 4px 12px var(--lx-color-accent-shadow);
+    transform: translateX(4px);
+}
+
+.lx-c-nearby-event-card-header {
+    padding-bottom: var(--lx-space-s);
+    border-bottom: var(--lx-primary-border);
+}
+
+.lx-c-nearby-event-card-name {
+    font-size: var(--lx-font-size-l);
+    font-weight: 600;
+    color: var(--lx-color-text);
+    margin: 0;
+    letter-spacing: -0.6pt;
+}
+
+.lx-c-nearby-event-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-s);
+}
+
+.lx-c-nearby-event-card-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-xs);
+}
+
+.lx-c-nearby-event-card-label {
+    display: flex;
+    align-items: center;
+    gap: var(--lx-space-xs);
+    font-size: var(--lx-font-size-xs);
+    color: var(--lx-color-text-softest);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.lx-c-nearby-event-card-label .material-symbols-rounded {
+    font-size: var(--lx-font-size-l);
+}
+
+.lx-c-nearby-event-card-value {
+    font-size: var(--lx-font-size-m);
+    color: var(--lx-color-text);
+    font-weight: 500;
+    margin: 0;
+}
+
+.lx-c-nearby-event-card-footer {
+    padding-top: var(--lx-space-s);
+    border-top: var(--lx-primary-border);
+}
+
+.lx-c-nearby-event-card-connector {
+    height: 16px;
+    position: relative;
+    margin-left: 24px;
+}
+
+.lx-c-nearby-event-card-connector::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--lx-color-accent-light);
+    border-radius: var(--lx-border-radius-full);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lx-c-nearby-event-card {
+        padding: var(--lx-padding-m);
+    }
+
+    .lx-c-nearby-event-card-name {
+        font-size: var(--lx-font-size-m);
+    }
+
+    .lx-c-nearby-event-card-connector {
+        margin-left: 20px;
+    }
+}

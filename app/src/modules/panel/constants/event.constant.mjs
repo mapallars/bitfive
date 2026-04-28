@@ -62,6 +62,20 @@ export const EVENT = {
                 key: 'America/Bogota',
                 value: 'America/Bogota'
             }
+        ],
+        ENROLLMENT_STATUS: [
+            {
+                key: 'Confirmado',
+                value: 'CONFIRMED'
+            },
+            {
+                key: 'Pendiente',
+                value: 'PENDING',
+            },
+            {
+                key: 'Cancelado',
+                value: 'CANCELLED',
+            }
         ]
     }
 }

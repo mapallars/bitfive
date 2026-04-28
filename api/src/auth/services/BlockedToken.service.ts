@@ -1,6 +1,6 @@
-import BlockedTokenRepository from "../repositories/BlockedToken.repository.js"
-import { Inject, Service } from "../../core/decorators/decorators.js"
-import BlockedToken from "../entities/BlockedToken.entity.js"
+import BlockedTokenRepository from '../repositories/BlockedToken.repository.js'
+import { Inject, Service } from '../../core/decorators/decorators.js'
+import BlockedToken from '../entities/BlockedToken.entity.js'
 
 @Service()
 export class BlockedTokenService {

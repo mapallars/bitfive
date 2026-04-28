@@ -1,6 +1,6 @@
-import { Entity, Id, Column, ManyToMany } from "../../core/orm/decorators/decorators.js"
-import Permission from "./Permission.entity.js"
-import User from "./User.entity.js"
+import { Entity, Id, Column, ManyToMany } from '../../core/orm/decorators/decorators.js'
+import Permission from './Permission.entity.js'
+import User from './User.entity.js'
 
 @Entity('Roles')
 export class Role {
@@ -37,9 +37,9 @@ export class Role {
 
     @ManyToMany(() => Permission, {
         joinTable: {
-            name: "RolesPermissions",
-            joinColumn: "roleId",
-            inverseJoinColumn: "permissionId"
+            name: 'RolesPermissions',
+            joinColumn: 'roleId',
+            inverseJoinColumn: 'permissionId'
         },
         owner: true,
         eager: true
@@ -48,9 +48,9 @@ export class Role {
 
     @ManyToMany(() => User, {
         joinTable: {
-            name: "UsersRoles",
-            joinColumn: "roleId",
-            inverseJoinColumn: "userId"
+            name: 'UsersRoles',
+            joinColumn: 'roleId',
+            inverseJoinColumn: 'userId'
         }
     })
     users: User[]

@@ -1,9 +1,10 @@
-import { ERROR_CODES } from "../constants/error.constant.js"
-import { Middleware } from "../decorators/middleware.decorator.js"
-import HandleableError from "../errors/Handleable.error.js"
+import { ERROR_CODES } from '../constants/error.constant.js'
+import { Middleware } from '../decorators/middleware.decorator.js'
+import HandleableError from '../errors/Handleable.error.js'
 
 @Middleware()
 export class ErrorMiddleware {
+
     public static handle(error, request, response, next) {
 
         console.error(error)
@@ -28,6 +29,7 @@ export class ErrorMiddleware {
 
         return response.status(500).json(handled)
     }
+
 }
 
 export default ErrorMiddleware

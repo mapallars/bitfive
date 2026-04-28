@@ -1,0 +1,28 @@
+.lx-c-event-organizer-picker {
+    width: 100%;
+    padding: 1rem;
+    background: var(--lx-color-background-primary);
+    border-radius: var(--lx-border-radius-m);
+    border: var(--lx-primary-border);
+}
+
+.lx-c-event-organizer-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-radius: var(--lx-border-radius-m);
+    border: var(--lx-primary-border);
+}
+
+.lx-c-event-organizer-picker-item-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--lx-color-background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--lx-color-text-secondary);
+}

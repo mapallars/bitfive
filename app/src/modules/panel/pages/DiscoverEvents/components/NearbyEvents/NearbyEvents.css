@@ -1,0 +1,103 @@
+﻿.lx-c-nearby-events {
+    width: 100%;
+}
+
+.lx-c-nearby-events-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-xxl);
+    position: relative;
+}
+
+.lx-c-nearby-events-date-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-l);
+    position: relative;
+}
+
+.lx-c-nearby-events-date-node {
+    display: flex;
+    align-items: center;
+    gap: var(--lx-space-m);
+    margin-bottom: var(--lx-space-m);
+}
+
+.lx-c-nearby-events-date-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--lx-border-radius-circle);
+    background: linear-gradient(135deg, var(--lx-color-accent), var(--lx-color-accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--lx-color-accent-shadow);
+    border: 3px solid var(--lx-color-background-primary);
+    flex-shrink: 0;
+}
+
+.lx-c-nearby-events-date-number {
+    font-size: var(--lx-font-size-xl);
+    font-weight: 700;
+    color: var(--lx-color-inverse);
+    line-height: 1;
+}
+
+.lx-c-nearby-events-date-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-xs);
+}
+
+.lx-c-nearby-events-date-day {
+    font-size: var(--lx-font-size-l);
+    font-weight: 600;
+    color: var(--lx-color-text);
+    text-transform: capitalize;
+}
+
+.lx-c-nearby-events-date-month {
+    font-size: var(--lx-font-size-m);
+    color: var(--lx-color-text-soft);
+    text-transform: capitalize;
+}
+
+.lx-c-nearby-events-date-events {
+    margin-left: 78px; /* 60px circle + 18px gap */
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-s);
+    position: relative;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lx-c-nearby-events-timeline {
+        gap: var(--lx-space-xl);
+    }
+
+    .lx-c-nearby-events-date-node {
+        gap: var(--lx-space-s);
+    }
+
+    .lx-c-nearby-events-date-circle {
+        width: 50px;
+        height: 50px;
+    }
+
+    .lx-c-nearby-events-date-number {
+        font-size: var(--lx-font-size-l);
+    }
+
+    .lx-c-nearby-events-date-day {
+        font-size: var(--lx-font-size-m);
+    }
+
+    .lx-c-nearby-events-date-month {
+        font-size: var(--lx-font-size-s);
+    }
+
+    .lx-c-nearby-events-date-events {
+        margin-left: 68px; /* 50px circle + 18px gap */
+    }
+}

@@ -1,13 +1,13 @@
-import { Permissions } from "../../core/decorators/auth.decorator.js"
-import { Controller } from "../../core/decorators/controller.decorator.js"
-import { Inject } from "../../core/decorators/inject.decorator.js"
-import { Delete, Get, Post, Put } from "../../core/decorators/route.decorator.js"
-import Validator from "../../core/utils/Validator.js"
-import { InvalidFormatError } from "../../core/errors/InvalidFormat.error.js"
-import { PERMISSIONS } from "../constants/authorities.js"
-import EventDTO from "../dtos/Event.dto.js"
-import EventService from "../services/Event.service.js"
-import ParkingDTO from "../../parking/dtos/Parking.dto.js"
+import { Permissions } from '../../core/decorators/auth.decorator.js'
+import { Controller } from '../../core/decorators/controller.decorator.js'
+import { Inject } from '../../core/decorators/inject.decorator.js'
+import { Delete, Get, Post, Put } from '../../core/decorators/route.decorator.js'
+import Validator from '../../core/utils/Validator.js'
+import { InvalidFormatError } from '../../core/errors/InvalidFormat.error.js'
+import { PERMISSIONS } from '../constants/authorities.js'
+import EventDTO from '../dtos/Event.dto.js'
+import EventService from '../services/Event.service.js'
+import ParkingDTO from '../../parking/dtos/Parking.dto.js'
 
 @Controller('/events')
 export class EventController {
@@ -63,18 +63,12 @@ export class EventController {
         const { name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price } = request.body
 
         Validator
-            .required({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
-            .isNumeric({ maxCapacity, price })
+            .required({ name, description, category, color, location, startAt, endAt, type, visibility, eventStatus, maxCapacity, hasParking, price })
+            .isInteger({ maxCapacity, price })
             .isDateTime({ startAt, endAt })
             .isIn({ eventStatus }, ['AVAILABLE', 'FINISHED', 'CANCELLED'])
-
-        if (Number(maxCapacity) <= 0) {
-            throw new InvalidFormatError('El campo "maxCapacity" debe ser mayor a 0')
-        }
-
-        if (Number(price) < 0) {
-            throw new InvalidFormatError('El campo "price" debe ser mayor o igual a 0')
-        }
+            .isGreaterThan({ maxCapacity }, 0)
+            .isGreaterThanOrEqual({ price }, 0)
 
         this._validateEventDates(startAt, endAt)
 
@@ -90,18 +84,12 @@ export class EventController {
         const { name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price } = request.body
 
         Validator
-            .required({ name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price })
+            .required({ name, description, category, color, location, startAt, endAt, type, visibility, eventStatus, maxCapacity, hasParking, price })
             .isNumeric({ maxCapacity, price })
             .isDateTime({ startAt, endAt })
             .isIn({ eventStatus }, ['AVAILABLE', 'FINISHED', 'CANCELLED'])
-
-        if (Number(maxCapacity) <= 0) {
-            throw new InvalidFormatError('El campo "maxCapacity" debe ser mayor a 0')
-        }
-
-        if (Number(price) < 0) {
-            throw new InvalidFormatError('El campo "price" debe ser mayor o igual a 0')
-        }
+            .isGreaterThan({ maxCapacity }, 0)
+            .isGreaterThanOrEqual({ price }, 0)
 
         this._validateEventDates(startAt, endAt)
 
@@ -171,7 +159,7 @@ export class EventController {
 
         await this.eventService.delete(id, request.user)
 
-        return response.status(204).json({ message: `Evento "${id}" eliminado correctamente` })
+        return response.status(204).json({ message: `Evento '${id}' eliminado correctamente` })
     }
 
     private _validateEventDates(startAt: string, endAt: string) {

@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { Inject, Service } from "../../core/decorators/decorators.js"
-import UserRepository from "../repositories/User.repository.js"
+import { Inject, Service } from '../../core/decorators/decorators.js'
+import UserRepository from '../repositories/User.repository.js'
 import RoleRepository from '../repositories/Role.repository.js'
 import PermissionRepository from '../repositories/Permission.repository.js'
 import BlockedTokenRepository from '../repositories/BlockedToken.repository.js'
-import User from "../entities/User.entity.js"
+import User from '../entities/User.entity.js'
 import { NotFoundError } from '../../core/errors/NotFound.error.js'
 import { UnauthorizedError } from '../../core/errors/Unauthorized.error.js'
 import { InvalidCredentialError } from '../../core/errors/InvalidCredentials.error.js'

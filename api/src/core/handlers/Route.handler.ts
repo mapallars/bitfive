@@ -2,7 +2,6 @@ import { Metadata } from '../metadata/Metadata.js'
 import { METADATA_KEYS } from '../metadata/keys.js'
 import { UnauthorizedError } from '../errors/Unauthorized.error.js'
 import { Handler } from '../decorators/handler.decorator.js'
-import AuthMiddleware from '../middlewares/Auth.middleware.js'
 
 @Handler()
 export class RouteHandler {
