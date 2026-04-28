@@ -38,14 +38,13 @@
 .lx-p-discover-events-content {
     flex: 1;
     width: 100%;
-    overflow: auto;
 }
 
 .lx-p-discover-events-container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--lx-space-xxxl);
+    gap: var(--lx-space-l);
 }
 
 .lx-p-discover-events-section {
@@ -54,7 +53,7 @@
     flex-direction: column;
     gap: var(--lx-space-m);
     background-color: var(--lx-color-background-primary);
-    border-radius: var(--lx-border-radius-l);
+    border-radius: var(--lx-border-radius-m);
     padding: var(--lx-padding-xl);
     box-shadow: var(--lx-box-shadow);
     border: var(--lx-primary-border);

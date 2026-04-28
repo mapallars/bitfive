@@ -54,7 +54,7 @@ export const MENU = [
     icon: 'parking_sign',
     description: 'Gestión de parqueaderos',
     to: 'parkings',
-    path: 'parkings/:parkingId',
+    path: 'parkings/:parkingId?',
     element: <Parkings />,
     authorities: {
       permissions: ['AccessParkings']

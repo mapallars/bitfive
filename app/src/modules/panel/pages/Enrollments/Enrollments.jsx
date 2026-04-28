@@ -1,12 +1,11 @@
 import './Enrollments.css'
+import UnderConstruction from '../../../../core/pages/UnderConstruction/UnderConstruction'
 
 const Enrollments = () => {
     return (
         <>
-            <h1>Mis inscripciones</h1>
-            <p>Gestiona las inscripciones del sistema</p>
-        </>
-    )
+            <UnderConstruction />
+        </>)
 }
 
 export default Enrollments

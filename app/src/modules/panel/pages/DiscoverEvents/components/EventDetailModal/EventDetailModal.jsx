@@ -1,9 +1,14 @@
-﻿import Button from '../../../../../../core/components/Button/Button'
+﻿import './EventDetailModal.css'
+import { useAuth } from '../../../../../../core/contexts/AuthContext'
+import Button from '../../../../../../core/components/Button/Button'
 import Icon from '../../../../../../core/components/Icon/Icon'
 import Modal from '../../../../../../core/components/Modal/Modal'
-import './EventDetailModal.css'
+import DateFormat from '../../../../../../core/utils/dateFormat.mjs'
+import EnrollmentRequester from '../../../../services/EnrollmentRequester.mjs'
 
-const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
+const EventDetailModal = ({ event, onClose, onEnrollment }) => {
+    const { user } = useAuth()
+
     if (!event) return null
 
     const {
@@ -14,33 +19,28 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
         price = 0,
         modality = '-',
         maxCapacity = 0,
-        attendeesCount = 0,
         parkingAvailable = false,
         startAt = new Date(),
         endAt = new Date(),
-        isEnrolled = false
     } = event
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleString('es-MX', { 
-            dateStyle: 'long'
-        })
-    }
+    const isEnrolled = event.enrollments?.some(enrollment => enrollment.userId === user?.id && enrollment.enrollmentStatus === 'CONFIRMED')
 
-    const formatTime = (date) => {
-        return new Date(date).toLocaleString('es-MX', { 
-            timeStyle: 'short'
-        })
-    }
+    const enrollmentsCount = event.enrollments?.filter(enrollment => enrollment.enrollmentStatus === 'CONFIRMED').length ?? 0
 
-    const availableSpots = maxCapacity - attendeesCount
+    const availableSpots = maxCapacity - enrollmentsCount
 
-    const handleEnrollClick = () => {
+    const handleEnrollClick = async () => {
+        let _event = event
+        let enrollment = _event.enrollments?.find(enrollment => enrollment.userId === user?.id && enrollment.enrollmentStatus === 'CONFIRMED')
         if (isEnrolled) {
-            onUnenroll?.(event)
+            enrollment = await EnrollmentRequester.cancelEnrollment(enrollment)
+            _event.enrollments = [...event.enrollments.filter(e => e.id !== enrollment.id), { ...enrollment }]
         } else {
-            onEnroll?.(event)
+            enrollment = await EnrollmentRequester.createEnrollment(event)
+            _event.enrollments = [...event.enrollments, enrollment]
         }
+        onEnrollment(_event)
     }
 
     return (
@@ -55,19 +55,19 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
                 {/* Descripción */}
                 <div className='lx-c-event-detail-section'>
                     <h3 className='lx-c-event-detail-section-title'>Descripción</h3>
-                    <p className='lx-c-event-detail-description'>{description}</p>
+                    <p className='lx-c-event-detail-description' style={{ whiteSpace: 'pre-wrap' }}>{description}</p>
                 </div>
 
                 {/* Información General */}
                 <div className='lx-c-event-detail-section'>
                     <h3 className='lx-c-event-detail-section-title'>Información General</h3>
-                    
+
                     <div className='lx-c-event-detail-row'>
                         <span className='lx-c-event-detail-label'>
                             <Icon name='event' />
                             Fecha
                         </span>
-                        <p className='lx-c-event-detail-value'>{formatDate(startAt)}</p>
+                        <p className='lx-c-event-detail-value'>{DateFormat.date(startAt)}</p>
                     </div>
 
                     <div className='lx-c-event-detail-row'>
@@ -75,7 +75,7 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
                             <Icon name='schedule' />
                             Hora de inicio
                         </span>
-                        <p className='lx-c-event-detail-value'>{formatTime(startAt)}</p>
+                        <p className='lx-c-event-detail-value'>{DateFormat.time(startAt)}</p>
                     </div>
 
                     <div className='lx-c-event-detail-row'>
@@ -83,7 +83,7 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
                             <Icon name='schedule' />
                             Hora de finalización
                         </span>
-                        <p className='lx-c-event-detail-value'>{formatTime(endAt)}</p>
+                        <p className='lx-c-event-detail-value'>{DateFormat.time(endAt)}</p>
                     </div>
 
                     <div className='lx-c-event-detail-row'>
@@ -106,7 +106,7 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
                 {/* Detalles de Precios y Capacidad */}
                 <div className='lx-c-event-detail-section'>
                     <h3 className='lx-c-event-detail-section-title'>Detalles del Evento</h3>
-                    
+
                     <div className='lx-c-event-detail-row'>
                         <span className='lx-c-event-detail-label'>
                             <Icon name='attach_money' />
@@ -138,7 +138,7 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
                             <Icon name='person_add' />
                             Personas Inscritas
                         </span>
-                        <p className='lx-c-event-detail-value'>{attendeesCount} de {maxCapacity}</p>
+                        <p className='lx-c-event-detail-value'>{enrollmentsCount} de {maxCapacity}</p>
                     </div>
 
                     <div className='lx-c-event-detail-row'>
@@ -160,10 +160,10 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
                             <p className='lx-c-event-detail-availability-value'>{availableSpots}/{maxCapacity}</p>
                         </div>
                         <div className='lx-c-event-detail-availability-bar'>
-                            <div 
+                            <div
                                 className='lx-c-event-detail-availability-fill'
-                                style={{ 
-                                    width: `${(attendeesCount / maxCapacity) * 100}%`
+                                style={{
+                                    width: `${(enrollmentsCount / maxCapacity) * 100}%`
                                 }}
                             />
                         </div>
@@ -172,11 +172,10 @@ const EventDetailModal = ({ event, onClose, onEnroll, onUnenroll }) => {
 
                 {/* Botón de Acción */}
                 <div className='lx-c-event-detail-section'>
-                    <Button 
+                    <Button
                         color={isEnrolled ? 'danger' : 'accent'}
                         onClick={handleEnrollClick}
                         width='full'
-                        size='l'
                     >
                         <Icon name={isEnrolled ? 'close' : 'check'} />
                         {isEnrolled ? 'Cancelar Inscripción' : 'Inscribirse'}

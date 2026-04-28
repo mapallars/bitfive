@@ -24,8 +24,11 @@ class EnrollmentRequester extends Requester {
         return result.data
     }
 
-    static async createEnrollment(enrollment) {
-        const result = await super.post(API.ENROLLMENT.ENDPOINTS.ENROLLMENTS, enrollment)
+    static async createEnrollment(event) {
+        const result = await super.post(API.ENROLLMENT.ENDPOINTS.ENROLLMENTS, {
+            eventId: event.id,
+            enrollmentStatus: 'CONFIRMED'
+        })
 
         if (result.message) {
             Notify.notice(
@@ -34,7 +37,7 @@ class EnrollmentRequester extends Requester {
             )
         }
 
-        return result.data
+        return result?.ok ? result.data : null
     }
 
     static async updateEnrollment(enrollment) {
@@ -64,7 +67,7 @@ class EnrollmentRequester extends Requester {
     }
 
     static async cancelEnrollment(enrollment) {
-        const result = await super.delete(`${API.ENROLLMENT.ENDPOINTS.ENROLLMENTS}${enrollment.id}/cancel`)
+        const result = await super.put(`${API.ENROLLMENT.ENDPOINTS.ENROLLMENTS}${enrollment.id}/cancel`)
 
         if (result.message) {
             Notify.notice(
@@ -73,7 +76,7 @@ class EnrollmentRequester extends Requester {
             )
         }
 
-        return result.ok
+        return result?.ok ? result.data : null
     }
 
 }

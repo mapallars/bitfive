@@ -28,7 +28,6 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
     }), [withLoad, setUsers])
 
     useEffect(() => {
-        console.log('event', event)
         load()
     }, [load])
 
@@ -212,7 +211,7 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                                 <br />
                                 <br />
                                 <Table
-                                    objects={event?.organizers}
+                                    objects={event?.organizers ?? []}
                                     mapper={(organizer, index) => ({
                                         '#': index + 1,
                                         '': <div className={`lx-c-user-table-avatar ${organizer.isOnline && '--online'}`}>
@@ -272,7 +271,7 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                                         isOnline: <SatatusTag status={enrollment.user.isOnline} message={enrollment.user.isOnline ? 'Online' : 'Offline'} />,
                                         lastLogin: enrollment.user.lastLogin ? new Date(enrollment.user.lastLogin).toLocaleString() : 'Nunca',
                                         date: <div className='lx-c-event-details-enrollment-date'>
-                                            <span className='lx-c-event-details-enrollment-status'>{Constant.fromValue(EVENT.OPTIONS.ENROLLMENT_STATUS, enrollment.enrollmentStatus)}</span>
+                                            <span className={`lx-c-event-details-enrollment-status --${enrollment.enrollmentStatus}`}>{Constant.fromValue(EVENT.OPTIONS.ENROLLMENT_STATUS, enrollment.enrollmentStatus)}</span>
                                             <p className='lx-text-color-soft'>{DateFormat.string(enrollment.date)}</p>
                                         </div>,
                                     })}
@@ -305,7 +304,7 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                         <p className='lx-text-color-softer'>Agrega usuarios como organizadores del evento "{event.name}".</p>
                         <br />
                         <Table
-                            objects={users}
+                            objects={users ?? []}
                             mapper={(user, index) => ({
                                 '': <div className={`lx-c-user-table-avatar ${user.isOnline && '--online'}`}>
                                     {user.image ? <img className='--image' src={user.image} alt={user.name} /> : <div className='--chars'>{user.name?.slice(0, 2) ?? '?'}</div>}
@@ -320,7 +319,7 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                                     <span className='lx-tag'>{user.phoneNumber || 'Sin teléfono'}</span>
                                 </div>,
                                 actions: <center>
-                                    {event.organizers.some((organizer) => organizer.id === user.id)
+                                    {event?.organizers?.some((organizer) => organizer.id === user.id)
                                         ? <Button color='danger' size='s' onClick={() => removeOrganizer(user)}>
                                             <Icon name='delete' />
                                             Quitar

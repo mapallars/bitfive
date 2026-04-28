@@ -81,6 +81,24 @@
     border: 0.01rem solid var(--lx-color-accent-dimed);
 }
 
+.lx-c-event-details-enrollment-status.--CONFIRMED {
+    background: var(--lx-color-success-dimed);
+    color: var(--lx-color-success);
+    border-color: var(--lx-color-success-dimed);
+}
+
+.lx-c-event-details-enrollment-status.--CANCELLED {
+    background: var(--lx-color-danger-dimed);
+    color: var(--lx-color-danger);
+    border-color: var(--lx-color-danger-dimed);
+}
+
+.lx-c-event-details-enrollment-status.--PENDING {
+    background: var(--lx-color-warning-dimed);
+    color: var(--lx-color-warning);
+    border-color: var(--lx-color-warning-dimed);
+}
+
 .lx-c-event-details-enrollment-date {
     display: flex;
     flex-direction: column;

@@ -148,8 +148,6 @@ const EventForm = ({ event, onBack = () => { }, handler = (result) => { } }) => 
                             label='Descripción'
                             type='text'
                             autoComplete='off'
-                            minLength={2}
-                            maxLength={100}
                             value={form.description}
                             onChange={handleChange}
                             error={errors.description}

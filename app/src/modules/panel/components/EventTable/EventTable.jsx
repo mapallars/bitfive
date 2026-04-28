@@ -5,7 +5,7 @@ import Button from '../../../../core/components/Button/Button'
 import Constant from '../../constants/constant.mjs'
 import { EVENT } from '../../constants/event.constant.mjs'
 
-const EventTable = ({ events, onView = () => { }, onEdit = () => { }, onDelete = () => { } }) => {
+const EventTable = ({ events, onView = () => { }, onEdit, onDelete }) => {
     return <Table
         objects={events}
         mapper={(event) => ({
@@ -43,12 +43,12 @@ const EventTable = ({ events, onView = () => { }, onEdit = () => { }, onDelete =
                 </div>
             </div>,
             '': <div className='lx-t-events-actions'>
-                <Button color='auto' variant='bordered' size='s' icon onClick={() => onEdit(event)}>
+                {onEdit && <Button color='auto' variant='bordered' size='s' icon onClick={() => onEdit(event)}>
                     <Icon name='edit' />
-                </Button>
-                <Button color='danger' variant='dimed' size='s' icon onClick={() => onDelete(event)}>
+                </Button>}
+                {onDelete && <Button color='danger' variant='dimed' size='s' icon onClick={() => onDelete(event)}>
                     <Icon name='delete' />
-                </Button>
+                </Button>}
             </div>
         })}
         translation={{
