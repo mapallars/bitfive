@@ -10,9 +10,9 @@ import Icon from '../../../../core/components/Icon/Icon'
 import Logo from '../../../../core/components/Logo/Logo'
 import Switch from '../../../../core/components/Switch/Switch'
 import Select from '../../../../core/components/Select/Select'
-import { EVENT } from '../../constants/event.contants'
+import { EVENT } from '../../constants/event.constant.mjs'
 
-const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) => {
+const EventForm = ({ event, onBack = () => { }, handler = (result) => { } }) => {
 
     const {
         form,
@@ -32,11 +32,11 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
             ['Visibility', () => validator.set({ visibility }).required().isIn(EVENT.OPTIONS.VISIBILITY.map(v => v.value))],
             ['Color', () => validator.set({ color }).required()],
             ['Name', () => validator.set({ name }).required().length(2, 100)],
+            ['Description', () => validator.set({ description }).required()],
             ['StartAt', () => validator.set({ startAt }).required()],
             ['EndAt', () => validator.set({ endAt }).required()],
-            ['Description', () => validator.set({ description }).required().length(1, 500)],
             ['Type', () => validator.set({ type }).required().isIn(EVENT.OPTIONS.TYPE.map(v => v.value))],
-            ['Location', () => validator.set({ location }).required().length(2, 100)],
+            ['Location', () => validator.set({ location }).required().length(2, 500)],
             ['MaxCapacity', () => validator.set({ maxCapacity }).required().isInteger().isGreaterThan(0)],
             ['Price', () => validator.set({ price }).required().isInteger()],
             ['EventStatus', () => validator.set({ eventStatus }).required().isIn(EVENT.OPTIONS.EVENT_STATUS.map(v => v.value))],
@@ -61,7 +61,7 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
         <div className='lx-f-event-container' style={{ '--lx-f-event-color': form.color }}>
 
             <div className="lx-f-event-header">
-                <Button color='auto' variant='bordered' icon onClick={onCancel}>
+                <Button color='auto' variant='bordered' icon onClick={onBack}>
                     <Icon name='arrow_back' />
                 </Button>
                 <h2 className='lx-f-event-title'>
@@ -71,14 +71,15 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
 
             <div className="lx-f-event-body">
 
-                <div className="lx-f-event-cover-container">
-                    <div className="lx-f-event-cover">
-                        {form.name || <Logo colored={form.color} />}
+                <div className='lx-f-event-column'>
+                    <div className="lx-f-event-cover-container">
+                        <div className="lx-f-event-cover">
+                            {form.name || <Logo colored={form.color} />}
+                        </div>
                     </div>
                 </div>
 
                 <form className='lx-f-event'>
-
 
                     <InputGroup>
                         <div className='lx-f-event-section-header'>
@@ -140,34 +141,6 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                                 error={errors.name}
                             />
                         </InputGroup>
-                        <InputGroup columns={2}>
-                            <Input
-                                required
-                                id='EventStartAt'
-                                name='startAt'
-                                label='Fecha de inicio'
-                                type='datetime-local'
-                                autoComplete='off'
-                                minLength={2}
-                                maxLength={100}
-                                value={form.startAt}
-                                onChange={handleChange}
-                                error={errors.startAt}
-                            />
-                            <Input
-                                required
-                                id='EventEndAt'
-                                name='endAt'
-                                label='Fecha de fin'
-                                type='datetime-local'
-                                autoComplete='off'
-                                minLength={2}
-                                maxLength={100}
-                                value={form.endAt}
-                                onChange={handleChange}
-                                error={errors.endAt}
-                            />
-                        </InputGroup>
                         <Textarea
                             required
                             id='EventDescription'
@@ -183,7 +156,51 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                         />
                         <br />
                         <div className='lx-f-event-section-header'>
-                            <strong className='lx-f-event-section-title'>2. Modalidad</strong>
+                            <strong className='lx-f-event-section-title'>2. Fechas</strong>
+                            <p className='lx-f-event-section-subtitle'>Completa la información de las fechas</p>
+                        </div>
+                        <Select
+                            required
+                            id='EventTimezone'
+                            name='timezone'
+                            label='Zona horaria'
+                            autoComplete='off'
+                            options={EVENT.OPTIONS.TIMEZONE}
+                            value={form.timezone}
+                            onChange={handleChange}
+                            error={errors.timezone}
+                        />
+                        <InputGroup columns={2}>
+                            <Input
+                                required
+                                id='EventStartAt'
+                                name='startAt'
+                                label='Fecha de inicio'
+                                type='datetime-local'
+                                autoComplete='off'
+                                minLength={2}
+                                maxLength={100}
+                                value={event ? new Date(form.startAt).toISOString().slice(0, 16) : form.startAt}
+                                onChange={handleChange}
+                                error={errors.startAt}
+                            />
+                            <Input
+                                required
+                                id='EventEndAt'
+                                name='endAt'
+                                label='Fecha de fin'
+                                type='datetime-local'
+                                autoComplete='off'
+                                minLength={2}
+                                maxLength={100}
+                                value={event ? new Date(form.endAt).toISOString().slice(0, 16) : form.endAt}
+                                onChange={handleChange}
+                                error={errors.endAt}
+                            />
+                        </InputGroup>
+                        <br />
+                        <div className='lx-f-event-section-header'>
+                            <strong className='lx-f-event-section-title'>3. Modalidad</strong>
                             <p className='lx-f-event-section-subtitle'>Completa la información de la modalidad</p>
                         </div>
                         <InputGroup columns={2} mode='min-max'>
@@ -242,7 +259,7 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                         </InputGroup>
                         <br />
                         <div className='lx-f-event-section-header'>
-                            <strong className='lx-f-event-section-title'>3. Otros ajustes</strong>
+                            <strong className='lx-f-event-section-title'>4. Otros ajustes</strong>
                             <p className='lx-f-event-section-subtitle'>Completa la información de los otros ajustes</p>
                         </div>
                         <Input
@@ -260,17 +277,6 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                         />
                         <Select
                             required
-                            id='EventTimezone'
-                            name='timezone'
-                            label='Zona horaria'
-                            autoComplete='off'
-                            options={EVENT.OPTIONS.TIMEZONE}
-                            value={form.timezone}
-                            onChange={handleChange}
-                            error={errors.timezone}
-                        />
-                        <Select
-                            required
                             id='EventEventStatus'
                             name='eventStatus'
                             label='Estado'
@@ -281,8 +287,9 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                             error={errors.eventStatus}
                         />
                     </InputGroup>
+
                     <div className='lx-f-evenet-section-header'>
-                        <strong className='lx-f-event-section-title'>4. Parqueadero</strong>
+                        <strong className='lx-f-event-section-title'>5. Parqueadero</strong>
                         <p className='lx-f-event-section-subtitle'>Marca el siguiente campo si el evento tiene parqueadero</p>
                     </div>
                     <Switch
@@ -296,7 +303,7 @@ const EventForm = ({ event, onCancel = () => { }, handler = (result) => { } }) =
                         }}
                     />
                     <div className='lx-f-event-actions'>
-                        <Button variant='bordered' color='auto' width='full' onClick={onCancel}>Cancelar</Button>
+                        <Button variant='bordered' color='auto' width='full' onClick={onBack}>Cancelar</Button>
                         <Button width='full' onClick={submit}>{event ? 'Guardar cambios' : 'Crear evento'}</Button>
                     </div>
                 </form>

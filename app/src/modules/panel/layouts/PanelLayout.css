@@ -257,6 +257,7 @@
     padding: 5px 10px;
     border-radius: var(--lx-border-radius-xxs);
     font-size: 12px;
+    white-space: nowrap;
 }
 
 .lx-l-panel-sidebar-nav-btn-label::before {

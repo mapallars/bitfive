@@ -38,7 +38,8 @@ INSERT INTO "Permissions" ("id", "name", "alias", "description", "type") VALUES
 ('6e4ba1df-4b49-4e3f-8d8d-9e44ecb97879', 'CreateEnrollments', 'Crear Enrollment', 'Permite la creacion de Enrollment.', 'Create'),
 ('87ad4527-4595-4860-a3f5-cad1f6918dba', 'ReadEnrollments', 'Leer Enrollment', 'Permite la lectura de Enrollment.', 'Read'),
 ('fb73562e-9b45-4109-b87a-078b98a015d8', 'DeleteEnrollments', 'Eliminar Enrollment', 'Permite la eliminación de Enrollment.', 'Delete'),
-('a2e8730f-f0cb-43d6-98e7-1db914adb6ca', 'UpdateEnrollments', 'Actualizar Enrollment', 'Permite la actualización de Enrollment.', 'Update');
+('a2e8730f-f0cb-43d6-98e7-1db914adb6ca', 'UpdateEnrollments', 'Actualizar Enrollment', 'Permite la actualización de Enrollment.', 'Update'),
+('f0603f40-60a1-4b8c-8e83-f1862c88681a', 'AccessEnrollments', 'Acceso a Inscripciones', 'Permite acceder a la gestión de inscripciones.', 'Access');
 
 
 INSERT INTO "RolesPermissions" ("roleId", "permissionId") VALUES

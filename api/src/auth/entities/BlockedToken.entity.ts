@@ -32,7 +32,7 @@ export class BlockedToken {
     deletedBy: string
 
     @ManyToOne(() => User, {
-        inverse: 'blockedTokens',
+        inverse: 'userId',
         joinColumn: 'userId',
         owner: true,
         eager: true

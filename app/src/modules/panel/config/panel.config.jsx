@@ -2,6 +2,8 @@ import Dashboard from '../pages/Dashboard/Dashboard'
 import Users from '../pages/Users/Users'
 import Authorization from '../pages/Authorization/Authorization'
 import Events from '../pages/Events/Events'
+import Enrollments from '../pages/Enrollments/Enrollments'
+import Parkings from '../pages/Parkings/Parkings'
 
 export const AUTHORITIES = {
   PANEL: {
@@ -48,7 +50,19 @@ export const MENU = [
     items: []
   },
   {
-    label: 'Eventos',
+    label: 'Parqueaderos',
+    icon: 'parking_sign',
+    description: 'Gestión de parqueaderos',
+    to: 'parkings',
+    path: 'parkings/:parkingId',
+    element: <Parkings />,
+    authorities: {
+      permissions: ['AccessParkings']
+    },
+    items: []
+  },
+  {
+    label: 'Mis eventos',
     icon: 'event',
     description: 'Gestión de eventos',
     to: 'events',
@@ -60,14 +74,14 @@ export const MENU = [
     items: []
   },
   {
-    label: 'Parqueaderos',
-    icon: 'parking_sign',
-    description: 'Gestión de parqueaderos',
-    to: 'parkings',
-    path: 'parkings/:parkingId',
-    element: <Events />,
+    label: 'Mis inscripciones',
+    icon: 'event_seat',
+    description: 'Gestión de inscripciones a eventos',
+    to: 'enrollments',
+    path: 'enrollments/:enrollmentId?',
+    element: <Enrollments />,
     authorities: {
-      permissions: ['AccessParkings']
+      permissions: ['AccessEnrollments']
     },
     items: []
   }

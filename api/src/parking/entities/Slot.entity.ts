@@ -31,7 +31,7 @@ export class Slot {
     deletedBy: string
 
     @ManyToOne(() => Parking, {
-        inverse: 'slots',
+        inverse: 'parkingId',
         joinColumn: 'parkingId',
         owner: true,
         eager: false

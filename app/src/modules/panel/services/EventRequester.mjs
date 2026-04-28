@@ -53,6 +53,50 @@ class EventRequester extends Requester {
         return result.ok
     }
 
+    static async addOrganizer(event, organizer) {
+        const result = await super.post(`${API.EVENT.ENDPOINTS.EVENTS}${event.id}/organizers`, {
+            organizerId: organizer.id
+        })
+
+        if (result.ok) {
+            Notify.notice(
+                `Organizador "${organizer.name}" agregado`,
+                'success'
+            )
+        }
+
+        if (result.message) {
+            Notify.notice(
+                result.message || 'No se pudo agregar el organizador',
+                result.ok ? 'info' : 'error'
+            )
+        }
+
+        return result.ok ? result.data : event
+    }
+
+    static async removeOrganizer(event, organizer) {
+        const result = await super.delete(`${API.EVENT.ENDPOINTS.EVENTS}${event.id}/organizers`, {
+            data: { organizerId: organizer.id }
+        })
+
+        if (result.ok) {
+            Notify.notice(
+                `Organizador "${organizer.name}" quitado`,
+                'success'
+            )
+        }
+
+        if (result.message) {
+            Notify.notice(
+                result.message || 'No se pudo eliminar el organizador',
+                result.ok ? 'info' : 'error'
+            )
+        }
+
+        return result.ok ? result.data : event
+    }
+
 }
 
 export default EventRequester

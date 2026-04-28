@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useSync } from '../../../../core/hooks/useSync'
 import { useLoad } from '../../../../core/hooks/useLoad'
 import EventRequester from '../../services/EventRequester.mjs'
+import AuthRequester from '../../services/AuthRequester.mjs'
 import Loader from '../../../../core/components/Loader/Loader'
 import TabGroup from '../../../../core/components/TabGroup/TabGroup'
 import Icon from '../../../../core/components/Icon/Icon'
@@ -61,84 +62,77 @@ const Events = () => {
         reset()
     }
 
+    if (mode === 'view') {
+        return <EventDetails event={event} onBack={reset} onEdit={onEdit} onDelete={onDelete} />
+    }
+
+    if (mode === 'form') {
+        return <EventForm event={event} onBack={reset} handler={eventFormHandler} />
+    }
+
     return (<>
-        {mode === 'form'
-            ? <EventForm event={event} onCancel={reset} handler={eventFormHandler} />
-            : <div className='lx-p-events'>
-                <Loader loading={loading} background='special' />
-                <div className='lx-p-events-header'>
-                    <div className='info'>
-                        <h1 className='--name'>Eventos</h1>
-                        <p className='--description'>Administra los eventos del sistema</p>
-                        <div className='--overview'>
-                            <div className='summary'>
-                                {events.length} eventos registrados
-                            </div>
+        <div className='lx-p-events'>
+            <Loader loading={loading} background='special' />
+            <div className='lx-p-events-header'>
+                <div className='info'>
+                    <h1 className='--name'>Mis eventos</h1>
+                    <p className='--description'>Administra todos tus eventos registrados</p>
+                    <div className='--overview'>
+                        <div className='summary'>
+                            {events.length} eventos registrados
                         </div>
                     </div>
-                    <div className='actions'>
-                        <Button onClick={() => setMode('form')}>
-                            <Icon name='calendar_add_on' />
-                            Crear evento
-                        </Button>
-                    </div>
                 </div>
-                <div className='lx-p-events-content'>
-                    <div className='lx-p-events-actions'>
-                        <TabGroup
-                            tabs={[
-                                <>Tarjetas <Icon name='square' /></>,
-                                <>Tabla <Icon name='table' /></>
-                            ]}
-                            options={['cards', 'table']}
-                            onClick={(option) => {
-                                setTab(option)
-                            }}
-                            active={tab}
-                        />
-                    </div>
-                    <div className='lx-p-events-container'>
-                        {tab === 'cards' && (
-                            <div className='lx-p-events-cards'>
-                                {
-                                    <EventCards
-                                        events={events}
-                                        onEdit={onEdit}
-                                        onDelete={onDelete}
-                                        onView={onView}
-                                    />
-                                }
-                            </div>
-                        )}
-                        {tab === 'table' && (
-                            <div className='lx-p-events-table'>
-                                {
-                                    <EventTable
-                                        events={events}
-                                        onEdit={onEdit}
-                                        onDelete={onDelete}
-                                        onView={onView}
-                                    />
-                                }
-                            </div>
-                        )}
-                    </div>
+                <div className='actions'>
+                    <Button onClick={() => setMode('form')}>
+                        <Icon name='calendar_add_on' />
+                        Crear evento
+                    </Button>
                 </div>
-                <Footer />
             </div>
-        }
-
-        <Modal
-            show={mode === 'view'}
-            title='Detalles del evento'
-            size='standar'
-            position='right'
-            onClose={reset}
-            isLocal={true}
-            children={
-                <EventDetails event={event} onEdit={onEdit} onDelete={onDelete} />
-            }
-        />
+            <div className='lx-p-events-content'>
+                <div className='lx-p-events-actions'>
+                    <TabGroup
+                        tabs={[
+                            <>Tarjetas <Icon name='square' /></>,
+                            <>Tabla <Icon name='table' /></>
+                        ]}
+                        options={['cards', 'table']}
+                        onClick={(option) => {
+                            setTab(option)
+                        }}
+                        active={tab}
+                    />
+                </div>
+                <div className='lx-p-events-container'>
+                    {tab === 'cards' && (
+                        <div className='lx-p-events-cards'>
+                            {
+                                <EventCards
+                                    events={events}
+                                    onEdit={onEdit}
+                                    onDelete={onDelete}
+                                    onView={onView}
+                                />
+                            }
+                        </div>
+                    )}
+                    {tab === 'table' && (
+                        <div className='lx-p-events-table'>
+                            {
+                                <EventTable
+                                    events={events}
+                                    onEdit={onEdit}
+                                    onDelete={onDelete}
+                                    onView={onView}
+                                />
+                            }
+                        </div>
+                    )}
+                </div>
+            </div>
+            <Footer />
+        </div>
 
         <Modal
             show={mode === 'delete'}
@@ -154,7 +148,6 @@ const Events = () => {
                 />
             }
         />
-
     </>)
 }
 
