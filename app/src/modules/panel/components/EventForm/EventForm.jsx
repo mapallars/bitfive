@@ -57,6 +57,12 @@ const EventForm = ({ event, onBack = () => { }, handler = (result) => { } }) => 
         }
     }
 
+    const formatDatetimeLocal = (date) => {
+        const d = new Date(date)
+        const pad = (n) => String(n).padStart(2, '0')
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+    }
+
     return (
         <div className='lx-f-event-container' style={{ '--lx-f-event-color': form.color }}>
 
@@ -178,7 +184,7 @@ const EventForm = ({ event, onBack = () => { }, handler = (result) => { } }) => 
                                 autoComplete='off'
                                 minLength={2}
                                 maxLength={100}
-                                value={event ? new Date(form.startAt).toISOString().slice(0, 16) : form.startAt}
+                                value={event ? formatDatetimeLocal(form.startAt) : form.startAt}
                                 onChange={handleChange}
                                 error={errors.startAt}
                             />
@@ -191,7 +197,7 @@ const EventForm = ({ event, onBack = () => { }, handler = (result) => { } }) => 
                                 autoComplete='off'
                                 minLength={2}
                                 maxLength={100}
-                                value={event ? new Date(form.endAt).toISOString().slice(0, 16) : form.endAt}
+                                value={event ? formatDatetimeLocal(form.endAt) : form.endAt}
                                 onChange={handleChange}
                                 error={errors.endAt}
                             />

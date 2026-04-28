@@ -5,6 +5,8 @@ import Icon from '../../../../../../core/components/Icon/Icon'
 import Modal from '../../../../../../core/components/Modal/Modal'
 import DateFormat from '../../../../../../core/utils/dateFormat.mjs'
 import EnrollmentRequester from '../../../../services/EnrollmentRequester.mjs'
+import Constant from '../../../../constants/constant.mjs'
+import { EVENT } from '../../../../constants/event.constant.mjs'
 
 const EventDetailModal = ({ event, onClose, onEnrollment }) => {
     const { user } = useAuth()
@@ -17,9 +19,9 @@ const EventDetailModal = ({ event, onClose, onEnrollment }) => {
         location = '-',
         owner = {},
         price = 0,
-        modality = '-',
+        type = '-',
         maxCapacity = 0,
-        parkingAvailable = false,
+        hasParking = false,
         startAt = new Date(),
         endAt = new Date(),
     } = event
@@ -122,7 +124,7 @@ const EventDetailModal = ({ event, onClose, onEnrollment }) => {
                             <Icon name='two_wheeler' />
                             Modalidad
                         </span>
-                        <p className='lx-c-event-detail-value'>{modality}</p>
+                        <p className='lx-c-event-detail-value'>{Constant.fromValue(EVENT.OPTIONS.TYPE, type)}</p>
                     </div>
 
                     <div className='lx-c-event-detail-row'>
@@ -146,8 +148,8 @@ const EventDetailModal = ({ event, onClose, onEnrollment }) => {
                             <Icon name='local_parking' />
                             Parqueadero
                         </span>
-                        <p className={`lx-c-event-detail-value ${parkingAvailable ? '--available' : '--unavailable'}`}>
-                            {parkingAvailable ? 'Disponible' : 'No disponible'}
+                        <p className={`lx-c-event-detail-value ${hasParking ? '--available' : '--unavailable'}`}>
+                            {hasParking ? 'Disponible' : 'No disponible'}
                         </p>
                     </div>
                 </div>

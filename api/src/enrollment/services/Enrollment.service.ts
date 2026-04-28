@@ -50,7 +50,7 @@ export class EnrollmentService {
     }
 
     async create(enrollment: Partial<Enrollment>, user: User) {
-        return await this.enrollmentRepository.create({ ...enrollment, user: user, createdAt: new Date(), createdBy: user.username })
+        return await this.enrollmentRepository.create({ ...enrollment, user: user, date: new Date(), createdAt: new Date(), createdBy: user.username })
     }
 
     async update(id: string, enrollment: Partial<Enrollment>, user: User) {
@@ -59,7 +59,7 @@ export class EnrollmentService {
             throw new NotFoundError('La inscripción no existe')
         }
         this._checkEnrollmentPermissions(existingEnrollment, user, 'No puedes editar esta inscripción porque no eres el dueño')
-        return await this.enrollmentRepository.update(id, { ...enrollment, updatedAt: new Date(), updatedBy: user.username })
+        return await this.enrollmentRepository.update(id, { ...enrollment, date: new Date(), updatedAt: new Date(), updatedBy: user.username })
     }
 
     async cancel(id: string, user: User) {
@@ -68,7 +68,7 @@ export class EnrollmentService {
             throw new NotFoundError('La inscripción no existe')
         }
         this._checkEnrollmentPermissions(existingEnrollment, user, 'No puedes cancelar esta inscripción porque no eres el dueño')
-        return await this.enrollmentRepository.update(id, { enrollmentStatus: 'CANCELLED', updatedAt: new Date(), updatedBy: user.username })
+        return await this.enrollmentRepository.update(id, { enrollmentStatus: 'CANCELLED', date: new Date(), updatedAt: new Date(), updatedBy: user.username })
     }
 
     async delete(id: string, user: User) {
