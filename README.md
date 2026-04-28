@@ -1,4 +1,4 @@
-# Bitfive (DevOps Project) 2.0.1v
+# Bitfive (DevOps Project) 3.0.0v
 
 Monorepo fullstack compuesto por un backend REST en **Node.js + TypeScript + Express 5 + PostgreSQL** y un frontend en **Vite + React**. El proyecto implementa un sistema completo de autenticación y autorización basado en roles y permisos, con una arquitectura modular en capas y un ORM personalizado construido desde cero.
 
@@ -11,6 +11,21 @@ Monorepo fullstack compuesto por un backend REST en **Node.js + TypeScript + Exp
 - Consultar permisos: listado con filtros por tipo.
 - Proteger rutas del frontend por roles y permisos.
 - Tema claro/oscuro.
+- Crear y administrar eventos
+- Inscribirse y desinscribirse a eventos
+- Ver eventos inscritos
+- Ver eventos creados
+- Ver inscripciones
+
+
+## Equipo de trabajo
+
+| Integrante         | Rol                                   | Descripción |
+|--------------------|----------------------------------------|-------------|
+| Wilman Cabana      | Full-Stack Developer                   | Desarrolla e integra funcionalidades frontend y backend del sistema. |
+| Cristian Peña      | Backend Developer                      | Diseña e implementa servicios, APIs, lógica de negocio y gestión de datos. |
+| Martín Pallares    | Full-Stack Developer & DevOps Lead     | Lidera la integración, despliegue, automatización e infraestructura DevOps, además de apoyar el desarrollo full-stack. |
+| Cristian Barrera   | Backend Developer & QA Engineer        | Desarrolla componentes backend y realiza aseguramiento de calidad mediante pruebas y validación. |
 
 ## Requisitos previos
 
