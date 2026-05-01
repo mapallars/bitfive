@@ -4,8 +4,6 @@ import { useLoad } from '../../../../core/hooks/useLoad'
 import EventRequester from '../../services/EventRequester.mjs'
 import Loader from '../../../../core/components/Loader/Loader'
 import Footer from '../../../../core/components/Footer/Footer'
-import AvailableEvents from './components/AvailableEvents/AvailableEvents'
-import NearbyEvents from './components/NearbyEvents/NearbyEvents'
 import EventDetailModal from './components/EventDetailModal/EventDetailModal'
 import EventTable from '../../components/EventTable/EventTable'
 import { useSync } from '../../../../core/hooks/useSync'
@@ -18,7 +16,7 @@ const DiscoverEvents = () => {
     const load = useCallback(() => withLoad(async () => {
         const events = await EventRequester.getEvents()
         setEvents(events ?? [])
-    }), [withLoad])
+    }), [withLoad, setEvents])
 
     const handleEnrollment = (event) => {
         syncEvents(event, 'update')

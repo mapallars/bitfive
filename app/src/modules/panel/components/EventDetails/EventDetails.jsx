@@ -301,11 +301,11 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                 onClose={() => setMode(null)}
                 children={
                     <div className='lx-c-event-details-add-organizers'>
-                        <p className='lx-text-color-softer'>Agrega usuarios como organizadores del evento "{event.name}".</p>
+                        <p className='lx-text-color-softer'>Agrega usuarios como organizadores del evento <b>{event.name}</b>.</p>
                         <br />
                         <Table
                             objects={users ?? []}
-                            mapper={(user, index) => ({
+                            mapper={(user) => ({
                                 '': <div className={`lx-c-user-table-avatar ${user.isOnline && '--online'}`}>
                                     {user.image ? <img className='--image' src={user.image} alt={user.name} /> : <div className='--chars'>{user.name?.slice(0, 2) ?? '?'}</div>}
                                 </div>,

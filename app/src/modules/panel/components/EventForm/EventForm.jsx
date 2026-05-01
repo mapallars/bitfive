@@ -12,12 +12,11 @@ import Switch from '../../../../core/components/Switch/Switch'
 import Select from '../../../../core/components/Select/Select'
 import { EVENT } from '../../constants/event.constant.mjs'
 
-const EventForm = ({ event, onBack = () => { }, handler = (result) => { } }) => {
+const EventForm = ({ event, onBack = () => { }, handler = () => { } }) => {
 
     const {
         form,
         setForm,
-        resetForm,
         errors,
         setErrors,
         handleChange
@@ -26,7 +25,7 @@ const EventForm = ({ event, onBack = () => { }, handler = (result) => { } }) => 
     const validator = new Validator({ prefix: 'Event', errorHandler: setErrors })
 
     const validate = () => {
-        const { name, description, timezone, location, maxCapacity, price, cover, eventStatus, color, category, visibility, type, startAt, endAt } = form
+        const { name, description, location, maxCapacity, price, eventStatus, color, category, visibility, type, startAt, endAt } = form
         return validator.every([
             ['Category', () => validator.set({ category }).required().length(2, 100)],
             ['Visibility', () => validator.set({ visibility }).required().isIn(EVENT.OPTIONS.VISIBILITY.map(v => v.value))],

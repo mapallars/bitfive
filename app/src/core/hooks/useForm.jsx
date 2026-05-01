@@ -10,8 +10,9 @@ export function useForm(initialValues = {}, initialErrors = {}) {
       ...form,
       [name]: type === 'checkbox' ? checked : value,
     })
-    if(errors[name]) {
+    if (errors[name]) {
       const { [name]: removed, ...rest } = errors
+      removed;
       setErrors(rest)
     }
   }

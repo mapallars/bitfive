@@ -2,13 +2,12 @@
 import NearbyEventCard from './NearbyEventCard'
 import Empity from '../../../../../../core/components/Empity/Empity'
 
-const NearbyEvents = ({ events = [], onEventSelect = () => {} }) => {
-    const count = events.length || 0
+const NearbyEvents = ({ events = [], onEventSelect = () => { } }) => {
 
     // Obtener los 8 eventos más próximos y agruparlos por fecha
     const getUpcomingEvents = () => {
         const now = new Date()
-        
+
         return events
             .filter(event => event && event.startAt && new Date(event.startAt) >= now)
             .sort((a, b) => new Date(a.startAt) - new Date(b.startAt))
@@ -18,21 +17,21 @@ const NearbyEvents = ({ events = [], onEventSelect = () => {} }) => {
     // Agrupar eventos por fecha
     const groupEventsByDate = (events) => {
         const grouped = {}
-        
+
         events.forEach(event => {
             const date = new Date(event.startAt)
             const dateKey = date.toDateString()
-            
+
             if (!grouped[dateKey]) {
                 grouped[dateKey] = {
                     date: date,
                     events: []
                 }
             }
-            
+
             grouped[dateKey].events.push(event)
         })
-        
+
         return Object.values(grouped).sort((a, b) => a.date - b.date)
     }
 
@@ -43,7 +42,7 @@ const NearbyEvents = ({ events = [], onEventSelect = () => {} }) => {
         <div className='lx-c-nearby-events'>
             {groupedEvents.length > 0 ? (
                 <div className='lx-c-nearby-events-timeline'>
-                    {groupedEvents.map((dateGroup, dateIndex) => (
+                    {groupedEvents.map((dateGroup) => (
                         <div key={dateGroup.date.toISOString()} className='lx-c-nearby-events-date-group'>
                             {/* Nodo de fecha */}
                             <div className='lx-c-nearby-events-date-node'>
@@ -61,14 +60,13 @@ const NearbyEvents = ({ events = [], onEventSelect = () => {} }) => {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             {/* Eventos de esta fecha */}
                             <div className='lx-c-nearby-events-date-events'>
                                 {dateGroup.events.map((event, eventIndex) => (
-                                    <NearbyEventCard 
-                                        key={event.id} 
+                                    <NearbyEventCard
+                                        key={event.id}
                                         event={event}
-                                        dateIndex={dateIndex}
                                         eventIndex={eventIndex}
                                         totalInDate={dateGroup.events.length}
                                         onSelect={() => onEventSelect(event)}
