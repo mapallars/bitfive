@@ -5,7 +5,7 @@ import HandleableError from '../errors/Handleable.error.js'
 @Middleware()
 export class ErrorMiddleware {
 
-    public static handle(error, request, response, next) {
+    public static handle(error, request, response, _next) {
 
         console.error(error)
 

@@ -158,7 +158,7 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
                 let joinResult;
                 try {
                     joinResult = await this.db.query(joinSql, entityIds);
-                } catch (e: any) { continue; } // Handle case where table is not yet synced
+                } catch (_e: any) { continue; } // Handle case where table is not yet synced
 
                 const joinRows = joinResult.rows;
                 const targetIdsToFetch = Array.from(new Set(joinRows.map(r => r[targetIdCol])));
@@ -239,7 +239,7 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
                             `UPDATE "${targetTableName}" SET "${fkCol}" = $1, "updatedAt" = NOW() WHERE "${targetIdField}" = $2`,
                             [entityId, childId]
                         );
-                    } catch (e: any) { } // Suppress if column doesn't exist yet
+                    } catch (_e: any) { /* Suppress if column doesn't exist yet */ } 
                 }
                 continue;
             }
@@ -299,7 +299,7 @@ export class BaseRepository<T extends { id?: string;[key: string]: any }> {
                         }
                         await this.db.query(`INSERT INTO "${joinTableName}" ("${selfIdCol}", "${targetIdCol}") VALUES ${rowPlaceholders.join(',')}`, values);
                     }
-                } catch (e: any) { } // Suppress errors if table doesn't exist yet before sync
+                } catch (_e: any) { /* Suppress errors if table doesn't exist yet before sync */ }
             }
         }
     }
