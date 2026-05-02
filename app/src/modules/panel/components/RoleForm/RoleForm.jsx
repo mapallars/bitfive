@@ -7,11 +7,9 @@ import Input from '../../../../core/components/Input/Input'
 import Textarea from '../../../../core/components/Textarea/Textarea'
 import AuthRequester from '../../services/AuthRequester.mjs'
 
-const RoleForm = ({ role, onCancel = () => { }, handler = (result) => { } }) => {
+const RoleForm = ({ role, onCancel = () => { }, handler = () => { } }) => {
     const {
         form,
-        setForm,
-        resetForm,
         errors,
         setErrors,
         handleChange

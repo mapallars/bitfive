@@ -1,7 +1,7 @@
 ﻿import Button from "../../../../../../core/components/Button/Button"
 import Icon from "../../../../../../core/components/Icon/Icon"
 
-const NearbyEventCard = ({ event, dateIndex, eventIndex, totalInDate, onSelect }) => {
+const NearbyEventCard = ({ event, eventIndex, totalInDate, onSelect }) => {
     const {
         name = '-',
         location = '-',
@@ -10,14 +10,8 @@ const NearbyEventCard = ({ event, dateIndex, eventIndex, totalInDate, onSelect }
         startAt = new Date()
     } = event
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleString('es-MX', { 
-            dateStyle: 'short'
-        })
-    }
-
     const formatTime = (date) => {
-        return new Date(date).toLocaleString('es-MX', { 
+        return new Date(date).toLocaleString('es-MX', {
             timeStyle: 'short'
         })
     }
@@ -30,7 +24,7 @@ const NearbyEventCard = ({ event, dateIndex, eventIndex, totalInDate, onSelect }
                 <div className='lx-c-nearby-event-card-header'>
                     <h3 className='lx-c-nearby-event-card-name'>{name}</h3>
                 </div>
-                
+
                 <div className='lx-c-nearby-event-card-body'>
                     <div className='lx-c-nearby-event-card-row'>
                         <span className='lx-c-nearby-event-card-label'>
@@ -79,7 +73,7 @@ const NearbyEventCard = ({ event, dateIndex, eventIndex, totalInDate, onSelect }
                     </Button>
                 </div>
             </div>
-            
+
             {!isLastEventInDate && <div className='lx-c-nearby-event-card-connector' />}
         </div>
     )

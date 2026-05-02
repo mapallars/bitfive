@@ -78,12 +78,16 @@ export const AuthProvider = ({ children }) => {
           'Authorization': `${session.token}`
         }
       })
+
+      if (!result.ok) {
+        localStorage.removeItem('session')
+        setSession(null)
+        Notify.notice('Sesión cerrada', 'info')
+        return
+      }
     } catch (error) {
-      Notify.notice('Error al cerrar sesión', 'error')
+      Notify.notice(error.message || 'Error al cerrar sesión', 'error')
     }
-    localStorage.removeItem('session')
-    setSession(null)
-    Notify.notice('Sesión cerrada', 'info')
   }
 
   const validateSession = async () => {

@@ -29,7 +29,6 @@ export class Validator {
         }
         catch (error) {
             if ($field) $field.focus()
-            console.log($field)
             this.field
                 ? this.errorHandler(prev => ({ ...prev, [this.field]: error.message }))
                 : Notify.notice(error.message, 'warning')

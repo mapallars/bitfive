@@ -12,8 +12,6 @@ const EventCard = ({ event, onDelete = () => { }, onEdit = () => { }, onView = (
         startAt,
     } = event
 
-    const icons = { Admin: 'manage_accounts', Event: 'person_check', Guest: 'person', Veterinarian: 'person_heart', Operator: 'person_apron' }
-
     return (<div className={`lx-c-event-card --${isActive ? 'active' : 'inactive'}`} onClick={() => onView(event)} style={{ '--lx-c-event-card-color': color }}>
         <div className='lx-c-event-card-head'>
             <div className='lx-c-event-card-cover'>
