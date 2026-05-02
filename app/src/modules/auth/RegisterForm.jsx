@@ -4,7 +4,6 @@ import { useForm } from '../../core/hooks/useForm'
 import { REGISTER } from './constants/register.mjs'
 import Validator from '../../core/utils/validator.mjs'
 import Notify from '../../core/lib/notify.mjs'
-import Brand from '../../core/components/Brand/Brand'
 import Logo from '../../core/components/Logo/Logo'
 import Button from '../../core/components/Button/Button'
 import Icon from '../../core/components/Icon/Icon'
@@ -359,7 +358,7 @@ const RegisterForm = ({ authenticationMode, setAuthenticationMode, signUp }) => 
                                             id='RegisterImage'
                                             name='image'
                                             type='file'
-                                            accept="image/png, image/jpeg, image/webp, .png, .jpg, .webp"
+                                            accept='image/png, image/jpeg, image/webp, .png, .jpg, .webp'
                                             autoComplete='off'
                                         />
                                         <label htmlFor='RegisterImage' className='lx-forms-label'>Imagen</label>
@@ -370,7 +369,7 @@ const RegisterForm = ({ authenticationMode, setAuthenticationMode, signUp }) => 
 
                             <div className={`lx-m-authentication-register-form-content-section ${step === 5 && '--visible'}`}>
                                 <p className='lx-m-authentication-register-form-content-section-message'>
-                                    ¡Listo! Ya tenemos tus datos validados para crear la cuenta y terminar con el proceso. Haz un click el botón de "Registrarse" a continuación, e inicia sesión con tus credenciales.
+                                    ¡Listo! Ya tenemos tus datos validados para crear la cuenta y terminar con el proceso. Haz un click el botón de Registrarse a continuación, e inicia sesión con tus credenciales.
                                 </p>
                             </div>
                         </div>

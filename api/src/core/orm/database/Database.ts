@@ -214,7 +214,7 @@ export class Database {
                     `
                     try {
                         await this.query(createJoinTableSql)
-                    } catch (e: any) {
+                    } catch (_e: any) {
                         // ignore constraint duplicate issues from reverse relationship passes
                     }
                 }

@@ -19,8 +19,6 @@ const UserCard = ({ user, onDelete = () => { }, onAuthorization = () => { }, onR
         lastLogin
     } = user
 
-    const icons = { Admin: 'manage_accounts', User: 'person_check', Guest: 'person', Veterinarian: 'person_heart', Operator: 'person_apron' }
-
     return (<div className={`lx-c-user-card --${isAuthorized ? 'active' : 'inactive'} --${isOnline ? 'online' : 'offline'}`} onClick={() => onView(user)}>
         <div className='lx-c-user-card-header'>
             <div className='lx-c-user-card-header-online'>
