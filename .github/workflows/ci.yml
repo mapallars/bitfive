@@ -1,0 +1,240 @@
+# ============================================================
+#  CI Pipeline — bitfive monorepo
+#  Backend : /api  (TypeScript / Node.js)
+#  Frontend: /app  (JavaScript / React)
+#
+#  Jobs
+#  ├── lint    → matrix: [backend, frontend]
+#  ├── build   → matrix: [backend, frontend]
+#  └── semgrep → SAST dividido por path
+#
+#  Política Semgrep
+#  ├── PR → develop   : baseline scan (solo findings nuevos)
+#  ├── push develop   : full scan (visible en Security tab)
+#  ├── PR → main      : full scan estricto (bloquea si hay ERROR)
+#  └── push main / release/* / hotfix/* : full scan estricto
+# ============================================================
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "release/*"
+      - "hotfix/*"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  # ----------------------------------------------------------
+  # 1. LINT
+  # ----------------------------------------------------------
+  lint:
+    name: "Lint · ${{ matrix.name }}"
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: backend
+            path: api
+            lang: typescript
+          - name: frontend
+            path: app
+            lang: javascript
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.path }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ matrix.path }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type-check
+        if: matrix.lang == 'typescript'
+        run: npx tsc --noEmit
+
+      - name: ESLint
+        run: npm run lint --if-present
+
+  # ----------------------------------------------------------
+  # 2. BUILD
+  # ----------------------------------------------------------
+  build:
+    name: "Build · ${{ matrix.name }}"
+    runs-on: ubuntu-latest
+    needs: lint
+    if: needs.lint.result == 'success' || needs.lint.result == 'failure'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: backend
+            path: api
+            artifact: backend-dist
+            dist: api/dist
+          - name: frontend
+            path: app
+            artifact: frontend-dist
+            dist: app/dist
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.path }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ${{ matrix.path }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.dist }}
+          retention-days: 3
+
+  # ----------------------------------------------------------
+  # 3. SEMGREP SAST
+  # ----------------------------------------------------------
+  semgrep:
+    name: "SAST · Semgrep"
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.result == 'success' || needs.build.result == 'failure'
+    permissions:
+      contents: read
+      security-events: write
+    container:
+      image: semgrep/semgrep
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      
+      - name: Fix git ownership
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      # Calcula si el scan debe ser estricto o usar baseline según la rama
+      - name: Determinar política
+        id: policy
+        run: |
+          STRICT="false"
+          BASELINE=""
+
+          if [ "${{ github.event_name }}" = "pull_request" ] \
+          && [ "${{ github.base_ref }}" = "main" ]; then
+            STRICT="true"
+          fi
+
+          if [ "${{ github.ref }}" = "refs/heads/main" ] \
+          || echo "${{ github.ref }}" | grep -qE '^refs/heads/release/|^refs/heads/hotfix/'; then
+            STRICT="true"
+          fi
+
+          if [ "${{ github.event_name }}" = "pull_request" ] \
+          && [ "${{ github.base_ref }}" = "develop" ]; then
+            # --baseline-commit reemplaza a --baseline-ref en semgrep >= 1.x
+            BASELINE="--baseline-commit=origin/develop"
+          fi
+
+          echo "strict=$STRICT"     >> $GITHUB_OUTPUT
+          echo "baseline=$BASELINE" >> $GITHUB_OUTPUT
+
+      # Packs: p/ci · p/security-audit · p/secrets · p/typescript · p/nodejs
+      - name: Semgrep · Backend (/api)
+        run: |
+          STRICT_FLAGS=""
+          if [ "${{ steps.policy.outputs.strict }}" = "true" ]; then
+            STRICT_FLAGS="--error --severity=ERROR"
+          fi
+
+          semgrep scan \
+            --config=p/ci \
+            --config=p/security-audit \
+            --config=p/secrets \
+            --config=p/typescript \
+            --config=p/nodejs \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=coverage \
+            --exclude='*.min.js' \
+            ${{ steps.policy.outputs.baseline }} \
+            $STRICT_FLAGS \
+            --sarif --output=results-backend.sarif \
+            ./api
+
+      # Packs: p/ci · p/security-audit · p/secrets · p/javascript · p/react
+      - name: Semgrep · Frontend (/app)
+        run: |
+          STRICT_FLAGS=""
+          if [ "${{ steps.policy.outputs.strict }}" = "true" ]; then
+            STRICT_FLAGS="--error --severity=ERROR"
+          fi
+
+          semgrep scan \
+            --config=p/ci \
+            --config=p/security-audit \
+            --config=p/secrets \
+            --config=p/javascript \
+            --config=p/react \
+            --exclude=node_modules \
+            --exclude=dist \
+            --exclude=build \
+            --exclude=coverage \
+            --exclude=.vite \
+            --exclude=.turbo \
+            --exclude=.next \
+            --exclude='*.min.js' \
+            ${{ steps.policy.outputs.baseline }} \
+            $STRICT_FLAGS \
+            --sarif --output=results-frontend.sarif \
+            ./app
+
+      - name: Publicar SARIF Backend
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results-backend.sarif
+          category: semgrep-backend
+
+      - name: Publicar SARIF Frontend
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results-frontend.sarif
+          category: semgrep-frontend
