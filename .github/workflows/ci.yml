@@ -145,6 +145,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      
+      - name: Fix git ownership
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       # Calcula si el scan debe ser estricto o usar baseline según la rama
       - name: Determinar política
         id: policy
@@ -164,7 +168,8 @@ jobs:
 
           if [ "${{ github.event_name }}" = "pull_request" ] \
           && [ "${{ github.base_ref }}" = "develop" ]; then
-            BASELINE="--baseline-ref=origin/develop"
+            # --baseline-commit reemplaza a --baseline-ref en semgrep >= 1.x
+            BASELINE="--baseline-commit=origin/develop"
           fi
 
           echo "strict=$STRICT"     >> $GITHUB_OUTPUT
