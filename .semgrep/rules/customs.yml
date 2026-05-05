@@ -1,0 +1,13 @@
+rules:
+  - id: no-eval-usage
+    name: Detectar uso de eval y ejecución dinámica
+    message: "Evita usar eval() o ejecución dinámica. Riesgo de RCE."
+    severity: ERROR
+    languages: [javascript, typescript]
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+    metadata:
+      category: security
+      cwe: "CWE-95"
+      owasp: "A03:2021 - Injection"
