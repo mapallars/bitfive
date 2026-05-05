@@ -14,10 +14,13 @@ import Constant from '../../constants/constant.mjs'
 import { EVENT } from '../../constants/event.constant.mjs'
 import SatatusTag from '../../../../core/components/StatusTag/StatusTag'
 import EventRequester from '../../services/EventRequester.mjs'
+import ScannerQR from '../ScannerQR/ScannerQR'
+import EnrollmentRequester from '../../services/EnrollmentRequester.mjs'
 
 const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
     const [event, setEvent] = useState(_event)
     const [mode, setMode] = useState(null)
+    const [checkInMode, setCheckInMode] = useState(false)
     const [tab, setTab] = useState('details')
     const [users, setUsers] = useState([])
     const { loading, withLoad } = useLoad(true)
@@ -39,6 +42,12 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
     const removeOrganizer = async (organizer) => {
         const eventUpdated = await EventRequester.removeOrganizer(event, organizer)
         setEvent(eventUpdated)
+    }
+
+    const handleEnrollmentCheckIn = async (enrollmentId) => {
+        const enrollmentUpdated = await EnrollmentRequester.checkInEnrollment(event.id, enrollmentId)
+        const eventUpdated = { ...event, enrollments: event.enrollments.map(enrollment => enrollment.id === enrollmentId ? enrollmentUpdated : enrollment) }
+        if (enrollmentUpdated) setEvent(eventUpdated)
     }
 
     if (!_event) return null
@@ -252,6 +261,12 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                         )}
                         {tab === 'enrollments' && (
                             <>
+                                <Button size='s' onClick={() => setMode('check-in')}>
+                                    <Icon name='qr_code_scanner' />
+                                    Check-in de inscripciones
+                                </Button>
+                                <br />
+                                <br />
                                 <Table
                                     objects={event?.enrollments ?? []}
                                     mapper={(enrollment, index) => ({
@@ -340,6 +355,20 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                             selectionable={false}
                             selectable={false}
                         />
+                    </div>
+                }
+            />
+
+            <Modal
+                show={mode === 'check-in'}
+                title='Check-in de inscripciones'
+                size='standar'
+                position='center'
+                onClose={() => setMode(null)}
+
+                children={
+                    <div>
+                        <ScannerQR onResult={handleEnrollmentCheckIn} />
                     </div>
                 }
             />
