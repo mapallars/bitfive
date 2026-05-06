@@ -43,6 +43,18 @@ export class EnrollmentController {
         return response.status(200).json(enrollments.map(enrollment => new EnrollmentDTO(enrollment)))
     }
 
+    @Get('/event/:id/report')
+    @Permissions([PERMISSIONS.ENROLLMENT.READ])
+    async attendanceReport(request, response) {
+        const { id } = request.params || {}
+
+        Validator.required({ id })
+
+        const report = await this.enrollmentService.getAttendanceReport(id)
+
+        return response.status(200).json(report)
+    }
+
     @Get('/event/:id')
     @Permissions([PERMISSIONS.ENROLLMENT.READ])
     async findByEventId(request, response) {
