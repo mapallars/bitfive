@@ -7,6 +7,8 @@ import { APP_NAME, HOST_NAME, VERSIONING, PORT } from './core/config/api.config.
 import ErrorMiddleware from './core/middlewares/Error.middleware.js'
 import CoreRouter from './core/router/Core.router.js'
 import { Database } from './core/orm/database/Database.js'
+import { startMailerWorker } from './notification/workers/Mailer.worker.js'
+import { startReminderScheduler } from './notification/schedulers/Reminder.scheduler.js'
 
 dotenv.config()
 
@@ -26,6 +28,9 @@ async function orm() {
 }
 
 await orm()
+
+startMailerWorker()
+startReminderScheduler()
 
 const router = new CoreRouter(app, VERSIONING)
 await router.explore()
