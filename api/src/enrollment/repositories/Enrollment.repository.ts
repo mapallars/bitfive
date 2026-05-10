@@ -46,29 +46,51 @@ export class EnrollmentRepository extends BaseRepository<Enrollment> {
     }
 
 
+    async checkInAtomic(enrollmentId: string, eventId: string, updatedBy: string): Promise<Enrollment | null> {
+        const now = new Date()
+        const result = await this.raw(`
+            UPDATE "Enrollments"
+            SET "enrollmentStatus" = 'CHECKED_IN',
+                "checkedInAt"      = $3,
+                "updatedAt"        = $3,
+                "updatedBy"        = $4
+            WHERE id              = $1
+              AND "eventId"       = $2
+              AND "checkedInAt"   IS NULL
+              AND "enrollmentStatus" != 'CANCELLED'
+              AND "isDeleted"     = false
+            RETURNING *
+        `, [enrollmentId, eventId, now, updatedBy])
+
+        return result[0] ?? null
+    }
+
     // Resumen de asistencia para un evento: totales por estado.
 
     async findAttendanceReport(eventId: string): Promise<{
         total: number
         checkedIn: number
+        confirmed: number
         pending: number
         cancelled: number
     }> {
         const rows = await this.raw(`
             SELECT
-                COUNT(*)                                                        AS total,
-                COUNT(*) FILTER (WHERE "enrollmentStatus" = 'CHECKED_IN')     AS "checkedIn",
-                COUNT(*) FILTER (WHERE "enrollmentStatus" = 'ACTIVE')         AS pending,
-                COUNT(*) FILTER (WHERE "enrollmentStatus" = 'CANCELLED')      AS cancelled
+                COUNT(*)                                                            AS total,
+                COUNT(*) FILTER (WHERE "enrollmentStatus" = 'CHECKED_IN')         AS "checkedIn",
+                COUNT(*) FILTER (WHERE "enrollmentStatus" = 'CONFIRMED')          AS confirmed,
+                COUNT(*) FILTER (WHERE "enrollmentStatus" = 'PENDING')            AS pending,
+                COUNT(*) FILTER (WHERE "enrollmentStatus" = 'CANCELLED')          AS cancelled
             FROM "Enrollments"
             WHERE "eventId" = $1
               AND "isDeleted" = false
         `, [eventId])
 
-        const row = rows[0] ?? { total: 0, checkedIn: 0, pending: 0, cancelled: 0 }
+        const row = rows[0] ?? { total: 0, checkedIn: 0, confirmed: 0, pending: 0, cancelled: 0 }
         return {
             total: Number(row.total),
             checkedIn: Number(row.checkedIn),
+            confirmed: Number(row.confirmed),
             pending: Number(row.pending),
             cancelled: Number(row.cancelled),
         }

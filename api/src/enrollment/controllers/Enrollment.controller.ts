@@ -36,7 +36,7 @@ export class EnrollmentController {
     async findByUserId(request, response) {
         const { id } = request.params || {}
 
-        Validator.required({ id })
+        Validator.required({ id }).isUUID({ id })
 
         const enrollments = await this.enrollmentService.findManyByUserId(id)
 
@@ -48,7 +48,7 @@ export class EnrollmentController {
     async attendanceReport(request, response) {
         const { id } = request.params || {}
 
-        Validator.required({ id })
+        Validator.required({ id }).isUUID({ id })
 
         const report = await this.enrollmentService.getAttendanceReport(id)
 
@@ -60,7 +60,7 @@ export class EnrollmentController {
     async findByEventId(request, response) {
         const { id } = request.params || {}
 
-        Validator.required({ id })
+        Validator.required({ id }).isUUID({ id })
 
         const enrollments = await this.enrollmentService.findManyByEventId(id)
 
@@ -72,7 +72,7 @@ export class EnrollmentController {
     async findById(request, response) {
         const { id } = request.params || {}
 
-        Validator.required({ id })
+        Validator.required({ id }).isUUID({ id })
 
         const enrollment = await this.enrollmentService.findById(id)
 
@@ -101,6 +101,7 @@ export class EnrollmentController {
 
         Validator
             .required({ id, enrollmentStatus })
+            .isUUID({ id })
             .isIn({ enrollmentStatus }, ['PENDING', 'CONFIRMED', 'CANCELLED'])
 
         const enrollment = await this.enrollmentService.update(id, { enrollmentStatus }, request.user)
@@ -113,7 +114,7 @@ export class EnrollmentController {
     async cancel(request, response) {
         const { id } = request.params
 
-        Validator.required({ id })
+        Validator.required({ id }).isUUID({ id })
 
         const enrollment = await this.enrollmentService.cancel(id, request.user)
 
@@ -125,7 +126,7 @@ export class EnrollmentController {
     async delete(request, response) {
         const { id } = request.params
 
-        Validator.required({ id })
+        Validator.required({ id }).isUUID({ id })
 
         await this.enrollmentService.delete(id, request.user)
 

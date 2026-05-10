@@ -20,6 +20,9 @@ export class Enrollment {
     @Column({ type: 'date', nullable: true })
     checkedInAt: Date | null
 
+    @Column({ type: 'date', nullable: true })
+    reminderSentAt: Date | null
+
     status: string
     isActive: boolean
     isDeleted: boolean

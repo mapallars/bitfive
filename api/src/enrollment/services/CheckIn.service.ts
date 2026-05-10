@@ -14,43 +14,43 @@ export class CheckInService {
     ) { }
 
     async checkIn(enrollmentId: string, eventId: string) {
-        const enrollment = await this.enrollmentRepository.findById(enrollmentId)
+        const updated = await this.enrollmentRepository.checkInAtomic(enrollmentId, eventId, 'system')
 
-        if (!enrollment) {
+        if (!updated) {
+            const enrollment = await this.enrollmentRepository.findById(enrollmentId)
+
+            if (!enrollment) {
+                throw new NotFoundError('La inscripción no existe o el código QR no es válido')
+            }
+            if (enrollment.event?.id !== eventId) {
+                throw new ForbiddenError('El código QR pertenece a un evento diferente')
+            }
+            if (enrollment.enrollmentStatus === 'CANCELLED') {
+                throw new ForbiddenError('La inscripción está cancelada y no permite check-in')
+            }
+            if (enrollment.checkedInAt) {
+                throw new AlreadyExistError('El código QR ya fue utilizado para registrar asistencia')
+            }
+
             throw new NotFoundError('La inscripción no existe o el código QR no es válido')
         }
 
-        if (enrollment.enrollmentStatus === 'CANCELLED') {
-            throw new ForbiddenError('La inscripción está cancelada y no permite check-in')
-        }
-
-        if (enrollment.checkedInAt) {
-            throw new AlreadyExistError('El código QR ya fue utilizado para registrar asistencia')
-        }
-
-        if (enrollment.event?.id !== eventId) {
-            throw new ForbiddenError('El código QR pertenece a un evento diferente')
-        }
-
-        const updated = await this.enrollmentRepository.update(enrollmentId, {
-            enrollmentStatus: 'CHECKED_IN',
-            checkedInAt: new Date(),
-        })
+        const fullEnrollment = await this.enrollmentRepository.findById(enrollmentId)
 
         try {
-            if (enrollment.user?.email) {
+            if (fullEnrollment?.user?.email) {
                 await mailerQueue.add('checkin-confirmation', {
-                    userEmail: enrollment.user.email,
-                    userName: enrollment.user.username,
-                    eventName: enrollment.event?.name,
-                    checkedInAt: new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' }),
+                    userEmail: fullEnrollment.user.email,
+                    userName: fullEnrollment.user.username,
+                    eventName: fullEnrollment.event?.name,
+                    checkedInAt: new Date(updated.checkedInAt!).toLocaleString('es-CO', { timeZone: 'America/Bogota' }),
                 })
             }
         } catch (err: any) {
-            console.error('[CheckInService] Error al encolar correo de check-in:', err.message)
+            console.error(`[CheckIn] Error al encolar correo de check-in (enrollmentId=${enrollmentId}):`, err.message)
         }
 
-        return updated
+        return fullEnrollment
     }
 
 }

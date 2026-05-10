@@ -81,7 +81,7 @@ export class EnrollmentService {
                 })
             }
         } catch (err: any) {
-            console.error('[EnrollmentService] Error al encolar correo de confirmación:', err.message)
+            console.error(`[Enrollment] Error al encolar correo de confirmación (enrollmentId=${created.id}):`, err.message)
         }
 
         return created

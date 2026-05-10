@@ -74,7 +74,9 @@ export class EventService {
         if (hasScheduleOrLocationChange) {
             try {
                 const enrollments = await this.enrollmentRepository.findManyByEventIdWithUsers(id)
-                const activeEnrollments = enrollments.filter(e => e.enrollmentStatus !== 'CANCELLED')
+                const activeEnrollments = enrollments.filter(e =>
+                    e.enrollmentStatus !== 'CANCELLED' && e.enrollmentStatus !== 'CHECKED_IN'
+                )
                 for (const enrollment of activeEnrollments) {
                     await mailerQueue.add('event-update', {
                         userEmail: enrollment.userEmail,
@@ -85,7 +87,7 @@ export class EventService {
                     })
                 }
             } catch (err: any) {
-                console.error('[EventService] Error al encolar notificaciones de cambio:', err.message)
+                console.error(`[Event] Error al encolar notificaciones de cambio (eventId=${id}):`, err.message)
             }
         }
 

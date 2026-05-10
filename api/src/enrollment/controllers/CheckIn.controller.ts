@@ -20,7 +20,9 @@ export class CheckInController {
     async checkIn(request, response) {
         const { enrollmentId, eventId } = request.body
 
-        Validator.required({ enrollmentId, eventId })
+        Validator
+            .required({ enrollmentId, eventId })
+            .isUUID({ enrollmentId, eventId })
 
         const enrollment = await this.checkInService.checkIn(enrollmentId, eventId)
 
