@@ -1,0 +1,149 @@
+.lx-p-enrollments {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: var(--lx-padding-xxl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-xl);
+    background-color: var(--lx-color-background-special);
+}
+
+.lx-p-enrollments-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--lx-space-l);
+    border-bottom: var(--lx-primary-border);
+}
+
+.lx-p-enrollments-header-content {
+    width: 100%;
+}
+
+.lx-p-enrollments-title {
+    font-size: var(--lx-font-size-xxxl);
+    font-weight: 700;
+    color: var(--lx-color-text);
+    margin-bottom: var(--lx-space-s);
+    letter-spacing: -0.6pt;
+}
+
+.lx-p-enrollments-description {
+    font-size: var(--lx-font-size-l);
+    color: var(--lx-color-text-softest);
+}
+
+.lx-p-enrollments-content {
+    flex: 1;
+    width: 100%;
+}
+
+.lx-p-enrollments-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-l);
+}
+
+.lx-p-enrollments-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-m);
+    background-color: var(--lx-color-background-primary);
+    border-radius: var(--lx-border-radius-m);
+    padding: var(--lx-padding-xl);
+    box-shadow: var(--lx-box-shadow);
+    border: var(--lx-primary-border);
+}
+
+.lx-p-enrollments-section-header {
+    width: 100%;
+    padding-bottom: var(--lx-space-m);
+    border-bottom: var(--lx-primary-border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--lx-space-l);
+}
+
+.lx-p-enrollments-section-header > div:first-child {
+    flex: 1;
+}
+
+.lx-p-enrollments-section-header-info {
+    flex: 1;
+}
+
+.lx-p-enrollments-section-title {
+    font-size: var(--lx-font-size-xxl);
+    font-weight: 600;
+    color: var(--lx-color-text);
+    margin-bottom: var(--lx-space-xs);
+    letter-spacing: -0.6pt;
+}
+
+.lx-p-enrollments-section-description {
+    font-size: var(--lx-font-size-m);
+    color: var(--lx-color-text-softer);
+}
+
+.lx-p-enrollments-filter {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--lx-space-m);
+    width: auto;
+    flex-shrink: 0;
+}
+
+.lx-p-enrollments-filter-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--lx-color-text-softer);
+    flex-shrink: 0;
+    margin-bottom: var(--lx-space-xs);
+}
+
+.lx-p-enrollments-filter .lx-forms-input-field {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* Estilos de opciones del Select según el tema */
+.lx-p-enrollments-filter select option {
+    background-color: var(--lx-color-background-primary);
+    color: var(--lx-color-text);
+    padding: var(--lx-padding-m);
+}
+
+.lx-p-enrollments-filter select option:hover {
+    background-color: var(--lx-color-background-secondary);
+}
+
+.lx-p-enrollments-filter select option:checked {
+    background-color: var(--lx-color-primary);
+    color: var(--lx-color-text-inverse);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .lx-p-enrollments {
+        padding: var(--lx-padding-l);
+        gap: var(--lx-space-l);
+    }
+
+    .lx-p-enrollments-title {
+        font-size: var(--lx-font-size-xxl);
+    }
+
+    .lx-p-enrollments-section {
+        padding: var(--lx-padding-l);
+    }
+
+    .lx-p-enrollments-container {
+        gap: var(--lx-space-xl);
+    }
+}
