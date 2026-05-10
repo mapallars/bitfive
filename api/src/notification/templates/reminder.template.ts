@@ -1,3 +1,5 @@
+import { escapeHtml } from './utils/escapeHtml.js'
+
 export interface ReminderTemplateData {
     userName: string
     eventName: string
@@ -6,6 +8,11 @@ export interface ReminderTemplateData {
 }
 
 export function reminderTemplate(data: ReminderTemplateData): string {
+    const userName = escapeHtml(data.userName)
+    const eventName = escapeHtml(data.eventName)
+    const eventDate = escapeHtml(data.eventDate)
+    const eventLocation = escapeHtml(data.eventLocation)
+
     return `
 <!DOCTYPE html>
 <html lang="es">
@@ -31,12 +38,12 @@ export function reminderTemplate(data: ReminderTemplateData): string {
       <h1>Recordatorio: Evento Mañana</h1>
     </div>
     <div class="body">
-      <p>Hola <strong>${data.userName}</strong>,</p>
+      <p>Hola <strong>${userName}</strong>,</p>
       <p>Te recordamos que mañana se lleva a cabo el evento en el que estás inscrito. ¡No olvides llevar tu código QR!</p>
       <div class="event-details">
-        <p><strong>Evento:</strong> ${data.eventName}</p>
-        <p><strong>Fecha:</strong> ${data.eventDate}</p>
-        <p><strong>Lugar:</strong> ${data.eventLocation}</p>
+        <p><strong>Evento:</strong> ${eventName}</p>
+        <p><strong>Fecha:</strong> ${eventDate}</p>
+        <p><strong>Lugar:</strong> ${eventLocation}</p>
       </div>
       <p>¡Te esperamos!</p>
     </div>

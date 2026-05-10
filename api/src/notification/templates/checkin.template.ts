@@ -1,3 +1,5 @@
+import { escapeHtml } from './utils/escapeHtml.js'
+
 export interface CheckInTemplateData {
     userName: string
     eventName: string
@@ -5,6 +7,10 @@ export interface CheckInTemplateData {
 }
 
 export function checkInTemplate(data: CheckInTemplateData): string {
+    const userName = escapeHtml(data.userName)
+    const eventName = escapeHtml(data.eventName)
+    const checkedInAt = escapeHtml(data.checkedInAt)
+
     return `
 <!DOCTYPE html>
 <html lang="es">
@@ -32,11 +38,11 @@ export function checkInTemplate(data: CheckInTemplateData): string {
     </div>
     <div class="body">
       <div class="check-icon">✅</div>
-      <p>Hola <strong>${data.userName}</strong>,</p>
+      <p>Hola <strong>${userName}</strong>,</p>
       <p>Tu asistencia al siguiente evento ha sido registrada exitosamente.</p>
       <div class="event-details">
-        <p><strong>Evento:</strong> ${data.eventName}</p>
-        <p><strong>Registrado el:</strong> ${data.checkedInAt}</p>
+        <p><strong>Evento:</strong> ${eventName}</p>
+        <p><strong>Registrado el:</strong> ${checkedInAt}</p>
       </div>
       <p>¡Esperamos que disfrutes el evento!</p>
     </div>

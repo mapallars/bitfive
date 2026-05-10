@@ -1,3 +1,5 @@
+import { escapeHtml } from './utils/escapeHtml.js'
+
 export interface EventUpdateTemplateData {
     userName: string
     eventName: string
@@ -6,6 +8,11 @@ export interface EventUpdateTemplateData {
 }
 
 export function eventUpdateTemplate(data: EventUpdateTemplateData): string {
+    const userName = escapeHtml(data.userName)
+    const eventName = escapeHtml(data.eventName)
+    const eventDate = escapeHtml(data.eventDate)
+    const eventLocation = escapeHtml(data.eventLocation)
+
     return `
 <!DOCTYPE html>
 <html lang="es">
@@ -31,12 +38,12 @@ export function eventUpdateTemplate(data: EventUpdateTemplateData): string {
       <h1>Evento Actualizado</h1>
     </div>
     <div class="body">
-      <p>Hola <strong>${data.userName}</strong>,</p>
+      <p>Hola <strong>${userName}</strong>,</p>
       <p>El organizador del evento en el que estás inscrito ha realizado cambios importantes. Por favor revisa los nuevos detalles:</p>
       <div class="event-details">
-        <p><strong>Evento:</strong> ${data.eventName}</p>
-        <p><strong>Nueva fecha:</strong> ${data.eventDate}</p>
-        <p><strong>Nuevo lugar:</strong> ${data.eventLocation}</p>
+        <p><strong>Evento:</strong> ${eventName}</p>
+        <p><strong>Nueva fecha:</strong> ${eventDate}</p>
+        <p><strong>Nuevo lugar:</strong> ${eventLocation}</p>
       </div>
       <p>Tu código QR de asistencia sigue siendo válido. Si tienes dudas, contacta al organizador del evento.</p>
     </div>

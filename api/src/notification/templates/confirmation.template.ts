@@ -1,3 +1,5 @@
+import { escapeHtml } from './utils/escapeHtml.js'
+
 export interface ConfirmationTemplateData {
   userName: string
   eventName: string
@@ -7,6 +9,11 @@ export interface ConfirmationTemplateData {
 }
 
 export function confirmationTemplate(data: ConfirmationTemplateData): string {
+  const userName = escapeHtml(data.userName)
+  const eventName = escapeHtml(data.eventName)
+  const eventDate = escapeHtml(data.eventDate)
+  const eventLocation = escapeHtml(data.eventLocation)
+
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -35,12 +42,12 @@ export function confirmationTemplate(data: ConfirmationTemplateData): string {
       <h1>¡Inscripción Confirmada!</h1>
     </div>
     <div class="body">
-      <p>Hola <strong>${data.userName}</strong>,</p>
+      <p>Hola <strong>${userName}</strong>,</p>
       <p>Tu inscripción al siguiente evento ha sido registrada exitosamente.</p>
       <div class="event-details">
-        <p><strong>Evento:</strong> ${data.eventName}</p>
-        <p><strong>Fecha:</strong> ${data.eventDate}</p>
-        <p><strong>Lugar:</strong> ${data.eventLocation}</p>
+        <p><strong>Evento:</strong> ${eventName}</p>
+        <p><strong>Fecha:</strong> ${eventDate}</p>
+        <p><strong>Lugar:</strong> ${eventLocation}</p>
       </div>
       <div class="qr-section">
         <p>Presenta este código QR el día del evento para registrar tu asistencia.</p>
