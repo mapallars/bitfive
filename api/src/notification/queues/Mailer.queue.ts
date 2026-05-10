@@ -1,15 +1,12 @@
 import { Queue } from 'bullmq'
-import { REDIS_HOST, REDIS_PORT } from '../../core/config/redis.config.js'
+import { getRedisConnection } from '../../core/config/redisConnection.js'
 
 let _queue: Queue | null = null
 
 export function getMailerQueue(): Queue {
     if (!_queue) {
         _queue = new Queue('mailer', {
-            connection: {
-                host: REDIS_HOST(),
-                port: REDIS_PORT(),
-            },
+            connection: getRedisConnection(),
             defaultJobOptions: {
                 attempts: 3,
                 backoff: {
@@ -22,6 +19,13 @@ export function getMailerQueue(): Queue {
         })
     }
     return _queue
+}
+
+export async function closeMailerQueue(): Promise<void> {
+    if (_queue) {
+        await _queue.close()
+        _queue = null
+    }
 }
 
 export const mailerQueue = { add: (...args: Parameters<Queue['add']>) => getMailerQueue().add(...args) }

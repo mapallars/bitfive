@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 import QRCode from 'qrcode'
-import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } from '../../core/config/mailer.config.js'
+import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, SMTP_TLS_INSECURE } from '../../core/config/mailer.config.js'
 import { confirmationTemplate } from '../templates/confirmation.template.js'
 import { eventUpdateTemplate } from '../templates/event-update.template.js'
 import { checkInTemplate } from '../templates/checkin.template.js'
@@ -44,16 +44,17 @@ class MailerService {
 
     private get transporter(): nodemailer.Transporter {
         if (!this._transporter) {
+            const port = SMTP_PORT()
             this._transporter = nodemailer.createTransport({
                 host: SMTP_HOST(),
-                port: SMTP_PORT(),
-                secure: false,
+                port,
+                secure: port === 465,
                 auth: {
                     user: SMTP_USER(),
                     pass: SMTP_PASS(),
                 },
                 tls: {
-                    rejectUnauthorized: false,
+                    rejectUnauthorized: !SMTP_TLS_INSECURE(),
                 },
             })
         }

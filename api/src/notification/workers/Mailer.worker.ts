@@ -1,5 +1,5 @@
 import { Worker, Job } from 'bullmq'
-import { REDIS_HOST, REDIS_PORT } from '../../core/config/redis.config.js'
+import { getRedisConnection } from '../../core/config/redisConnection.js'
 import mailerService from '../services/Mailer.service.js'
 
 async function processJob(job: Job): Promise<void> {
@@ -27,20 +27,23 @@ async function processJob(job: Job): Promise<void> {
 
 export function startMailerWorker(): Worker {
     const worker = new Worker('mailer', processJob, {
-        connection: {
-            host: REDIS_HOST(),
-            port: REDIS_PORT(),
-        },
+        connection: getRedisConnection(),
         concurrency: 5,
     })
 
+    worker.on('completed', (job) => {
+        console.log(`[Mailer] ✔ Job completado: ${job.name} (id: ${job.id})`)
+    })
+
     worker.on('failed', (job, err) => {
-        console.error(`[MailerWorker] ✘ Job fallido: ${job?.name} (id: ${job?.id}) — ${err.message}`)
+        console.error(`[Mailer] ✘ Job fallido: ${job?.name} (id: ${job?.id}) — ${err.message}`)
     })
 
     worker.on('error', (err) => {
-        console.error(`[MailerWorker] Error en worker: ${err.message}`)
+        console.error(`[Mailer] Error en worker: ${err.message}`)
     })
+
+    console.log('[Mailer] ✔ Worker de correos iniciado')
 
     return worker
 }

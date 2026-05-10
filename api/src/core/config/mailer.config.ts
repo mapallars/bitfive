@@ -3,3 +3,4 @@ export const SMTP_PORT = () => Number(process.env.SMTP_PORT) || 587
 export const SMTP_USER = () => process.env.SMTP_USER || ''
 export const SMTP_PASS = () => process.env.SMTP_PASS || ''
 export const SMTP_FROM = () => process.env.SMTP_FROM || 'no-reply@bitfive.dev'
+export const SMTP_TLS_INSECURE = () => process.env.SMTP_TLS_INSECURE === 'true'

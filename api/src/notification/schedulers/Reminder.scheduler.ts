@@ -1,5 +1,5 @@
 import { Worker, Queue } from 'bullmq'
-import { REDIS_HOST, REDIS_PORT } from '../../core/config/redis.config.js'
+import { getRedisConnection } from '../../core/config/redisConnection.js'
 import { Database } from '../../core/orm/database/Database.js'
 import { mailerQueue } from '../queues/Mailer.queue.js'
 
@@ -7,6 +7,7 @@ const SCHEDULER_QUEUE_NAME = 'reminder-scheduler'
 const CHECK_INTERVAL_MS = 60 * 60 * 1000
 
 interface UpcomingEnrollment {
+    enrollmentId: string
     eventId: string
     eventName: string
     startAt: string
@@ -19,6 +20,7 @@ async function findUpcomingEnrollments(): Promise<UpcomingEnrollment[]> {
     const db = Database.getInstance()
     const result = await db.query(`
         SELECT
+            e.id         AS "enrollmentId",
             ev.id        AS "eventId",
             ev.name      AS "eventName",
             ev."startAt" AS "startAt",
@@ -28,15 +30,24 @@ async function findUpcomingEnrollments(): Promise<UpcomingEnrollment[]> {
         FROM "Events" ev
         INNER JOIN "Enrollments" e ON e."eventId" = ev.id
         INNER JOIN "Users" u ON u.id = e."userId"
-        WHERE ev."startAt" BETWEEN NOW() AND NOW() + INTERVAL '24 hours'
+        WHERE ev."startAt" BETWEEN NOW() + INTERVAL '23 hours' AND NOW() + INTERVAL '25 hours'
           AND ev."isActive" = true
           AND ev."isDeleted" = false
           AND ev."eventStatus" != 'CANCELLED'
-          AND e."enrollmentStatus" != 'CANCELLED'
+          AND e."enrollmentStatus" NOT IN ('CANCELLED', 'CHECKED_IN')
+          AND e."reminderSentAt" IS NULL
           AND e."isActive" = true
           AND e."isDeleted" = false
     `)
     return result.rows
+}
+
+async function markReminderSent(enrollmentId: string): Promise<void> {
+    const db = Database.getInstance()
+    await db.query(
+        `UPDATE "Enrollments" SET "reminderSentAt" = NOW(), "updatedAt" = NOW() WHERE id = $1`,
+        [enrollmentId]
+    )
 }
 
 async function processReminderCheck(): Promise<void> {
@@ -50,15 +61,16 @@ async function processReminderCheck(): Promise<void> {
             eventDate: new Date(enrollment.startAt).toLocaleString('es-CO', { timeZone: 'America/Bogota' }),
             eventLocation: enrollment.location,
         }, {
-            jobId: `reminder-${enrollment.eventId}-${enrollment.userEmail}`,
+            jobId: `reminder-${enrollment.enrollmentId}`,
         })
+        await markReminderSent(enrollment.enrollmentId)
     }
 }
 
-export function startReminderScheduler(): void {
-    const schedulerQueue = new Queue(SCHEDULER_QUEUE_NAME, {
-        connection: { host: REDIS_HOST(), port: REDIS_PORT() },
-    })
+export function startReminderScheduler(): { queue: Queue; worker: Worker } {
+    const connection = getRedisConnection()
+
+    const schedulerQueue = new Queue(SCHEDULER_QUEUE_NAME, { connection })
 
     schedulerQueue.upsertJobScheduler(
         'check-upcoming-events',
@@ -70,13 +82,15 @@ export function startReminderScheduler(): void {
         try {
             await processReminderCheck()
         } catch (err: any) {
-            console.error('[ReminderScheduler] Error:', err.message)
+            console.error('[Reminder] Error en processReminderCheck:', err.message)
         }
-    }, {
-        connection: { host: REDIS_HOST(), port: REDIS_PORT() },
-    })
+    }, { connection })
 
     worker.on('failed', (_job, err) => {
-        console.error('[ReminderScheduler] ✘ Job fallido:', err.message)
+        console.error('[Reminder] ✘ Job fallido:', err.message)
     })
+
+    console.log('[Reminder] ✔ Scheduler de recordatorios iniciado')
+
+    return { queue: schedulerQueue, worker }
 }
