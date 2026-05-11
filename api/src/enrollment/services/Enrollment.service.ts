@@ -6,6 +6,7 @@ import User from '../../auth/entities/User.entity.js'
 import EventRepository from '../../event/repositories/Event.repository.js'
 import UserRepository from '../../auth/repositories/User.repository.js'
 import { ForbiddenError } from '../../core/errors/Forbidden.error.js'
+import { mailerQueue } from '../../notification/queues/Mailer.queue.js'
 
 @Service()
 export class EnrollmentService {
@@ -49,8 +50,41 @@ export class EnrollmentService {
         return enrollments
     }
 
+    async getAttendanceReport(eventId: string) {
+        const event = await this.eventRepository.findById(eventId)
+        if (!event) {
+            throw new NotFoundError('El evento no existe')
+        }
+        const report = await this.enrollmentRepository.findAttendanceReport(eventId)
+        const enrollments = await this.enrollmentRepository.findManyByEventId(eventId)
+        return {
+            event: { id: event.id, name: event.name },
+            ...report,
+            enrollments,
+        }
+    }
+
     async create(enrollment: Partial<Enrollment>, user: User) {
-        return await this.enrollmentRepository.create({ ...enrollment, user: user, createdAt: new Date(), createdBy: user.username })
+        const created = await this.enrollmentRepository.create({ ...enrollment, user: user, createdAt: new Date(), createdBy: user.username })
+
+        try {
+            const fullEnrollment = await this.enrollmentRepository.findById(created.id)
+
+            if (fullEnrollment?.user?.email && fullEnrollment?.event) {
+                await mailerQueue.add('enrollment-confirmation', {
+                    enrollmentId: fullEnrollment.id,
+                    userEmail: fullEnrollment.user.email,
+                    userName: fullEnrollment.user.username,
+                    eventName: fullEnrollment.event.name,
+                    eventDate: new Date(fullEnrollment.event.startAt).toLocaleString('es-CO', { timeZone: 'America/Bogota' }),
+                    eventLocation: fullEnrollment.event.location,
+                })
+            }
+        } catch (err: any) {
+            console.error(`[Enrollment] Error al encolar correo de confirmación (enrollmentId=${created.id}):`, err.message)
+        }
+
+        return created
     }
 
     async update(id: string, enrollment: Partial<Enrollment>, user: User) {

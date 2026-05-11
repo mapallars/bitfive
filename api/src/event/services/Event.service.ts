@@ -3,10 +3,12 @@ import { Inject } from '../../core/decorators/inject.decorator.js'
 import EventRepository from '../repositories/Event.repository.js'
 import ParkingRepository from '../../parking/repositories/Parking.repository.js'
 import UserRepository from '../../auth/repositories/User.repository.js'
+import EnrollmentRepository from '../../enrollment/repositories/Enrollment.repository.js'
 import Event from '../entities/Event.entity.js'
 import { NotFoundError } from '../../core/errors/NotFound.error.js'
 import { ForbiddenError } from '../../core/errors/Forbidden.error.js'
 import User from '../../auth/entities/User.entity.js'
+import { mailerQueue } from '../../notification/queues/Mailer.queue.js'
 
 @Service()
 export class EventService {
@@ -17,7 +19,9 @@ export class EventService {
         @Inject(ParkingRepository)
         private parkingRepository: ParkingRepository,
         @Inject(UserRepository)
-        private userRepository: UserRepository
+        private userRepository: UserRepository,
+        @Inject(EnrollmentRepository)
+        private enrollmentRepository: EnrollmentRepository,
     ) { }
 
     async findAll() {
@@ -63,7 +67,31 @@ export class EventService {
             throw new NotFoundError('El evento no existe')
         }
         this._checkEventPermissions(existingEvent, user, 'No puedes editar este evento porque no eres el dueño o colaborador')
-        return await this.eventRepository.update(id, { ...event, updatedAt: new Date(), updatedBy: user.username })
+
+        const updated = await this.eventRepository.update(id, { ...event, updatedAt: new Date(), updatedBy: user.username })
+
+        const hasScheduleOrLocationChange = event.startAt !== undefined || event.endAt !== undefined || event.location !== undefined
+        if (hasScheduleOrLocationChange) {
+            try {
+                const enrollments = await this.enrollmentRepository.findManyByEventIdWithUsers(id)
+                const activeEnrollments = enrollments.filter(e =>
+                    e.enrollmentStatus !== 'CANCELLED' && e.enrollmentStatus !== 'CHECKED_IN'
+                )
+                for (const enrollment of activeEnrollments) {
+                    await mailerQueue.add('event-update', {
+                        userEmail: enrollment.userEmail,
+                        userName: enrollment.userName,
+                        eventName: updated?.name ?? existingEvent.name,
+                        eventDate: new Date(updated?.startAt ?? existingEvent.startAt).toLocaleString('es-CO', { timeZone: 'America/Bogota' }),
+                        eventLocation: updated?.location ?? existingEvent.location,
+                    })
+                }
+            } catch (err: any) {
+                console.error(`[Event] Error al encolar notificaciones de cambio (eventId=${id}):`, err.message)
+            }
+        }
+
+        return updated
     }
 
     async delete(id: string, user: User) {
