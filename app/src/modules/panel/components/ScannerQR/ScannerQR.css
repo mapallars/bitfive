@@ -1,0 +1,244 @@
+/* ==========================================================================
+   HTML5 QR Code Scanner - Tema personalizado con tokens LX
+   Aplica sobre el contenedor: <div id="reader"></div>
+   ========================================================================== */
+
+/* Contenedor principal */
+#reader {
+    position: relative !important;
+    padding: var(--lx-padding-s) !important;
+    background: var(--lx-color-background-primary) !important;
+    border: none !important;
+    color: var(--lx-color-text) !important;
+    overflow: hidden;
+    font-family: inherit;
+}
+
+/* Header del componente */
+#reader>div:first-child {
+    margin: 0 !important;
+    padding-bottom: var(--lx-space-s);
+}
+
+/* Icono de información */
+#reader img[alt="Info icon"] {
+    width: 18px !important;
+    height: 18px !important;
+    top: var(--lx-space-s) !important;
+    right: var(--lx-space-s) !important;
+    opacity: 0.6 !important;
+    transition: opacity 0.2s ease;
+    filter: grayscale(1);
+}
+
+#reader img[alt="Info icon"]:hover {
+    opacity: 1 !important;
+}
+
+/* Popup "Powered by ScanApp" */
+#reader img[alt="Info icon"]+div,
+#reader div[style*="Powered by"] {
+    background: var(--lx-color-background-modal) !important;
+    color: var(--lx-color-text) !important;
+    border: var(--lx-primary-border) !important;
+    border-radius: var(--lx-border-radius-s) !important;
+    box-shadow: var(--lx-box-shadow-popout) !important;
+    padding: var(--lx-padding-s) !important;
+    font-size: var(--lx-font-size-s) !important;
+}
+
+#reader img[alt="Info icon"]+div a,
+#reader div[style*="Powered by"] a {
+    color: var(--lx-color-accent) !important;
+    text-decoration: none;
+}
+
+#reader img[alt="Info icon"]+div a:hover,
+#reader div[style*="Powered by"] a:hover {
+    text-decoration: underline;
+}
+
+/* Mensajes del header */
+#reader__header_message {
+    background: var(--lx-color-accent-dimed) !important;
+    color: var(--lx-color-accent-dark) !important;
+    border: 1px solid var(--lx-color-accent-shadow) !important;
+    border-radius: var(--lx-border-radius-s) !important;
+    padding: var(--lx-padding-xs) var(--lx-padding-s) !important;
+    margin: var(--lx-space-s) 0 !important;
+    font-size: var(--lx-font-size-m) !important;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Región del escáner */
+#reader__scan_region {
+    background: var(--lx-color-background-special) !important;
+    border: 2px dashed var(--lx-color-border) !important;
+    border-radius: var(--lx-border-radius-m) !important;
+    min-height: 260px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--lx-space-m);
+    overflow: hidden;
+}
+
+/* Video del escáner */
+#reader__scan_region video {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: var(--lx-border-radius-s);
+    object-fit: cover;
+}
+
+/* Placeholder mientras no hay cámara */
+#reader__scan_region img[alt="Camera based scan"] {
+    width: 64px !important;
+    height: 64px !important;
+    opacity: 0.4 !important;
+    filter: grayscale(1);
+}
+
+/* Dashboard */
+#reader__dashboard {
+    width: 100% !important;
+}
+
+#reader__dashboard_section {
+    padding: var(--lx-padding-s) 0 !important;
+    color: var(--lx-color-text);
+}
+
+/* Select de cámaras */
+#html5-qrcode-select-camera {
+    height: var(--lx-height-m) !important;
+    padding: 0 var(--lx-padding-s) !important;
+    border: var(--lx-primary-border) !important;
+    border-radius: var(--lx-border-radius-s) !important;
+    background: var(--lx-color-background-primary) !important;
+    color: var(--lx-color-text) !important;
+    font-size: var(--lx-font-size-m) !important;
+    box-shadow: var(--lx-box-shadow);
+    min-width: 260px;
+}
+
+#html5-qrcode-select-camera:focus {
+    outline: none;
+    border-color: var(--lx-color-accent) !important;
+    box-shadow: 0 0 0 3px var(--lx-color-accent-shadow);
+}
+
+/* Botones */
+.html5-qrcode-element[type="button"],
+#html5-qrcode-button-camera-start,
+#html5-qrcode-button-camera-stop,
+#html5-qrcode-button-file-selection {
+    height: var(--lx-height-m) !important;
+    padding: 0 var(--lx-padding-m) !important;
+    border: none !important;
+    border-radius: var(--lx-border-radius-s) !important;
+    background: var(--lx-color-accent) !important;
+    color: var(--lx-color-white) !important;
+    font-size: var(--lx-font-size-m) !important;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.html5-qrcode-element[type="button"]:hover,
+#html5-qrcode-button-camera-start:hover,
+#html5-qrcode-button-file-selection:hover {
+    opacity: 0.8;
+}
+
+.html5-qrcode-element[type="button"]:active {
+    transform: translateY(0);
+}
+
+.html5-qrcode-element[type="button"]:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Botón Stop */
+#html5-qrcode-button-camera-stop {
+    background: var(--lx-color-danger) !important;
+    box-shadow: 0 4px 12px var(--lx-color-danger-dimed);
+}
+
+/* Enlace "Scan an Image File" */
+#html5-qrcode-anchor-scan-type-change {
+    display: inline-block;
+    margin-top: var(--lx-space-s);
+    color: var(--lx-color-accent) !important;
+    font-size: var(--lx-font-size-m) !important;
+    font-weight: 500;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+#html5-qrcode-anchor-scan-type-change:hover {
+    color: var(--lx-color-accent-dark) !important;
+    text-decoration: underline !important;
+}
+
+/* Área de carga de imagen */
+#reader__dashboard_section div[style*="dashed"] {
+    border: 2px dashed var(--lx-color-border) !important;
+    background: var(--lx-color-background-special) !important;
+    border-radius: var(--lx-border-radius-m) !important;
+    padding: var(--lx-padding-m) !important;
+}
+
+/* Input range zoom */
+#html5-qrcode-input-range-zoom {
+    accent-color: var(--lx-color-accent);
+    cursor: pointer;
+}
+
+/* Texto general */
+#reader span,
+#reader label,
+#reader div {
+    color: var(--lx-color-text);
+    font-size: var(--lx-font-size-m);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #reader {
+        padding: var(--lx-padding-xs) !important;
+    }
+
+    #html5-qrcode-select-camera {
+        width: 100% !important;
+        min-width: 0;
+        margin-top: var(--lx-space-s);
+    }
+
+    #reader__dashboard_section_csr span {
+        display: block;
+        margin-bottom: var(--lx-space-s);
+    }
+
+    #html5-qrcode-button-camera-start,
+    #html5-qrcode-button-camera-stop {
+        width: 100%;
+    }
+}
+
+/* Tema oscuro: sombra adecuada */
+:root[data-theme="dark"] #reader {
+    box-shadow: var(--lx-box-shadow-card-dark) !important;
+}
+
+:root[data-theme="dark"] #reader img[alt="Info icon"] {
+    filter: invert(1);
+}
+
+:root[data-theme="dark"] #reader img[alt="Camera based scan"] {
+    filter: grayscale(1) invert(1);
+}
