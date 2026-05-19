@@ -26,7 +26,8 @@ class EnrollmentRequester extends Requester {
 
     static async createEnrollment(event) {
         const result = await super.post(API.ENROLLMENT.ENDPOINTS.ENROLLMENTS, {
-            eventId: event.id
+            eventId: event.id,
+            enrollmentStatus: 'PENDING'
         })
 
         if (result.message) {

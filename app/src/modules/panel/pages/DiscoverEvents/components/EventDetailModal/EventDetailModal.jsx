@@ -24,15 +24,15 @@ const EventDetailModal = ({ event, onClose, onEnrollment }) => {
         endAt = new Date(),
     } = event
 
-    const isEnrolled = event.enrollments?.some(enrollment => enrollment.userId === user?.id && enrollment.enrollmentStatus === 'CONFIRMED')
+    const isEnrolled = event.enrollments?.some(enrollment => enrollment.userId === user?.id && ['CONFIRMED', 'PENDING'].includes(enrollment.enrollmentStatus))
 
-    const enrollmentsCount = event.enrollments?.filter(enrollment => enrollment.enrollmentStatus === 'CONFIRMED').length ?? 0
+    const enrollmentsCount = event.enrollments?.filter(enrollment => ['CONFIRMED', 'PENDING'].includes(enrollment.enrollmentStatus)).length ?? 0
 
     const availableSpots = maxCapacity - enrollmentsCount
 
     const handleEnrollClick = async () => {
         let _event = event
-        let enrollment = _event.enrollments?.find(enrollment => enrollment.userId === user?.id && enrollment.enrollmentStatus === 'CONFIRMED')
+        let enrollment = _event.enrollments?.find(enrollment => enrollment.userId === user?.id && ['CONFIRMED', 'PENDING'].includes(enrollment.enrollmentStatus))
         if (isEnrolled) {
             enrollment = await EnrollmentRequester.cancelEnrollment(enrollment)
             _event.enrollments = [...event.enrollments.filter(e => e.id !== enrollment.id), { ...enrollment }]

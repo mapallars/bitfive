@@ -11,7 +11,7 @@ import { useSync } from '../../../../core/hooks/useSync'
 
 const Enrollments = () => {
     const [selectedStatus, setSelectedStatus] = useState('')
-    const { state: enrollments, set: setEnrollments, sync: syncEnrollments } = useSync()
+    const { state: enrollments, set: setEnrollments } = useSync()
     const { loading, withLoad } = useLoad(true)
 
     const load = useCallback(() => withLoad(async () => {
@@ -72,7 +72,7 @@ const Enrollments = () => {
                                 />
                             </div>
                         </div>
-                        <Timeline events={events} onView={() => {}} />
+                        <Timeline events={events} onView={() => { }} />
                     </div>
                 </div>
             </div>
