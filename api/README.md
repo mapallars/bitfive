@@ -15,35 +15,77 @@ Construido con un **framework custom** sobre Express 5: decoradores para rutas (
 
 Relaciones: `UsersRoles` (M2M usuario-rol), `RolesPermissions` (M2M rol-permiso).
 
-## Instalacion
+## Instalación
+
+### Requisitos previos
+
+| Herramienta   | Versión mínima | Para qué se usa |
+|---------------|---------------|-----------------|
+| **Node.js**   | 22.x          | Runtime del servidor |
+| **PostgreSQL**| 14+           | Base de datos relacional |
+| **Redis**     | 7+            | Cola de correos (BullMQ) |
+| **Docker** *(opcional)* | 24+ | Para levantar Redis fácilmente |
+
+### Paso 1 — Clonar e instalar dependencias
 
 ```bash
 cd api
 npm install
-cp .env.example .env   # edita con tus valores
 ```
 
-## Variables de entorno (`.env`)
+### Paso 2 — Configurar variables de entorno
 
-| Variable       | Descripcion                        | Ejemplo                        |
+```bash
+cp .env.example .env
+```
+
+Editar `.env` con los valores reales:
+
+| Variable       | Descripción                        | Ejemplo                        |
 |----------------|------------------------------------|--------------------------------|
 | `APP_NAME`     | Nombre de la app                   | `Bitfive DevOpsProject API`    |
-| `VERSION`      | Version de la API                  | `1.0.0`                        |
+| `VERSION`      | Versión de la API                  | `1.0.0`                        |
 | `VERSIONING`   | Prefijo de rutas                   | `/api/v1`                      |
 | `PORT`         | Puerto del servidor                | `3000`                         |
 | `DB_HOST`      | Host de PostgreSQL                 | `localhost`                    |
 | `DB_PORT`      | Puerto de PostgreSQL               | `5432`                         |
 | `DB_USER`      | Usuario de PostgreSQL              | `postgres`                     |
-| `DB_PASSWORD`  | Contrasena de PostgreSQL           | `postgres`                     |
+| `DB_PASSWORD`  | Contraseña de PostgreSQL           | `postgres`                     |
 | `DB_NAME`      | Nombre de la base de datos         | `bitfive`                      |
 | `JWT_SECRET`   | Clave para firmar tokens JWT       | `mi_clave_secreta`             |
-| `JWT_EXPIRES_IN`| Expiracion del token              | `30d`                          |
+| `JWT_EXPIRES_IN`| Expiración del token              | `30d`                          |
+| `REDIS_HOST`   | Host de Redis                      | `localhost`                    |
+| `REDIS_PORT`   | Puerto de Redis                    | `6379`                         |
+| `SMTP_HOST`    | Host SMTP de Brevo                 | `smtp-relay.brevo.com`         |
+| `SMTP_PORT`    | Puerto SMTP                        | `587`                          |
+| `SMTP_USER`    | Login SMTP (panel Brevo)           | `aa5b54001@smtp-brevo.com`     |
+| `SMTP_PASS`    | API Key SMTP (panel Brevo)         | `xsmtpsib-...`                 |
+| `SMTP_FROM`    | Remitente verificado en Brevo      | `tu-email@gmail.com`           |
 
-> **Nota:** `DATABASE_URL` aparece en `.env.example` pero el ORM usa las variables individuales (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`). `DATABASE_URL` no es leida por la app.
+> **Importante:** `SMTP_FROM` debe ser un email verificado en tu cuenta de Brevo. Si usas un email no verificado, Brevo acepta la conexión pero descarta el correo silenciosamente.
 
-## Base de datos: migraciones y seeders
+### Paso 3 — Levantar Redis
 
-### 1) Crear la base de datos
+**Opción A — Docker (recomendado):**
+
+```bash
+docker run -d --name bitfive-redis -p 6379:6379 redis:7-alpine
+```
+
+**Opción B — Redis instalado en el sistema:**
+
+```bash
+redis-server
+```
+
+Verificar que Redis responde:
+
+```bash
+redis-cli ping
+# Debe responder: PONG
+```
+
+### Paso 4 — Crear la base de datos
 
 ```bash
 createdb bitfive
@@ -51,27 +93,51 @@ createdb bitfive
 psql -U postgres -c "CREATE DATABASE bitfive;"
 ```
 
-### 2) Migraciones (automaticas)
-
-Al ejecutar `npm run dev`, el ORM sincroniza las tablas automaticamente. Veras en consola:
-
-```
-[ORM] ✔ Initializing Database...
-[ORM] ✔ Migration completed
-[ORM] ✔ Database ready
-```
-
-No hay comando `npm run migrate` separado; la sincronizacion ocurre cada vez que inicia el servidor.
-
-### 3) Seed inicial (opcional)
-
-Carga roles, permisos y sus asignaciones base:
+### Paso 5 — Ejecutar el seed inicial
 
 ```bash
 psql -U postgres -d bitfive -f src/core/orm/database/scripts/init.sql
 ```
 
-Esto inserta los roles `Guest`, `User` y `Admin`, mas los permisos CRUD y los asigna al rol `Admin`.
+Esto crea los roles (`Guest`, `User`, `Admin`), todos los permisos (incluido `CheckInEnrollments`) y los asigna al rol `Admin`.
+
+### Paso 6 — Iniciar el servidor
+
+```bash
+npm run dev
+```
+
+Deberías ver en consola:
+
+```
+[ORM] ✔ Initializing Database...
+[ORM] ✔ Migration completed
+[ORM] ✔ Database ready
+
+[Server] Bitfive DevOpsProject API running on http://localhost:3000/api/v1
+```
+
+### Paso 7 — Configurar SMTP (Brevo)
+
+1. Crear cuenta gratuita en [brevo.com](https://www.brevo.com)
+2. Ir a **Settings → SMTP & API**
+3. Copiar el **Login** (algo como `aa5b54001@smtp-brevo.com`) → `SMTP_USER`
+4. Copiar la **Master password** o generar una API Key → `SMTP_PASS`
+5. Usar el email con el que te registraste en Brevo como `SMTP_FROM` (ya está verificado automáticamente)
+
+### Verificación rápida
+
+```bash
+# 1. Login
+curl -s -c cookies.txt -X POST http://localhost:3000/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"TuUsuario","password":"TuPassword"}'
+
+# 2. Crear inscripción (debe enviar correo de confirmación con QR)
+curl -s -b cookies.txt -X POST http://localhost:3000/api/v1/enrollments \
+  -H 'Content-Type: application/json' \
+  -d '{"eventId":"<UUID-del-evento>","enrollmentStatus":"CONFIRMED"}'
+```
 
 ## Endpoints de auth
 
