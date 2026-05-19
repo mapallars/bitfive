@@ -1,0 +1,97 @@
+.lx-c-timeline {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+}
+
+.lx-c-timeline-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    z-index: 1;
+}
+
+.lx-c-timeline-controls .lx-c-tab-group {
+    display: flex;
+    align-items: center;
+}
+
+.lx-c-timeline-controls .lx-c-tab-group-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--lx-space-s);
+}
+
+.lx-c-timeline-controls .lx-c-tab-group-tab span {
+   font-size: 17px;
+}
+
+.lx-c-timeline::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 45px;
+    height: calc(100% - 60px);
+    width: 2px;
+    border-left: 2px dashed var(--lx-color-text-softest);
+    z-index: 0;
+}
+
+.lx-c-timeline-date-group {
+    position: relative;
+    z-index: 1;
+}
+
+.lx-c-timeline-date-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.lx-c-timeline-date-header h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--lx-color-text);
+    font-family: var(--lx-font-family);
+}
+
+.lx-c-timeline-day-name {
+    color: var(--lx-color-text-softest);
+    font-weight: 400;
+    font-size: 17px;
+    text-transform: lowercase;
+}
+
+.lx-c-timeline-date-point {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--lx-color-text-softest);
+    position: relative;
+    left: 0;
+    border: 3px solid var(--lx-color-background-primary);
+    z-index: 2;
+}
+
+/* ITEM EVENTO */
+.lx-c-timeline-item {
+    position: relative;
+    margin-left: 40px;
+    margin-bottom: 20px;
+    z-index: 1;
+}
+
+.lx-c-timeline-empty {
+    text-align: center;
+    color: var(--lx-color-text-softest);
+    font-size: var(--lx-font-size-m);
+}

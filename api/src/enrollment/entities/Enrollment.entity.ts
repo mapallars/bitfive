@@ -5,7 +5,6 @@ import { ManyToOne } from '../../core/orm/decorators/decorators.js'
 import { Entity } from '../../core/orm/decorators/entity.decorator.js'
 import { Id } from '../../core/orm/decorators/id.decorator.js'
 
-
 @Entity('Enrollments')
 export class Enrollment {
 
@@ -18,22 +17,20 @@ export class Enrollment {
     @Column({ type: 'string', nullable: false })
     enrollmentStatus: string
 
+    @Column({ type: 'date', nullable: true })
+    checkedInAt: Date | null
+
+    @Column({ type: 'date', nullable: true })
+    reminderSentAt: Date | null
+
     status: string
-
     isActive: boolean
-
     isDeleted: boolean
-
     createdAt: Date
-
     createdBy: string
-
     updatedAt: Date
-
     updatedBy: string
-
     deletedAt: Date
-
     deletedBy: string
 
     @ManyToOne(() => User, {
@@ -42,7 +39,7 @@ export class Enrollment {
         owner: true,
         eager: true
     })
-    user: any
+    user: Partial<User>
 
     @ManyToOne(() => Event, {
         inverse: 'eventId',
@@ -50,7 +47,7 @@ export class Enrollment {
         owner: true,
         eager: true
     })
-    event: any
+    event: Partial<Event>
 
 }
 

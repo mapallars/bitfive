@@ -14,7 +14,7 @@
     background: none;
     outline: none;
     color: rgba(var(--lx-inverse), 0.3);
-    font-size: 12px;
+    font-size: 14px;
     padding: var(--lx-padding-xxs) var(--lx-padding-s);
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;

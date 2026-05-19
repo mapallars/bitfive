@@ -6,6 +6,7 @@ import Loader from '../../../../core/components/Loader/Loader'
 import Footer from '../../../../core/components/Footer/Footer'
 import EventDetailModal from './components/EventDetailModal/EventDetailModal'
 import EventTable from '../../components/EventTable/EventTable'
+import Timeline from '../../components/Timeline/Timeline'
 import { useSync } from '../../../../core/hooks/useSync'
 
 const DiscoverEvents = () => {
@@ -43,12 +44,12 @@ const DiscoverEvents = () => {
                 <div className='lx-p-discover-events-container'>
                     <div className='lx-p-discover-events-section'>
                         <div className='lx-p-discover-events-section-header'>
-                            <h2 className='lx-p-discover-events-section-title'>Próximos Eventos</h2>
+                            <h2 className='lx-p-discover-events-section-title'>Eventos</h2>
                             <p className='lx-p-discover-events-section-description'>
-                                Los 8 eventos más próximos organizados por fecha
+                                Consulta eventos próximos y pasados usando las pestañas
                             </p>
                         </div>
-                        <EventTable events={events} onView={setSelectedEvent} />
+                        <Timeline events={events} onView={setSelectedEvent} />
                     </div>
                     <div className='lx-p-discover-events-section'>
                         <div className='lx-p-discover-events-section-header'>

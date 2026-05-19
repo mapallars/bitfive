@@ -9,6 +9,7 @@ import Icon from '../../../../core/components/Icon/Icon'
 import Button from '../../../../core/components/Button/Button.jsx'
 import EventCards from '../../components/EventCards/EventCards.jsx'
 import EventTable from '../../components/EventTable/EventTable.jsx'
+import EventsCalendar from '../../components/EventsCalendar/EventsCalendar.jsx'
 import Footer from '../../../../core/components/Footer/Footer'
 import Modal from '../../../../core/components/Modal/Modal'
 import EventDetails from '../../components/EventDetails/EventDetails.jsx'
@@ -94,9 +95,10 @@ const Events = () => {
                     <TabGroup
                         tabs={[
                             <>Tarjetas <Icon name='square' /></>,
-                            <>Tabla <Icon name='table' /></>
+                            <>Tabla <Icon name='table' /></>,
+                            <><span style={{ padding: '4px 8px', fontSize: '8px', background: 'var(--lx-color-accent)', color: 'var(--lx-color-white)', borderRadius: '100px' }}>NEW</span> Calendario <Icon name='calendar_month' /></>
                         ]}
-                        options={['cards', 'table']}
+                        options={['cards', 'table', 'calendar']}
                         onClick={(option) => {
                             setTab(option)
                         }}
@@ -126,6 +128,14 @@ const Events = () => {
                                     onView={onView}
                                 />
                             }
+                        </div>
+                    )}
+                    {tab === 'calendar' && (
+                        <div className='lx-p-events-calendar'>
+                            <EventsCalendar
+                                events={events}
+                                onView={onView}
+                            />
                         </div>
                     )}
                 </div>

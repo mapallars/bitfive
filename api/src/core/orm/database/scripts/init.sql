@@ -39,7 +39,8 @@ INSERT INTO "Permissions" ("id", "name", "alias", "description", "type") VALUES
 ('87ad4527-4595-4860-a3f5-cad1f6918dba', 'ReadEnrollments', 'Leer Enrollment', 'Permite la lectura de Enrollment.', 'Read'),
 ('fb73562e-9b45-4109-b87a-078b98a015d8', 'DeleteEnrollments', 'Eliminar Enrollment', 'Permite la eliminación de Enrollment.', 'Delete'),
 ('a2e8730f-f0cb-43d6-98e7-1db914adb6ca', 'UpdateEnrollments', 'Actualizar Enrollment', 'Permite la actualización de Enrollment.', 'Update'),
-('f0603f40-60a1-4b8c-8e83-f1862c88681a', 'AccessEnrollments', 'Acceso a Inscripciones', 'Permite acceder a la gestión de inscripciones.', 'Access');
+('f0603f40-60a1-4b8c-8e83-f1862c88681a', 'AccessEnrollments', 'Acceso a Inscripciones', 'Permite acceder a la gestión de inscripciones.', 'Access'),
+('d1e2f3a4-5b6c-4d7e-8f9a-0b1c2d3e4f55', 'CheckInEnrollments', 'Check-in de Inscripciones', 'Permite registrar asistencia mediante check-in.', 'Action');
 
 
 INSERT INTO "RolesPermissions" ("roleId", "permissionId") VALUES
@@ -63,4 +64,20 @@ INSERT INTO "RolesPermissions" ("roleId", "permissionId") VALUES
 ('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'b3e0c1f6-3455-40e9-8067-153303c737f5'),
 ('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'b6c3df60-1e9d-4ffc-bd45-6d7b0cf7f801'),
 ('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '8a1259bf-5649-45a7-8a72-865f38e81920'),
-('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'c33acfe7-b6f0-4c8f-980e-2f3f953e03a8');
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'c33acfe7-b6f0-4c8f-980e-2f3f953e03a8'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'e6a88034-e65d-49f2-bbd2-e59f405c5073'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'c73beb80-5bba-4b79-bd9d-96206a8273bf'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'f0603f40-60a1-4b8c-8e83-f1862c88681a'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'a7c9b8c2-5c6f-4c4a-9d2a-2f8d9c1a7e31'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'd3f1a6e4-8b2c-4f1e-9a77-6c0b3d2e5f90'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '5e2a9c44-1d7f-4b6a-b3e1-9f8c2d7a6b55'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'c8b4f2d1-3a9e-4e7b-8c6d-1a2f5e9b7c03'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'b1f3a9c7-6d2e-4a5b-8c1f-3e7d9a2b4c10'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '9c7e2d4a-5b8f-4f1c-a3d6-7b2e1a9c6f33'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '2d5b7c9e-1a3f-4e6c-b8a1-5f9d2c7b3e44'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '7a4e1c2b-9d6f-4b3a-8c5e-2f1d7a9b6c88'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '6e4ba1df-4b49-4e3f-8d8d-9e44ecb97879'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', '87ad4527-4595-4860-a3f5-cad1f6918dba'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'a2e8730f-f0cb-43d6-98e7-1db914adb6ca'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'fb73562e-9b45-4109-b87a-078b98a015d8'),
+('5296f982-f8b4-4e9a-9ed9-89672f2c3700', 'd1e2f3a4-5b6c-4d7e-8f9a-0b1c2d3e4f55');

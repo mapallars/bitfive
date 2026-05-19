@@ -9,6 +9,11 @@ class EnrollmentRequester extends Requester {
         return result.data
     }
 
+    static async getMyEnrollments() {
+        const result = await super.get(API.ENROLLMENT.ENDPOINTS.MY_ENROLLMENTS)
+        return result.data
+    }
+
     static async getEnrollmentsById(id) {
         const result = await super.get(`${API.ENROLLMENT.ENDPOINTS.ENROLLMENTS}${id}`)
         return result.data
@@ -27,7 +32,7 @@ class EnrollmentRequester extends Requester {
     static async createEnrollment(event) {
         const result = await super.post(API.ENROLLMENT.ENDPOINTS.ENROLLMENTS, {
             eventId: event.id,
-            enrollmentStatus: 'CONFIRMED'
+            enrollmentStatus: 'PENDING'
         })
 
         if (result.message) {
@@ -75,6 +80,30 @@ class EnrollmentRequester extends Requester {
                 result.ok ? 'info' : 'error'
             )
         }
+
+        return result?.ok ? result.data : null
+    }
+
+    static async checkInEnrollment(eventId, enrollmentId) {
+        const result = await super.put(`${API.ENROLLMENT.ENDPOINTS.ENROLLMENTS}/checkin`, {
+            eventId,
+            enrollmentId
+        })
+
+        if (result.ok) {
+            Notify.notice(
+                `Inscripcion "${enrollmentId}" validada`,
+                'success'
+            )
+        }
+
+        if (result.message) {
+            Notify.notice(
+                result.message || 'No se pudo validar la inscripcion',
+                result.ok ? 'info' : 'error'
+            )
+        }
+
 
         return result?.ok ? result.data : null
     }
