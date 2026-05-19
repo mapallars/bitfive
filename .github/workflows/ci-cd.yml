@@ -440,7 +440,7 @@ jobs:
         run: |
           echo "🚀 Frontend desplegado en: ${{ steps.deploy.outputs.preview-url }}"
 
-# ----------------------------------------------------------
+  # ----------------------------------------------------------
   # 6. DEPLOY BACKEND → Render (producción)
   #
   #  Render expone un Deploy Hook por servicio.
@@ -520,4 +520,62 @@ jobs:
             echo "❌ El backend no respondió tras $MAX_RETRIES intentos."
             echo "   Revisa los logs en el dashboard de Render."
             exit 1
+          fi
+
+  # ----------------------------------------------------------
+  # 7. SMOKE TEST POST-DEPLOY
+  #
+  # Valida endpoints críticos después de que ambos servicios
+  # estén arriba. Si falla, el pipeline queda en rojo como señal
+  # de que el despliegue requiere atención inmediata.
+  # ----------------------------------------------------------
+  smoke-test:
+    name: "Smoke Test · Post-deploy"
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend, deploy-backend]
+    if: |
+      needs.deploy-frontend.result == 'success' &&
+      needs.deploy-backend.result == 'success'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Smoke test — endpoint de salud del backend
+        env:
+          BASE_URL: ${{ secrets.BACKEND_PROD_URL }}
+        run: |
+          echo "🧪 Iniciando smoke tests sobre $BASE_URL"
+
+          check_endpoint() {
+            local path=$1
+            local expected=$2
+            local status
+
+            status=$(curl -o /dev/null -sS -w "%{http_code}" \
+              --max-time 10 \
+              "$BASE_URL$path")
+
+            if [ "$status" = "$expected" ]; then
+              echo "  ✅ $path → HTTP $status"
+            else
+              echo "  ❌ $path → HTTP $status (esperado: $expected)"
+              return 1
+            fi
+          }
+
+          # Health check del servicio de autenticación
+          check_endpoint "/api/v1/auth/health" "200"
+
+          echo "✅ Todos los smoke tests pasaron."
+
+      - name: Resumen del despliegue
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "🎉 Despliegue completado exitosamente."
+            echo "   Disparado por : ${{ github.actor }}"
+            echo "   Evento        : ${{ github.event_name }}"
+            echo "   Commit        : ${{ github.sha }}"
+          else
+            echo "⚠️ Smoke test falló. Revisar los servicios en Vercel y Render."
           fi
