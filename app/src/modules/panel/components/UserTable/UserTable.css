@@ -48,6 +48,10 @@
 
 .lx-tag {
     width: fit-content;
+    max-width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     background: var(--lx-color-info-dimed);
     color: var(--lx-color-info);
     padding: 5px 10px;
