@@ -15,7 +15,7 @@ const Enrollments = () => {
     const { loading, withLoad } = useLoad(true)
 
     const load = useCallback(() => withLoad(async () => {
-        const enrollments = await EnrollmentRequester.getEnrollments()
+        const enrollments = await EnrollmentRequester.getMyEnrollments()
         setEnrollments(enrollments ?? [])
     }), [withLoad, setEnrollments])
 

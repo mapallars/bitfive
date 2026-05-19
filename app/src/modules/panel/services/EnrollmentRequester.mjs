@@ -9,6 +9,11 @@ class EnrollmentRequester extends Requester {
         return result.data
     }
 
+    static async getMyEnrollments() {
+        const result = await super.get(API.ENROLLMENT.ENDPOINTS.MY_ENROLLMENTS)
+        return result.data
+    }
+
     static async getEnrollmentsById(id) {
         const result = await super.get(`${API.ENROLLMENT.ENDPOINTS.ENROLLMENTS}${id}`)
         return result.data

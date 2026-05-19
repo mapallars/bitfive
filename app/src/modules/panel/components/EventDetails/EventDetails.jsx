@@ -66,13 +66,11 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                         <h1 className='--name'>{event.name || 'Evento sin nombre'}</h1>
                     </div>
                     <div className='actions'>
-                        <Button color='auto' size='s' onClick={() => onEdit(event)}>
+                        <Button color='auto' variant='dimed' size='s' icon onClick={() => onEdit(event)}>
                             <Icon name='edit' />
-                            Editar
                         </Button>
-                        <Button color='danger' size='s' onClick={() => onDelete(event)}>
+                        <Button color='danger' variant='dimed' size='s' icon onClick={() => onDelete(event)}>
                             <Icon name='delete' />
-                            Eliminar
                         </Button>
                     </div>
                 </div>
