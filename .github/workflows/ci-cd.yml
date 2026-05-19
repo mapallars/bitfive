@@ -439,3 +439,85 @@ jobs:
       - name: Mostrar URL del despliegue
         run: |
           echo "🚀 Frontend desplegado en: ${{ steps.deploy.outputs.preview-url }}"
+
+# ----------------------------------------------------------
+  # 6. DEPLOY BACKEND → Render (producción)
+  #
+  #  Render expone un Deploy Hook por servicio.
+  #  Un POST al hook dispara el redeploy del servicio de producción.
+  #
+  #  Las env vars sensibles del backend (DB_URL, JWT_SECRET, etc.)
+  #  se configuran EXCLUSIVAMENTE en el dashboard de Render
+  #  (Dashboard → servicio → Environment) — nunca en el repo.
+  # ----------------------------------------------------------
+  deploy-backend:
+    name: "Deploy · Backend → Render"
+    runs-on: ubuntu-latest
+    needs: [build, semgrep]
+    if: |
+      (
+        github.event_name == 'push' &&
+        github.ref == 'refs/heads/main'
+      ) ||
+      github.event_name == 'workflow_dispatch'
+
+    environment:
+      name: production
+
+    steps:
+      - name: Registrar motivo (solo dispatch manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "🖐️  Despliegue manual disparado por: ${{ github.actor }}"
+          echo "📝 Motivo: ${{ github.event.inputs.reason }}"
+
+      - name: Disparar redeploy en Render
+        run: |
+          echo "🚀 Disparando deploy en Render (producción)..."
+          HTTP_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+
+          if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "201" ]; then
+            echo "❌ Render respondió HTTP $HTTP_STATUS al recibir el hook."
+            exit 1
+          fi
+          echo "✅ Hook aceptado por Render (HTTP $HTTP_STATUS). Build en progreso."
+
+      # ----------------------------------------------------------
+      # Health-check posterior al despliegue
+      # Render tarda ~60-120 s en completar el redeploy.
+      # Polling con reintentos para no fallar prematuramente.
+      # Requiere que el backend exponga GET /health → 200.
+      # ----------------------------------------------------------
+      - name: Esperar y verificar health-check del backend
+        env:
+          HEALTH_URL: ${{ secrets.BACKEND_PROD_URL }}
+        run: |
+          echo "⏳ Esperando que Render complete el despliegue..."
+          sleep 60   # pausa inicial — Render necesita tiempo para construir
+
+          MAX_RETRIES=10
+          RETRY_DELAY=15
+          SUCCESS=false
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "🔍 Intento $i / $MAX_RETRIES — GET $HEALTH_URL/health"
+            HTTP_STATUS=$(curl -o /dev/null -sS -w "%{http_code}" \
+              --max-time 10 \
+              "$HEALTH_URL/health" || echo "000")
+
+            if [ "$HTTP_STATUS" = "200" ]; then
+              echo "✅ Backend operativo (HTTP $HTTP_STATUS)"
+              SUCCESS=true
+              break
+            else
+              echo "⚠️  HTTP $HTTP_STATUS — reintentando en ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          if [ "$SUCCESS" != "true" ]; then
+            echo "❌ El backend no respondió tras $MAX_RETRIES intentos."
+            echo "   Revisa los logs en el dashboard de Render."
+            exit 1
+          fi
