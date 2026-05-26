@@ -50,7 +50,7 @@ export class EnrollmentRepository extends BaseRepository<Enrollment> {
         const now = new Date()
         const result = await this.raw(`
             UPDATE "Enrollments"
-            SET "enrollmentStatus" = 'CHECKED_IN',
+            SET "enrollmentStatus" = 'CONFIRMED',
                 "checkedInAt"      = $3,
                 "updatedAt"        = $3,
                 "updatedBy"        = $4
