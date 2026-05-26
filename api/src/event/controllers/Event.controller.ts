@@ -83,6 +83,7 @@ export class EventController {
         const { id } = request.params
         const { name, description, category, cover, color, location, startAt, endAt, timezone, type, visibility, eventStatus, maxCapacity, hasParking, price } = request.body
 
+
         Validator
             .required({ name, description, category, color, location, startAt, endAt, type, visibility, eventStatus, maxCapacity, hasParking, price })
             .isNumeric({ maxCapacity, price })

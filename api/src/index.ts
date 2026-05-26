@@ -10,7 +10,7 @@ import { Database } from './core/orm/database/Database.js'
 import { startMailerWorker } from './notification/workers/Mailer.worker.js'
 import { startReminderScheduler } from './notification/schedulers/Reminder.scheduler.js'
 import { closeMailerQueue } from './notification/queues/Mailer.queue.js'
-import { closeRedisConnection } from './core/config/redisConnection.js'
+import { closeRedisConnection, verifyRedisConnection } from './core/config/redisConnection.js'
 
 dotenv.config()
 
@@ -30,6 +30,15 @@ async function orm() {
 }
 
 await orm()
+
+try {
+    await verifyRedisConnection()
+    console.log('[Redis] ✔ Connection ready')
+} catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error(`[Redis] ✘ Connection failed — ${message}`)
+    process.exit(1)
+}
 
 const mailerWorker = startMailerWorker()
 const { queue: reminderQueue, worker: reminderWorker } = startReminderScheduler()

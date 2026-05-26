@@ -85,7 +85,7 @@ class EnrollmentRequester extends Requester {
     }
 
     static async checkInEnrollment(eventId, enrollmentId) {
-        const result = await super.put(`${API.ENROLLMENT.ENDPOINTS.ENROLLMENTS}/checkin`, {
+        const result = await super.post(`${API.CHECK_IN.ENDPOINTS.CHECK_IN}`, {
             eventId,
             enrollmentId
         })

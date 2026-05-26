@@ -28,7 +28,7 @@ class EventRequester extends Requester {
     }
 
     static async updateEvent(event) {
-        const result = await super.put(`${API.EVENT.ENDPOINTS.EVENTS}${event.id}`, event)
+        const result = await super.put(`${API.EVENT.ENDPOINTS.EVENTS}${event.id}`, { name: event.name, description: event.description, category: event.category, color: event.color, location: event.location, startAt: event.startAt, endAt: event.endAt, type: event.type, visibility: event.visibility, eventStatus: event.eventStatus, maxCapacity: event.maxCapacity, hasParking: event.hasParking, price: event.price })
 
         if (result.message) {
             Notify.notice(

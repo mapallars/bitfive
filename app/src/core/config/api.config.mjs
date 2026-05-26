@@ -2,9 +2,9 @@ const ENV = import.meta.env;
 
 export const IS_DEV_MODE = ENV.VITE_IS_DEV_MODE === 'true';
 
-export const URL_BASE = IS_DEV_MODE
-    ? ENV.VITE_API_URL_DEV
-    : ENV.VITE_API_URL_PROD;
+export const URL_BASE = 'http://localhost:3000/api/v1'
+
+console.log("soy cristian")
 
 class EndpointGroup {
     constructor(base = '', paths = {}) {
@@ -50,6 +50,9 @@ export const API = {
         CREATE: '',
         UPDATE: '',
         DELETE: ''
+    }),
+    CHECK_IN: new EndpointGroup(`${URL_BASE}/checkIn`, {
+        CHECK_IN: ''
     })
 }
 
