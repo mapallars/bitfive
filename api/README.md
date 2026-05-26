@@ -54,8 +54,9 @@ Editar `.env` con los valores reales:
 | `DB_NAME`      | Nombre de la base de datos         | `bitfive`                      |
 | `JWT_SECRET`   | Clave para firmar tokens JWT       | `mi_clave_secreta`             |
 | `JWT_EXPIRES_IN`| Expiración del token              | `30d`                          |
-| `REDIS_HOST`   | Host de Redis                      | `localhost`                    |
-| `REDIS_PORT`   | Puerto de Redis                    | `6379`                         |
+| `REDIS_HOST`   | Host de Redis (local)              | `localhost`                    |
+| `REDIS_PORT`   | Puerto de Redis (local)            | `6379`                         |
+| `REDIS_URL`    | URL Redis TCP (Upstash, producción)| `rediss://default:...@....upstash.io:6379` |
 | `SMTP_HOST`    | Host SMTP de Brevo                 | `smtp-relay.brevo.com`         |
 | `SMTP_PORT`    | Puerto SMTP                        | `587`                          |
 | `SMTP_USER`    | Login SMTP (panel Brevo)           | `aa5b54001@smtp-brevo.com`     |
@@ -64,7 +65,9 @@ Editar `.env` con los valores reales:
 
 > **Importante:** `SMTP_FROM` debe ser un email verificado en tu cuenta de Brevo. Si usas un email no verificado, Brevo acepta la conexión pero descarta el correo silenciosamente.
 
-### Paso 3 — Levantar Redis
+> **Redis en producción:** BullMQ requiere conexión TCP a Redis (no la API REST de Upstash). Usa `REDIS_URL` con el esquema `rediss://` copiado del dashboard de Upstash. Las variables `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` **no** funcionan con BullMQ.
+
+### Paso 3 — Levantar Redis (desarrollo local)
 
 **Opción A — Docker (recomendado):**
 
@@ -113,9 +116,25 @@ Deberías ver en consola:
 [ORM] ✔ Initializing Database...
 [ORM] ✔ Migration completed
 [ORM] ✔ Database ready
+[Redis] ✔ Connection ready
+[Mailer] ✔ Worker de correos iniciado
 
 [Server] Bitfive DevOpsProject API running on http://localhost:3000/api/v1
 ```
+
+### Producción con Upstash Redis
+
+El backend se despliega en **Render**. Redis se provisiona en [Upstash](https://console.upstash.com/) como servicio externo.
+
+1. Crear una base Redis en Upstash (elegir región cercana al servicio Render).
+2. En el dashboard, ir a **Connect** y copiar la **Redis URL** (formato `rediss://default:TOKEN@endpoint.upstash.io:6379`).
+3. En Render → servicio backend → **Environment**, añadir:
+   - `REDIS_URL` = la URL copiada de Upstash
+4. Redeploy del servicio.
+
+No commitear `REDIS_URL` en el repositorio; solo configurarla en Render Environment.
+
+> **Costos:** BullMQ consulta Redis periódicamente aunque no haya correos en cola. Upstash recomienda un plan **Fixed** en lugar de Pay-As-You-Go para evitar costos elevados. Ver [BullMQ + Upstash](https://upstash.com/docs/redis/integrations/bullmq).
 
 ### Paso 7 — Configurar SMTP (Brevo)
 
