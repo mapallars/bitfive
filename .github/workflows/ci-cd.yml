@@ -399,11 +399,7 @@ jobs:
   #  Un único ambiente: production. No existen preview ni staging.
   #  Vercel maneja las env vars del frontend en su propio dashboard.
   # ----------------------------------------------------------
-
-# ----------------------------------------------------------
-  # 5. DEPLOY FRONTEND → Vercel (producción)
-  # ----------------------------------------------------------
-  
+    
   deploy-frontend:
     name: "Deploy · Frontend → Vercel"
     runs-on: ubuntu-latest
@@ -433,7 +429,6 @@ jobs:
 
       - name: Deploy a Vercel
         id: deploy
-        working-directory: ./app
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
