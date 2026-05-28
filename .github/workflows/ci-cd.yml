@@ -1,21 +1,36 @@
 # ============================================================
-#  CI Pipeline — bitfive monorepo
-#  Backend : /api  (TypeScript / Node.js)
-#  Frontend: /app  (JavaScript / React)
+#  CI/CD Pipeline — bitfive monorepo
+#  Backend : /api  (TypeScript / Node.js)  → Azure Web App
+#  Frontend: /app  (JavaScript / React)    → Vercel
 #
-#  Jobs
-#  ├── lint    → matrix: [backend, frontend]
-#  ├── build   → matrix: [backend, frontend]
-#  └── semgrep → SAST dividido por path
+#  Jobs CI (sin cambios)
+#  ├── lint             → matrix: [backend, frontend]
+#  ├── build            → matrix: [backend, frontend]
+#  ├── dependency-audit → matrix: [backend, frontend]
+#  └── semgrep          → SAST dividido por path
 #
-#  Política Semgrep
-#  ├── PR → develop   : baseline scan
-#  ├── push develop   : full scan
-#  ├── PR → main      : full scan estricto
-#  └── push main / release/* / hotfix/* : full scan estricto
+#  Jobs CD
+#  ├── deploy-frontend  → Vercel production
+#  ├── deploy-backend   → Azure Web App production
+#  └── smoke-test       → verificación post-deploy
+#
+#  Política de despliegue
+#  └── Solo producción (main). Un único ambiente.
+#      El CD se activa de dos formas:
+#        a) push a main (automático, después de que CI pase)
+#        b) workflow_dispatch (manual, desde la UI de GitHub Actions)
+#
+#  Secrets requeridos (Settings → Secrets → Actions):
+#  ├── VERCEL_TOKEN                        : token de la cuenta Vercel
+#  ├── VERCEL_ORG_ID                       : org ID del proyecto Vercel
+#  ├── VERCEL_PROJECT_ID                   : project ID del proyecto Vercel
+#  ├── AZUREAPPSERVICE_CLIENTID_*          : client ID de la service principal Azure
+#  ├── AZUREAPPSERVICE_TENANTID_*          : tenant ID de Azure AD
+#  ├── AZUREAPPSERVICE_SUBSCRIPTIONID_*    : subscription ID de Azure
+#  └── BACKEND_PROD_URL                    : URL pública del backend en Azure
 # ============================================================
 
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -28,6 +43,17 @@ on:
     branches:
       - main
       - develop
+
+  # ── Disparo manual desde GitHub Actions UI ──────────────────
+  # Permite ejecutar el CD en cualquier momento sobre main,
+  # sin necesidad de hacer un push. Útil para rollbacks rápidos
+  # o redespliegues tras un incidente.
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Motivo del despliegue manual"
+        required: false
+        default: "Redespliegue manual"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -199,7 +225,6 @@ jobs:
       - name: Fix git ownership
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      # Login condicional con Semgrep Cloud
       - name: Semgrep Login (Cloud — condicional)
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
@@ -213,7 +238,6 @@ jobs:
             echo "ℹ️  Sin SEMGREP_APP_TOKEN — usando reglas públicas y locales únicamente"
           fi
 
-      # Reglas personalizadas
       - name: Detectar reglas personalizadas
         id: custom_rules
         run: |
@@ -364,3 +388,248 @@ jobs:
             exit 1
           fi
           echo "✅ Scan de Frontend sin findings bloqueantes."
+
+  # ----------------------------------------------------------
+  # 5. DEPLOY FRONTEND → Vercel (producción)
+  #
+  #  Se activa cuando:
+  #    a) push a main  Y  CI (build + semgrep) pasó correctamente
+  #    b) workflow_dispatch manual desde la UI de GitHub Actions
+  #
+  #  Un único ambiente: production. No existen preview ni staging.
+  #  Vercel maneja las env vars del frontend en su propio dashboard.
+  # ----------------------------------------------------------
+  deploy-frontend:
+    name: "Deploy · Frontend → Vercel"
+    runs-on: ubuntu-latest
+    needs: [build, semgrep]
+    if: |
+      (
+        github.event_name == 'push' &&
+        github.ref == 'refs/heads/main'
+      ) ||
+      github.event_name == 'workflow_dispatch'
+
+    # En workflow_dispatch los jobs de CI no corren, por lo que
+    # needs.build / needs.semgrep quedan en 'skipped' — esto es intencional:
+    # el operador que dispara el deploy manualmente asume la responsabilidad
+    # de que el código en main ya pasó el CI previamente.
+
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.preview-url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Registrar motivo (solo dispatch manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "🖐️  Despliegue manual disparado por: ${{ github.actor }}"
+          echo "📝 Motivo: ${{ github.event.inputs.reason }}"
+
+      - name: Deploy a Vercel (production)
+        id: deploy
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./app
+          vercel-args: "--prod"   # siempre producción — no hay otro ambiente
+
+      - name: Mostrar URL del despliegue
+        run: |
+          echo "🚀 Frontend desplegado en: ${{ steps.deploy.outputs.preview-url }}"
+
+  # ----------------------------------------------------------
+  # 6. BUILD BACKEND PARA AZURE
+  #
+  #  Empaqueta el directorio /api completo (incluyendo node_modules
+  #  instalados en producción) como artifact para el deploy job.
+  #  Azure App Service requiere el paquete completo, no solo /dist.
+  #
+  #  Las env vars sensibles del backend (DB_URL, JWT_SECRET, etc.)
+  #  se configuran EXCLUSIVAMENTE en Azure App Service
+  #  (Configuration → Application settings) — nunca en el repo.
+  # ----------------------------------------------------------
+  build-backend-azure:
+    name: "Build · Backend → Azure"
+    runs-on: ubuntu-latest
+    needs: [build, semgrep]
+    if: |
+      (
+        github.event_name == 'push' &&
+        github.ref == 'refs/heads/main'
+      ) ||
+      github.event_name == 'workflow_dispatch'
+
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: ./api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+          cache-dependency-path: ./api/package-lock.json
+
+      - name: npm install and build
+        run: |
+          npm install
+          npm run build --if-present
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: ./api
+
+  # ----------------------------------------------------------
+  # 7. DEPLOY BACKEND → Azure Web App (producción)
+  #
+  #  Descarga el artifact producido en build-backend-azure
+  #  y lo despliega en Azure App Service via OIDC (sin contraseñas).
+  # ----------------------------------------------------------
+  deploy-backend:
+    name: "Deploy · Backend → Azure"
+    runs-on: ubuntu-latest
+    needs: [build-backend-azure]
+
+    environment:
+      name: production
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Registrar motivo (solo dispatch manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "🖐️  Despliegue manual disparado por: ${{ github.actor }}"
+          echo "📝 Motivo: ${{ github.event.inputs.reason }}"
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: node-app
+          path: ./api
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_66991DBFE91249DCBE24D98893E88689 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_437A56B0FD864981983F770A955FEF86 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8043119D353D4AC0951A1601F6FE3815 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'bitfive'
+          slot-name: 'Production'
+          package: ./api
+
+      # ----------------------------------------------------------
+      # Health-check posterior al despliegue
+      # Azure tarda unos segundos en activar la nueva instancia.
+      # Requiere que el backend exponga GET /health → 200.
+      # ----------------------------------------------------------
+      - name: Esperar y verificar health-check del backend
+        env:
+          HEALTH_URL: ${{ secrets.BACKEND_PROD_URL }}
+        run: |
+          echo "⏳ Esperando que Azure complete el despliegue..."
+          sleep 60   # pausa inicial — Azure necesita tiempo para iniciar
+
+          MAX_RETRIES=10
+          RETRY_DELAY=15
+          SUCCESS=false
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "🔍 Intento $i / $MAX_RETRIES — GET $HEALTH_URL/api/v1/auth/health"
+            HTTP_STATUS=$(curl -o /dev/null -sS -w "%{http_code}" \
+              --max-time 10 \
+              "$HEALTH_URL/api/v1/auth/health" || echo "000")
+
+            if [ "$HTTP_STATUS" = "200" ]; then
+              echo "✅ Backend operativo (HTTP $HTTP_STATUS)"
+              SUCCESS=true
+              break
+            else
+              echo "⚠️  HTTP $HTTP_STATUS — reintentando en ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          if [ "$SUCCESS" != "true" ]; then
+            echo "❌ El backend no respondió tras $MAX_RETRIES intentos."
+            echo "   Revisa los logs en Azure App Service → Log stream."
+            exit 1
+          fi
+
+  # ----------------------------------------------------------
+  # 8. SMOKE TEST POST-DEPLOY
+  #
+  # Valida endpoints críticos después de que ambos servicios
+  # estén arriba. Si falla, el pipeline queda en rojo como señal
+  # de que el despliegue requiere atención inmediata.
+  # ----------------------------------------------------------
+  smoke-test:
+    name: "Smoke Test · Post-deploy"
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend, deploy-backend]
+    if: |
+      needs.deploy-frontend.result == 'success' &&
+      needs.deploy-backend.result == 'success'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Smoke test — endpoint de salud del backend
+        env:
+          BASE_URL: ${{ secrets.BACKEND_PROD_URL }}
+        run: |
+          echo "🧪 Iniciando smoke tests sobre $BASE_URL"
+
+          check_endpoint() {
+            local path=$1
+            local expected=$2
+            local status
+
+            status=$(curl -o /dev/null -sS -w "%{http_code}" \
+              --max-time 10 \
+              "$BASE_URL$path")
+
+            if [ "$status" = "$expected" ]; then
+              echo "  ✅ $path → HTTP $status"
+            else
+              echo "  ❌ $path → HTTP $status (esperado: $expected)"
+              return 1
+            fi
+          }
+
+          # Health check del servicio de autenticación
+          check_endpoint "/api/v1/auth/health" "200"
+
+          echo "✅ Todos los smoke tests pasaron."
+
+      - name: Resumen del despliegue
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "🎉 Despliegue completado exitosamente."
+            echo "   Disparado por : ${{ github.actor }}"
+            echo "   Evento        : ${{ github.event_name }}"
+            echo "   Commit        : ${{ github.sha }}"
+          else
+            echo "⚠️ Smoke test falló. Revisar los servicios en Vercel y Azure App Service."
+          fi
