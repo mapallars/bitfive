@@ -421,16 +421,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
+    
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ./app/package-lock.json
+    
       - name: Registrar motivo (solo dispatch manual)
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "🖐️  Despliegue manual disparado por: ${{ github.actor }}"
           echo "📝 Motivo: ${{ github.event.inputs.reason }}"
-            
+    
       - name: Instalar Vercel CLI
         run: npm install --global vercel@latest
-      
+    
       - name: Sincronizar metadata de Vercel
         working-directory: ./app
         env:
@@ -442,7 +449,11 @@ jobs:
             --yes \
             --environment=production \
             --token=$VERCEL_TOKEN
-      
+    
+      - name: Instalar dependencias
+        working-directory: ./app
+        run: npm install
+    
       - name: Build frontend
         working-directory: ./app
         env:
@@ -453,7 +464,7 @@ jobs:
           vercel build \
             --prod \
             --token=$VERCEL_TOKEN
-      
+    
       - name: Deploy frontend
         id: deploy
         working-directory: ./app
@@ -466,9 +477,9 @@ jobs:
             --prebuilt \
             --prod \
             --token=$VERCEL_TOKEN)
-      
+
           echo "preview-url=$url" >> $GITHUB_OUTPUT
-          
+      
   # ----------------------------------------------------------
   # 6. BUILD BACKEND PARA AZURE
   #
