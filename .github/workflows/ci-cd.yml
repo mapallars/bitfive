@@ -400,6 +400,10 @@ jobs:
   #  Vercel maneja las env vars del frontend en su propio dashboard.
   # ----------------------------------------------------------
 
+# ----------------------------------------------------------
+  # 5. DEPLOY FRONTEND → Vercel (producción)
+  # ----------------------------------------------------------
+  
   deploy-frontend:
     name: "Deploy · Frontend → Vercel"
     runs-on: ubuntu-latest
@@ -415,14 +419,6 @@ jobs:
       name: production
       url: ${{ steps.deploy.outputs.deployment-url }}
 
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-    defaults:
-      run:
-        working-directory: ./app
-
     steps:
       - uses: actions/checkout@v4
 
@@ -435,16 +431,14 @@ jobs:
       - name: Instalar Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy Project Artifacts to Vercel
+      - name: Deploy a Vercel
         id: deploy
+        working-directory: ./app
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment-url=$url" >> $GITHUB_OUTPUT
 
   # ----------------------------------------------------------
