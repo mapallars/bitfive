@@ -1,6 +1,6 @@
 # ============================================================
 #  CI/CD Pipeline — bitfive monorepo
-#  Backend : /api  (TypeScript / Node.js)  → Render
+#  Backend : /api  (TypeScript / Node.js)  → Azure Web App
 #  Frontend: /app  (JavaScript / React)    → Vercel
 #
 #  Jobs CI (sin cambios)
@@ -9,9 +9,9 @@
 #  ├── dependency-audit → matrix: [backend, frontend]
 #  └── semgrep          → SAST dividido por path
 #
-#  Jobs CD (nuevos)
+#  Jobs CD
 #  ├── deploy-frontend  → Vercel production
-#  ├── deploy-backend   → Render production
+#  ├── deploy-backend   → Azure Web App production
 #  └── smoke-test       → verificación post-deploy
 #
 #  Política de despliegue
@@ -21,11 +21,13 @@
 #        b) workflow_dispatch (manual, desde la UI de GitHub Actions)
 #
 #  Secrets requeridos (Settings → Secrets → Actions):
-#  ├── VERCEL_TOKEN          : token de la cuenta Vercel
-#  ├── VERCEL_ORG_ID         : org ID del proyecto Vercel
-#  ├── VERCEL_PROJECT_ID     : project ID del proyecto Vercel
-#  ├── RENDER_DEPLOY_HOOK_URL: webhook URL del servicio Render (producción)
-#  └── BACKEND_PROD_URL      : URL pública del backend en Render
+#  ├── VERCEL_TOKEN                        : token de la cuenta Vercel
+#  ├── VERCEL_ORG_ID                       : org ID del proyecto Vercel
+#  ├── VERCEL_PROJECT_ID                   : project ID del proyecto Vercel
+#  ├── AZUREAPPSERVICE_CLIENTID_*          : client ID de la service principal Azure
+#  ├── AZUREAPPSERVICE_TENANTID_*          : tenant ID de Azure AD
+#  ├── AZUREAPPSERVICE_SUBSCRIPTIONID_*    : subscription ID de Azure
+#  └── BACKEND_PROD_URL                    : URL pública del backend en Azure
 # ============================================================
 
 name: CI/CD
@@ -441,17 +443,18 @@ jobs:
           echo "🚀 Frontend desplegado en: ${{ steps.deploy.outputs.preview-url }}"
 
   # ----------------------------------------------------------
-  # 6. DEPLOY BACKEND → Render (producción)
+  # 6. BUILD BACKEND PARA AZURE
   #
-  #  Render expone un Deploy Hook por servicio.
-  #  Un POST al hook dispara el redeploy del servicio de producción.
+  #  Empaqueta el directorio /api completo (incluyendo node_modules
+  #  instalados en producción) como artifact para el deploy job.
+  #  Azure App Service requiere el paquete completo, no solo /dist.
   #
   #  Las env vars sensibles del backend (DB_URL, JWT_SECRET, etc.)
-  #  se configuran EXCLUSIVAMENTE en el dashboard de Render
-  #  (Dashboard → servicio → Environment) — nunca en el repo.
+  #  se configuran EXCLUSIVAMENTE en Azure App Service
+  #  (Configuration → Application settings) — nunca en el repo.
   # ----------------------------------------------------------
-  deploy-backend:
-    name: "Deploy · Backend → Render"
+  build-backend-azure:
+    name: "Build · Backend → Azure"
     runs-on: ubuntu-latest
     needs: [build, semgrep]
     if: |
@@ -461,8 +464,51 @@ jobs:
       ) ||
       github.event_name == 'workflow_dispatch'
 
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: ./api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+          cache-dependency-path: ./api/package-lock.json
+
+      - name: npm install and build
+        run: |
+          npm install
+          npm run build --if-present
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: ./api
+
+  # ----------------------------------------------------------
+  # 7. DEPLOY BACKEND → Azure Web App (producción)
+  #
+  #  Descarga el artifact producido en build-backend-azure
+  #  y lo despliega en Azure App Service via OIDC (sin contraseñas).
+  # ----------------------------------------------------------
+  deploy-backend:
+    name: "Deploy · Backend → Azure"
+    runs-on: ubuntu-latest
+    needs: [build-backend-azure]
+
     environment:
       name: production
+
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Registrar motivo (solo dispatch manual)
@@ -471,40 +517,48 @@ jobs:
           echo "🖐️  Despliegue manual disparado por: ${{ github.actor }}"
           echo "📝 Motivo: ${{ github.event.inputs.reason }}"
 
-      - name: Disparar redeploy en Render
-        run: |
-          echo "🚀 Disparando deploy en Render (producción)..."
-          HTTP_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-            -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: node-app
+          path: ./api
 
-          if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "201" ]; then
-            echo "❌ Render respondió HTTP $HTTP_STATUS al recibir el hook."
-            exit 1
-          fi
-          echo "✅ Hook aceptado por Render (HTTP $HTTP_STATUS). Build en progreso."
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_66991DBFE91249DCBE24D98893E88689 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_437A56B0FD864981983F770A955FEF86 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8043119D353D4AC0951A1601F6FE3815 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'bitfive'
+          slot-name: 'Production'
+          package: ./api
 
       # ----------------------------------------------------------
       # Health-check posterior al despliegue
-      # Render tarda ~60-120 s en completar el redeploy.
-      # Polling con reintentos para no fallar prematuramente.
+      # Azure tarda unos segundos en activar la nueva instancia.
       # Requiere que el backend exponga GET /health → 200.
       # ----------------------------------------------------------
       - name: Esperar y verificar health-check del backend
         env:
           HEALTH_URL: ${{ secrets.BACKEND_PROD_URL }}
         run: |
-          echo "⏳ Esperando que Render complete el despliegue..."
-          sleep 60   # pausa inicial — Render necesita tiempo para construir
+          echo "⏳ Esperando que Azure complete el despliegue..."
+          sleep 60   # pausa inicial — Azure necesita tiempo para iniciar
 
           MAX_RETRIES=10
           RETRY_DELAY=15
           SUCCESS=false
 
           for i in $(seq 1 $MAX_RETRIES); do
-            echo "🔍 Intento $i / $MAX_RETRIES — GET $HEALTH_URL/health"
+            echo "🔍 Intento $i / $MAX_RETRIES — GET $HEALTH_URL/api/v1/auth/health"
             HTTP_STATUS=$(curl -o /dev/null -sS -w "%{http_code}" \
               --max-time 10 \
-              "$HEALTH_URL/health" || echo "000")
+              "$HEALTH_URL/api/v1/auth/health" || echo "000")
 
             if [ "$HTTP_STATUS" = "200" ]; then
               echo "✅ Backend operativo (HTTP $HTTP_STATUS)"
@@ -518,12 +572,12 @@ jobs:
 
           if [ "$SUCCESS" != "true" ]; then
             echo "❌ El backend no respondió tras $MAX_RETRIES intentos."
-            echo "   Revisa los logs en el dashboard de Render."
+            echo "   Revisa los logs en Azure App Service → Log stream."
             exit 1
           fi
 
   # ----------------------------------------------------------
-  # 7. SMOKE TEST POST-DEPLOY
+  # 8. SMOKE TEST POST-DEPLOY
   #
   # Valida endpoints críticos después de que ambos servicios
   # estén arriba. Si falla, el pipeline queda en rojo como señal
@@ -577,5 +631,5 @@ jobs:
             echo "   Evento        : ${{ github.event_name }}"
             echo "   Commit        : ${{ github.sha }}"
           else
-            echo "⚠️ Smoke test falló. Revisar los servicios en Vercel y Render."
+            echo "⚠️ Smoke test falló. Revisar los servicios en Vercel y Azure App Service."
           fi
