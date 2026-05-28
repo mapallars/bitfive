@@ -904,3 +904,4 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,visualstudio,node,dbeaver,git,react,reactnative,angular,astro,nextjs,yarn,firebase,linux,svelte,dotenv
 api/.agents/skills/
+.env*

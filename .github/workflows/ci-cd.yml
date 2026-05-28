@@ -399,6 +399,7 @@ jobs:
   #  Un único ambiente: production. No existen preview ni staging.
   #  Vercel maneja las env vars del frontend en su propio dashboard.
   # ----------------------------------------------------------
+
   deploy-frontend:
     name: "Deploy · Frontend → Vercel"
     runs-on: ubuntu-latest
@@ -410,76 +411,42 @@ jobs:
       ) ||
       github.event_name == 'workflow_dispatch'
 
-    # En workflow_dispatch los jobs de CI no corren, por lo que
-    # needs.build / needs.semgrep quedan en 'skipped' — esto es intencional:
-    # el operador que dispara el deploy manualmente asume la responsabilidad
-    # de que el código en main ya pasó el CI previamente.
-
     environment:
       name: production
-      url: ${{ steps.deploy.outputs.preview-url }}
+      url: ${{ steps.deploy.outputs.deployment-url }}
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    defaults:
+      run:
+        working-directory: ./app
 
     steps:
       - uses: actions/checkout@v4
-    
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: ./app/package-lock.json
-    
+
       - name: Registrar motivo (solo dispatch manual)
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "🖐️  Despliegue manual disparado por: ${{ github.actor }}"
           echo "📝 Motivo: ${{ github.event.inputs.reason }}"
-    
+
       - name: Instalar Vercel CLI
         run: npm install --global vercel@latest
-    
-      - name: Sincronizar metadata de Vercel
-        working-directory: ./app
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          vercel pull \
-            --yes \
-            --environment=production \
-            --token=$VERCEL_TOKEN
-    
-      - name: Instalar dependencias
-        working-directory: ./app
-        run: npm install
-    
-      - name: Build frontend
-        working-directory: ./app
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          vercel build \
-            --prod \
-            --token=$VERCEL_TOKEN
-    
-      - name: Deploy frontend
-        id: deploy
-        working-directory: ./app
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          url=$(vercel deploy \
-            --prebuilt \
-            --prod \
-            --token=$VERCEL_TOKEN)
 
-          echo "preview-url=$url" >> $GITHUB_OUTPUT
-      
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment-url=$url" >> $GITHUB_OUTPUT
+
   # ----------------------------------------------------------
   # 6. BUILD BACKEND PARA AZURE
   #
