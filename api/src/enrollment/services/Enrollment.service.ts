@@ -37,7 +37,7 @@ export class EnrollmentService {
         if (!user) {
             throw new NotFoundError('El usuario al que intentas obtener las inscripciones no existe')
         }
-        const enrollments = await this.enrollmentRepository.findManyByUserId(id)
+        const enrollments = await this.enrollmentRepository.findManyBy('userId', id)
         return enrollments
     }
 
@@ -46,7 +46,7 @@ export class EnrollmentService {
         if (!event) {
             throw new NotFoundError('El evento al que intentas obtener las inscripciones no existe')
         }
-        const enrollments = await this.enrollmentRepository.findManyByEventId(id)
+        const enrollments = await this.enrollmentRepository.findManyBy('eventId', id)
         return enrollments
     }
 
@@ -56,7 +56,7 @@ export class EnrollmentService {
             throw new NotFoundError('El evento no existe')
         }
         const report = await this.enrollmentRepository.findAttendanceReport(eventId)
-        const enrollments = await this.enrollmentRepository.findManyByEventId(eventId)
+        const enrollments = await this.enrollmentRepository.findManyBy('eventId', eventId)
         return {
             event: { id: event.id, name: event.name },
             ...report,
