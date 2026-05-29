@@ -16,6 +16,7 @@ import SatatusTag from '../../../../core/components/StatusTag/StatusTag'
 import EventRequester from '../../services/EventRequester.mjs'
 import ScannerQR from '../ScannerQR/ScannerQR'
 import EnrollmentRequester from '../../services/EnrollmentRequester.mjs'
+import Empity from '../../../../core/components/Empity/Empity'
 
 const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
     const [event, setEvent] = useState(_event)
@@ -197,6 +198,32 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                                             )}
                                         </div>
                                     </div>
+
+                                    <div className='lx-c-event-details-widget-card'>
+                                        <div className='lx-c-event-details-widget-organizers'>
+                                            <div className='--header'>
+                                                <span className='--title'>Organizadores</span>
+                                                <span className='--count'>{event.organizers?.length ?? 0}</span>
+                                            </div>
+                                            <div className='lx-c-event-details-widget-organizers-list'>
+                                                {event.organizers?.length > 0 ? event.organizers.map((organizer) => (
+                                                    <div key={organizer.id} className='lx-c-event-details-widget-organizer'>
+                                                        <div className={`lx-c-event-details-widget-organizer-avatar ${organizer.isOnline && '--online'}`}>
+                                                            {organizer.image ? <img className='--image' src={organizer.image} alt={organizer.name} /> : <div className='--chars'>{organizer.name?.slice(0, 2) ?? '?'}</div>}
+                                                        </div>
+                                                        <div className='--content'>
+                                                            <p className='--name'>{organizer.name}</p>
+                                                            <p className='--username'>@{organizer.username}</p>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                                    : <div className='lx-c-event-details-widget-organizer'>
+                                                        <p className='--name'>Sin organizadores</p>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -245,6 +272,7 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                                         actions: 'Acciones'
                                     }}
                                     selectionable={false}
+                                    empity={<Empity icon='groups' message='No hay organizadores' />}
                                 />
                             </>
                         )}
@@ -289,6 +317,7 @@ const EventDetails = ({ event: _event, onBack, onEdit, onDelete }) => {
                                         date: 'Inscripción',
                                     }}
                                     selectionable={false}
+                                    empity={<Empity icon='event_seat' message='No hay inscripciones' />}
                                 />
                             </>
                         )}

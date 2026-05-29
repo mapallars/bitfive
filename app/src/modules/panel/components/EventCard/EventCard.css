@@ -53,19 +53,20 @@
 .lx-c-event-card-content {
     width: 100%;
     height: 100%;
-    padding: 0.5rem;
     position: relative;
     z-index: 1;
     display: flex;
     flex-direction: column;
+    gap: .5rem;
+    padding: 0.5rem 0 0 0;
 }
 
 .lx-c-event-card-summary {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: .5rem;
-    padding: 1rem 0;
+    gap: .25rem;
+    padding: .5rem;
 }
 
 
@@ -97,4 +98,82 @@
     display: flex;
     align-items: flex-end;
     gap: 0.5rem;
+}
+
+.lx-c-event-card-price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--lx-color-text-softest);
+}
+
+.lx-c-event-card-dates {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .25rem;
+    background: rgba(var(--lx-inverse), 0.05);
+    padding: .5rem;
+    border-radius: var(--lx-border-radius-s);
+    border: var(--lx-primary-border);
+}
+
+.lx-c-event-card-dates .--start,
+.lx-c-event-card-dates .--end {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.lx-c-event-card-dates .--end {
+    align-items: end;
+}
+
+.lx-c-event-card-dates .--icon {
+    width: 30px;
+    height: 30px;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--lx-c-event-card-color);
+    border-radius: var(--lx-border-radius-full);
+    color: var(--lx-color-white);
+}
+
+.lx-c-event-card-dates .--start .--label,
+.lx-c-event-card-dates .--end .--label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--lx-color-text-soft);
+}
+
+.lx-c-event-card-dates .--start .--date,
+.lx-c-event-card-dates .--end .--date {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--lx-color-text);
+}
+
+.lx-c-event-card-dates .--start .--time,
+.lx-c-event-card-dates .--end .--time {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--lx-color-text-softest);
+}
+
+.lx-c-event-card .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background: linear-gradient(to bottom, transparent, var(--lx-color-background-primary) 80%);
+    transform: translateY(calc(100% - 2rem));
+    transition: transform 0.3s ease;
+}
+
+.lx-c-event-card:hover .footer {
+    transform: translateY(0);
 }

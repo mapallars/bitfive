@@ -234,6 +234,7 @@ const EventForm = ({ event, onBack = () => { }, handler = () => { } }) => {
                                 label='Capacidad máxima'
                                 type='number'
                                 autoComplete='off'
+                                min={0}
                                 minLength={2}
                                 maxLength={100}
                                 value={form.maxCapacity}
@@ -247,6 +248,7 @@ const EventForm = ({ event, onBack = () => { }, handler = () => { } }) => {
                                 label='Precio'
                                 type='number'
                                 autoComplete='off'
+                                min={0}
                                 minLength={2}
                                 maxLength={100}
                                 value={form.price}

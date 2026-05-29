@@ -343,12 +343,20 @@
 }
 
 .lx-l-panel-sidebar-session-user p {
+    width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: rgba(255, 255, 255, 1);
     font-weight: 500;
     font-size: 12px;
 }
 
 .lx-l-panel-sidebar-session-user span {
+    width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 12px;
     color: rgba(255, 255, 255, 0.6);
 }

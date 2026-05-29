@@ -61,6 +61,16 @@ class DateFormat {
         return isFuture ? "Dentro de un momento" : "Hace un momento"
     }
 
+    static short(dateString) {
+        if (!dateString) return ''
+        const date = new Date(dateString)
+        return new Intl.DateTimeFormat('es-CO', {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+        }).format(date)
+    }
+
 }
 
 export default DateFormat

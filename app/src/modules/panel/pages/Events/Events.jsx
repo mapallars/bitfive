@@ -15,6 +15,7 @@ import Modal from '../../../../core/components/Modal/Modal'
 import EventDetails from '../../components/EventDetails/EventDetails.jsx'
 import EventDeleteForm from '../../components/EventDeleteForm/EventDeleteForm.jsx'
 import EventForm from '../../components/EventForm/EventForm.jsx'
+import InputSearch from '../../../../core/components/InputSearch/InputSearch.jsx'
 
 const Events = () => {
     const [mode, setMode] = useState(null)
@@ -108,6 +109,7 @@ const Events = () => {
                 <div className='lx-p-events-container'>
                     {tab === 'cards' && (
                         <div className='lx-p-events-cards'>
+                            <InputSearch context='.lx-c-events-content' element='.lx-c-event-card' />
                             {
                                 <EventCards
                                     events={events}
