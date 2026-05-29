@@ -2,6 +2,7 @@ import './Timeline.css'
 import { useState } from 'react'
 import Icon from '../../../../core/components/Icon/Icon'
 import TimelineEventCard from './TimelineEventCard'
+import ButtonGroup from '../../../../core/components/ButtonGroup/ButtonGroup'
 
 const dias = [
     "domingo",
@@ -72,22 +73,11 @@ const Timeline = ({ events, onView }) => {
     return (
         <div className='lx-c-timeline'>
             <div className='lx-c-timeline-controls'>
-                <div className='lx-c-tab-group'>
-                    <div
-                        className={`lx-c-tab-group-tab ${activeTab === 'upcoming' ? 'active' : 'inactive'}`}
-                        onClick={() => setActiveTab('upcoming')}
-                    >
-                        <span>Próximos</span>
-                        <Icon name='event_upcoming' size='m' />
-                    </div>
-                    <div
-                        className={`lx-c-tab-group-tab ${activeTab === 'past' ? 'active' : 'inactive'}`}
-                        onClick={() => setActiveTab('past')}
-                    >
-                        <span>Pasados</span>
-                        <Icon name='history' size='m' />
-                    </div>
-                </div>
+                <ButtonGroup
+                    buttons={['Próximos', 'Pasados']}
+                    options={['upcoming', 'past']}
+                    onClick={setActiveTab}
+                />
             </div>
 
             {!hasEvents && (

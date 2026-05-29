@@ -4,7 +4,7 @@ import DateFormat from "../../../../core/utils/dateFormat.mjs"
 import Constant from "../../constants/constant.mjs"
 import { EVENT } from "../../constants/event.constant.mjs"
 
-const Details = ({ event }) => {
+const Details = ({ event, enrollment = null }) => {
     if (!event) return null
     return (
         <>
@@ -113,6 +113,7 @@ const Details = ({ event }) => {
                                 </div>
                             )}
                         </div>
+                        {enrollment}
                     </div>
 
                     <div className='lx-c-event-details-widget-card'>

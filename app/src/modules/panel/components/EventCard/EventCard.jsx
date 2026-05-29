@@ -3,7 +3,7 @@ import Button from '../../../../core/components/Button/Button'
 import Icon from '../../../../core/components/Icon/Icon'
 import DateFormat from '../../../../core/utils/dateFormat.mjs'
 
-const EventCard = ({ event, onDelete = () => { }, onEdit = () => { }, onView = () => { } }) => {
+const EventCard = ({ event, onDelete = () => { }, onEdit = () => { }, onView = () => { }, disableActions }) => {
 
     const {
         name = '',
@@ -53,8 +53,10 @@ const EventCard = ({ event, onDelete = () => { }, onEdit = () => { }, onView = (
 
             <div className='footer'>
                 <Button size='s' color='auto' width='full' onClick={() => onView(event)}><Icon name='visibility' /> Detalles</Button>
-                <Button size='s' color='auto' width='full' variant='bordered' icon onClick={() => onEdit(event)}><Icon name='edit' /></Button>
-                <Button size='s' color='danger' variant='dimed' icon onClick={() => onDelete(event)}><Icon name='delete' /></Button>
+                {!disableActions && <>
+                    <Button size='s' color='auto' width='full' variant='bordered' icon onClick={() => onEdit(event)}><Icon name='edit' /></Button>
+                    <Button size='s' color='danger' variant='dimed' icon onClick={() => onDelete(event)}><Icon name='delete' /></Button>
+                </>}
             </div>
         </div>
     </div>)

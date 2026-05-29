@@ -1,9 +1,7 @@
 .lx-c-timeline {
     width: 100%;
-
     display: flex;
     flex-direction: column;
-
     position: relative;
 }
 
@@ -27,7 +25,7 @@
 }
 
 .lx-c-timeline-controls .lx-c-tab-group-tab span {
-   font-size: 17px;
+    font-size: 12px;
 }
 
 .lx-c-timeline::before {
@@ -78,7 +76,7 @@
     background: var(--lx-color-text-softest);
     position: relative;
     left: 0;
-    border: 3px solid var(--lx-color-background-primary);
+    border: 3px solid var(--lx-color-background-special);
     z-index: 2;
 }
 

@@ -97,3 +97,22 @@
         gap: var(--lx-space-xl);
     }
 }
+
+.lx-p-discover-events-float {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.lx-p-discover-events-timeline {
+    background: var(--lx-color-background-special);
+    padding: 1rem;
+}
+
+.lx-p-discover-events-search {
+    background: var(--lx-color-background-special);
+    padding: 2rem;
+}
