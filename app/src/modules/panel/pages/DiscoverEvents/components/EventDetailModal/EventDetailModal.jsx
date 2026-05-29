@@ -5,20 +5,12 @@ import Icon from '../../../../../../core/components/Icon/Icon'
 import EnrollmentRequester from '../../../../services/EnrollmentRequester.mjs'
 import Details from '../../../../components/EventDetails/Details'
 
-const EventDetailModal = ({ event, onClose, onEnrollment }) => {
+const EventDetailModal = ({ event, onEnrollment }) => {
     const { user } = useAuth()
 
     if (!event) return null
 
-    const {
-        maxCapacity = 0,
-    } = event
-
     const isEnrolled = event.enrollments?.some(enrollment => enrollment.userId === user?.id && ['CONFIRMED', 'PENDING'].includes(enrollment.enrollmentStatus))
-
-    const enrollmentsCount = event.enrollments?.filter(enrollment => ['CONFIRMED', 'PENDING'].includes(enrollment.enrollmentStatus)).length ?? 0
-
-    const availableSpots = maxCapacity - enrollmentsCount
 
     const handleEnrollClick = async () => {
         let _event = event

@@ -1,6 +1,5 @@
 import './Timeline.css'
 import { useState } from 'react'
-import Icon from '../../../../core/components/Icon/Icon'
 import TimelineEventCard from './TimelineEventCard'
 import ButtonGroup from '../../../../core/components/ButtonGroup/ButtonGroup'
 

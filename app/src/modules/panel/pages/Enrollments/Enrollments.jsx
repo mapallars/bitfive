@@ -107,7 +107,7 @@ const Enrollments = () => {
                         <div className={`--qr --${enrollment?.enrollmentStatus}`}>
                             <GeneratorQR value={enrollment?.id} />
                         </div>
-                        <p className='--description'>Inscripción realizada al evento <i>"{enrollment?.event?.name}"</i> el <strong>{DateFormat.date(enrollment?.createdAt)}</strong>, <strong>{DateFormat.time(enrollment?.createdAt)}</strong> está en estado <span className={`--status --${enrollment?.enrollmentStatus}`}>{Constant.fromValue(EVENT.OPTIONS.ENROLLMENT_STATUS, enrollment?.enrollmentStatus)}</span></p>
+                        <p className='--description'>Inscripción realizada al evento <i>{enrollment?.event?.name}</i> el <strong>{DateFormat.date(enrollment?.createdAt)}</strong>, <strong>{DateFormat.time(enrollment?.createdAt)}</strong> está en estado <span className={`--status --${enrollment?.enrollmentStatus}`}>{Constant.fromValue(EVENT.OPTIONS.ENROLLMENT_STATUS, enrollment?.enrollmentStatus)}</span></p>
                         <Details event={enrollment?.event || null} />
                     </div>
                 }
