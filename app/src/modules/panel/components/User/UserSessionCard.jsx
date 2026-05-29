@@ -17,7 +17,8 @@ const UserSessionCard = ({ onClose = () => { } }) => {
     gender = '',
     birthdate,
     image,
-    createdAt
+    createdAt,
+    lastLogin
   } = user
 
   const avatarChar = name ? name[0] : '?'
@@ -50,6 +51,14 @@ const UserSessionCard = ({ onClose = () => { } }) => {
     {
       label: 'Estado',
       value: 'Acitvo'
+    },
+    {
+      label: 'Creado',
+      value: createdAt && dateCountdown(new Date(createdAt))
+    },
+    {
+      label: 'Última sesión',
+      value: lastLogin && dateCountdown(new Date(lastLogin))
     }
   ]
 
@@ -88,13 +97,14 @@ const UserSessionCard = ({ onClose = () => { } }) => {
             </div>
           ))}
 
-                  <Button size='s' color='danger' radius='full' variant='dimed' onClick={signOut}>
-          <span className='material-symbols-rounded' translate='no'>logout</span> Cerrar sesión
-        </Button>
         </div>
 
+        <br />
 
-        {createdAt && <p className='lx-c-user-session-card-created-at'>{dateCountdown(new Date(createdAt))}</p>}
+        <Button size='s' color='danger' radius='full' variant='dimed' onClick={signOut}>
+          <span className='material-symbols-rounded' translate='no'>logout</span> Cerrar sesión
+        </Button>
+
       </div>
     </div>
   )

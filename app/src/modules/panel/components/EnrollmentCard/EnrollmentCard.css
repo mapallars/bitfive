@@ -1,4 +1,4 @@
-.lx-c-event-card {
+.lx-c-enrollment-card {
     width: 100%;
     height: 100%;
     display: flex;
@@ -14,26 +14,26 @@
     animation: appear both;
     animation-timeline: view();
     animation-range: entry 20% cover 30%;
-    --lx-c-event-card-color-online: var(--lx-color-accent);
-    transition: transform 0.3s ease, filter 0.3s ease;
+    --lx-c-enrollment-card-color-online: var(--lx-color-accent);
+    transition: transform 0.3s ease;
 }
 
-.lx-c-event-card:hover {
+.lx-c-enrollment-card:hover {
     transform: scale(1.02);
     cursor: pointer;
 }
 
-.lx-c-event-card.--inactive {
+.lx-c-enrollment-card.--inactive {
     filter: grayscale(1);
 }
 
-.lx-c-event-card-head {
+.lx-c-enrollment-card-head {
     width: 100%;
     background-image: radial-gradient(var(--lx-color-background-secondary) 8%, transparent 8%);
     background-size: 1rem 1rem;
 }
 
-.lx-c-event-card-cover {
+.lx-c-enrollment-card-cover {
     width: 100%;
     aspect-ratio: 1;
     padding: 1rem;
@@ -43,14 +43,14 @@
     text-align: center;
     position: relative;
     border-radius: var(--lx-border-radius-s);
-    background: linear-gradient(var(--lx-c-event-card-color) -200%, rgba(var(--lx-inverse), 0.05) 60%);
+    background: linear-gradient(rgba(var(--lx-inverse), 0.2) -200%, rgba(var(--lx-inverse), 0.03) 60%);
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -.6pt;
-    color: var(--lx-c-event-card-color);
+    color: var(--lx-c-enrollment-card-color);
 }
 
-.lx-c-event-card-content {
+.lx-c-enrollment-card-content {
     width: 100%;
     height: 100%;
     position: relative;
@@ -62,7 +62,7 @@
     padding: 0.5rem 0 0 0;
 }
 
-.lx-c-event-card-summary {
+.lx-c-enrollment-card-summary {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -71,7 +71,7 @@
 }
 
 
-.lx-c-event-card-date {
+.lx-c-enrollment-card-date {
     width: fit-content;
     font-size: 12px;
     color: var(--lx-color-text-soft);
@@ -81,19 +81,19 @@
 }
 
 
-.lx-c-event-card-name {
+.lx-c-enrollment-card-name {
     font-size: 18px;
     font-weight: 600;
     color: var(--lx-color-text);
 }
 
-.lx-c-event-card-location {
+.lx-c-enrollment-card-location {
     font-size: 14px;
     color: var(--lx-color-text-softest);
 }
 
 
-.lx-c-event-card-content .footer {
+.lx-c-enrollment-card-content .footer {
     width: 100%;
     height: 100%;
     display: flex;
@@ -101,13 +101,13 @@
     gap: 0.5rem;
 }
 
-.lx-c-event-card-price {
+.lx-c-enrollment-card-price {
     font-size: 1rem;
     font-weight: 600;
     color: var(--lx-color-text-softest);
 }
 
-.lx-c-event-card-dates {
+.lx-c-enrollment-card-dates {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -119,18 +119,18 @@
     border: var(--lx-primary-border);
 }
 
-.lx-c-event-card-dates .--start,
-.lx-c-event-card-dates .--end {
+.lx-c-enrollment-card-dates .--start,
+.lx-c-enrollment-card-dates .--end {
     width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.lx-c-event-card-dates .--end {
+.lx-c-enrollment-card-dates .--end {
     align-items: end;
 }
 
-.lx-c-event-card-dates .--icon {
+.lx-c-enrollment-card-dates .--icon {
     width: 30px;
     height: 30px;
     aspect-ratio: 1;
@@ -138,33 +138,33 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: var(--lx-c-event-card-color);
+    background: var(--lx-c-enrollment-card-color);
     border-radius: var(--lx-border-radius-full);
     color: var(--lx-color-white);
 }
 
-.lx-c-event-card-dates .--start .--label,
-.lx-c-event-card-dates .--end .--label {
+.lx-c-enrollment-card-dates .--start .--label,
+.lx-c-enrollment-card-dates .--end .--label {
     font-size: 10px;
     font-weight: 600;
     color: var(--lx-color-text-soft);
 }
 
-.lx-c-event-card-dates .--start .--date,
-.lx-c-event-card-dates .--end .--date {
+.lx-c-enrollment-card-dates .--start .--date,
+.lx-c-enrollment-card-dates .--end .--date {
     font-size: 14px;
     font-weight: 600;
     color: var(--lx-color-text);
 }
 
-.lx-c-event-card-dates .--start .--time,
-.lx-c-event-card-dates .--end .--time {
+.lx-c-enrollment-card-dates .--start .--time,
+.lx-c-enrollment-card-dates .--end .--time {
     font-size: 12px;
     font-weight: 600;
     color: var(--lx-color-text-softest);
 }
 
-.lx-c-event-card .footer {
+.lx-c-enrollment-card .footer {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -175,6 +175,39 @@
     transition: transform 0.3s ease;
 }
 
-.lx-c-event-card:hover .footer {
+.lx-c-enrollment-card:hover .footer {
     transform: translateY(0);
+}
+
+.lx-c-enrollment-card-status {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    padding: .5rem .75rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: .25rem;
+    background: var(--lx-color-auto);
+    color: var(--lx-color-inverse);
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 0 0 0 var(--lx-border-radius-s);
+}
+
+.lx-c-enrollment-card-status.--CONFIRMED {
+    background: var(--lx-color-success);
+    color: var(--lx-color-white);
+}
+
+.lx-c-enrollment-card-status.--CANCELLED {
+    background: var(--lx-color-danger);
+    color: var(--lx-color-white);
+}
+
+.lx-c-enrollment-card-status.--PENDING {
+    background: var(--lx-color-warning);
+    color: var(--lx-color-white);
 }

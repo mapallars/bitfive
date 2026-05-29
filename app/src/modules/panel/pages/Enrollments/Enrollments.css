@@ -2,148 +2,160 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    padding: var(--lx-padding-xxl);
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: var(--lx-space-xl);
-    background-color: var(--lx-color-background-special);
+    gap: 1rem;
 }
 
 .lx-p-enrollments-header {
     width: 100%;
+    user-select: none;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: var(--lx-space-l);
-    border-bottom: var(--lx-primary-border);
 }
 
-.lx-p-enrollments-header-content {
+.lx-p-enrollments-header .info {
     width: 100%;
 }
 
-.lx-p-enrollments-title {
-    font-size: var(--lx-font-size-xxxl);
-    font-weight: 700;
-    color: var(--lx-color-text);
-    margin-bottom: var(--lx-space-s);
-    letter-spacing: -0.6pt;
+.lx-p-enrollments-header .actions {
+    width: fit-content;
 }
 
-.lx-p-enrollments-description {
-    font-size: var(--lx-font-size-l);
+.lx-p-enrollments-header .--name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--lx-color-text);
+}
+
+.lx-p-enrollments-header .--description {
+    font-size: 14px;
     color: var(--lx-color-text-softest);
 }
 
+.lx-p-enrollments-header .--overview {
+    padding-top: 10px;
+}
+
+.lx-p-enrollments-header .--overview .summary {
+    width: fit-content;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    background: var(--lx-color-accent-dimed);
+    color: var(--lx-color-accent);
+    border-radius: var(--lx-border-radius-full);
+}
+
 .lx-p-enrollments-content {
-    flex: 1;
-    width: 100%;
-}
-
-.lx-p-enrollments-container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--lx-space-l);
+    gap: 1.5rem;
 }
 
-.lx-p-enrollments-section {
+.lx-p-enrollments-cards {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--lx-space-m);
-    background-color: var(--lx-color-background-primary);
-    border-radius: var(--lx-border-radius-m);
-    padding: var(--lx-padding-xl);
-    box-shadow: var(--lx-box-shadow);
-    border: var(--lx-primary-border);
+    gap: .5rem;
 }
 
-.lx-p-enrollments-section-header {
+.lx-p-enrollments-actions {
     width: 100%;
-    padding-bottom: var(--lx-space-m);
+    display: flex;
+    gap: .5rem;
     border-bottom: var(--lx-primary-border);
+}
+
+.lx-p-enrollments-cards-header {
+    width: 100%;
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
-    gap: var(--lx-space-l);
+    align-items: center;
+    gap: .5rem;
 }
 
-.lx-p-enrollments-section-header > div:first-child {
-    flex: 1;
+.lx-p-enrollments-cards-results {
+    width: 100%;
+    max-width: fit-content;
+    font-size: 12px;
+    padding: .5rem 1rem;
+    background: var(--lx-color-auto-dimed);
+    color: var(--lx-color-auto);
+    border-radius: var(--lx-border-radius-s);
 }
 
-.lx-p-enrollments-section-header-info {
-    flex: 1;
+.lx-p-enrollments-cards-results.--PENDING {
+    background: var(--lx-color-warning-dimed);
+    color: var(--lx-color-warning);
 }
 
-.lx-p-enrollments-section-title {
-    font-size: var(--lx-font-size-xxl);
-    font-weight: 600;
-    color: var(--lx-color-text);
-    margin-bottom: var(--lx-space-xs);
-    letter-spacing: -0.6pt;
+.lx-p-enrollments-cards-results.--CONFIRMED {
+    background: var(--lx-color-success-dimed);
+    color: var(--lx-color-success);
 }
 
-.lx-p-enrollments-section-description {
-    font-size: var(--lx-font-size-m);
-    color: var(--lx-color-text-softer);
+.lx-p-enrollments-cards-results.--CANCELLED {
+    background: var(--lx-color-danger-dimed);
+    color: var(--lx-color-danger);
 }
 
-.lx-p-enrollments-filter {
+.lx-p-enrollments-details {
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
     display: flex;
-    align-items: flex-end;
-    gap: var(--lx-space-m);
-    width: auto;
-    flex-shrink: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    background: var(--lx-color-background-special);
 }
 
-.lx-p-enrollments-filter-icon {
+.lx-p-enrollments-details .--qr {
+    width: 100%;
+    max-width: fit-content;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--lx-color-text-softer);
-    flex-shrink: 0;
-    margin-bottom: var(--lx-space-xs);
+    border-radius: var(--lx-border-radius-m);
 }
 
-.lx-p-enrollments-filter .lx-forms-input-field {
+.lx-p-enrollments-details .--qr.--PENDING {
+    border: 0.5rem solid var(--lx-color-warning);
+}
+
+.lx-p-enrollments-details .--qr.--CONFIRMED {
+    border: 0.5rem solid var(--lx-color-success);
+}
+
+.lx-p-enrollments-details .--qr.--CANCELLED {
+    border: 0.5rem solid var(--lx-color-danger);
+}
+
+.lx-p-enrollments-details .--description {
     width: 100%;
-    margin-bottom: 0;
+    max-width: 400px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--lx-color-text-soft);
 }
 
-/* Estilos de opciones del Select según el tema */
-.lx-p-enrollments-filter select option {
-    background-color: var(--lx-color-background-primary);
-    color: var(--lx-color-text);
-    padding: var(--lx-padding-m);
+.lx-p-enrollments-details .--status {
+    font-weight: 600;
 }
 
-.lx-p-enrollments-filter select option:hover {
-    background-color: var(--lx-color-background-secondary);
+.lx-p-enrollments-details .--status.--PENDING {
+    color: var(--lx-color-warning);
 }
 
-.lx-p-enrollments-filter select option:checked {
-    background-color: var(--lx-color-primary);
-    color: var(--lx-color-text-inverse);
+.lx-p-enrollments-details .--status.--CONFIRMED {
+    color: var(--lx-color-success);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .lx-p-enrollments {
-        padding: var(--lx-padding-l);
-        gap: var(--lx-space-l);
-    }
-
-    .lx-p-enrollments-title {
-        font-size: var(--lx-font-size-xxl);
-    }
-
-    .lx-p-enrollments-section {
-        padding: var(--lx-padding-l);
-    }
-
-    .lx-p-enrollments-container {
-        gap: var(--lx-space-xl);
-    }
+.lx-p-enrollments-details .--status.--CANCELLED {
+    color: var(--lx-color-danger);
 }

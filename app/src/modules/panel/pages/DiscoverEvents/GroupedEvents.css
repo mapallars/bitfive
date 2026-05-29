@@ -1,0 +1,31 @@
+.lx-c-grouped-events {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--lx-space-l);
+}
+
+.lx-c-grouped-events-list {
+    width: 100%;
+    display: flex;
+    gap: var(--lx-space-l);
+    overflow-y: auto;
+    padding: 1rem;
+    background: linear-gradient(to right, transparent, var(--lx-color-background-primary), transparent);
+    background-attachment: fixed;
+    animation: appear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 30%;
+}
+
+.lx-c-grouped-events-event {
+    width: 100%;
+    max-width: 260px;
+    animation: appear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 30%;
+}
+
+.lx-c-grouped-events-category-title {
+    color: var(--lx-color-text-soft);
+}

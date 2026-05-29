@@ -15,7 +15,7 @@ const TimelineEventCard = ({ event, onClick }) => {
     }
 
     return (
-        <div className='lx-c-timeline-event-card' onClick={onClick}>
+        <div className='lx-c-timeline-event-card' onClick={onClick} style={{ '--lx-c-timeline-event-card-color': event.color }}>
             <div className='lx-c-timeline-event-card-header'>
                 <p className='lx-c-timeline-event-card-time'>{startTime}</p>
                 <p className='lx-c-timeline-event-card-end-time'>a {endTime}</p>

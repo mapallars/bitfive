@@ -25,6 +25,7 @@
   overflow: hidden;
   animation: fromDownAppear 0.5s ease forwards;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 1px 0px inset;
+  border: var(--lx-primary-border);
 }
 
 [data-theme="dark"] .lx-c-modal-container {

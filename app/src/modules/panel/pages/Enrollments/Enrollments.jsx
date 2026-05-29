@@ -4,13 +4,24 @@ import { useLoad } from '../../../../core/hooks/useLoad'
 import EnrollmentRequester from '../../services/EnrollmentRequester.mjs'
 import Loader from '../../../../core/components/Loader/Loader'
 import Footer from '../../../../core/components/Footer/Footer'
-import Icon from '../../../../core/components/Icon/Icon'
-import Select from '../../../../core/components/Select/Select'
-import Timeline from '../../components/Timeline/Timeline'
 import { useSync } from '../../../../core/hooks/useSync'
+import EventsCalendar from '../../components/EventsCalendar/EventsCalendar'
+import TabGroup from '../../../../core/components/TabGroup/TabGroup'
+import Icon from '../../../../core/components/Icon/Icon'
+import EnrollmentCards from '../../components/EnrollmentCards/EnrollmentCards'
+import Modal from '../../../../core/components/Modal/Modal'
+import ButtonGroup from '../../../../core/components/ButtonGroup/ButtonGroup'
+import InputSearch from '../../../../core/components/InputSearch/InputSearch'
+import GeneratorQR from '../../components/GeneratorQR/GeneratorQR'
+import Details from '../../components/EventDetails/Details'
+import DateFormat from '../../../../core/utils/dateFormat.mjs'
+import Constant from '../../constants/constant.mjs'
+import { EVENT } from '../../constants/event.constant.mjs'
 
 const Enrollments = () => {
-    const [selectedStatus, setSelectedStatus] = useState('')
+    const [tab, setTab] = useState('cards')
+    const [status, setStatus] = useState(null)
+    const [enrollment, setEnrollment] = useState(null)
     const { state: enrollments, set: setEnrollments } = useSync()
     const { loading, withLoad } = useLoad(true)
 
@@ -19,66 +30,89 @@ const Enrollments = () => {
         setEnrollments(enrollments ?? [])
     }), [withLoad, setEnrollments])
 
-    const filteredEnrollments = selectedStatus ? enrollments.filter(enrollment => enrollment.enrollmentStatus === selectedStatus) : enrollments
-
-    const events = filteredEnrollments.map(enrollment => ({
-        ...enrollment.event,
-        enrollmentStatus: enrollment.enrollmentStatus,
-        enrollmentId: enrollment.id
-    }))
+    const filteredEnrollments = status ? enrollments.filter(e => e.enrollmentStatus == status) : enrollments
+    const events = enrollments.filter(e => ['CONFIRMED', 'PENDING'].includes(e.enrollmentStatus)).map(e => ({ ...e.event, enrollmentStatus: e.enrollmentStatus }))
 
     useEffect(() => {
         load()
     }, [load])
 
-    const statusOptions = [
-        { value: 'PENDING', key: 'Pendientes' },
-        { value: 'CANCELLED', key: 'Canceladas' },
-        { value: 'CONFIRMED', key: 'Confirmadas' }
-    ]
-
     return (
-        <div className='lx-p-enrollments'>
-            <Loader loading={loading} background='special' />
-
-            <div className='lx-p-enrollments-header'>
-                <div className='lx-p-enroll-events-header-content'>
-                    <h1 className='lx-p-enrollments-title'>Mis Inscripciones</h1>
-                    <p className='lx-p-enrollments-description'>
-                        Gestiona tus inscripciones a eventos
-                    </p>
-                </div>
-            </div>
-
-            <div className='lx-p-enrollments-content'>
-                <div className='lx-p-enrollments-container'>
-                    <div className='lx-p-enrollments-section'>
-                        <div className='lx-p-enrollments-section-header'>
-                            <div className='lx-p-enrollments-section-header-info'>
-                                <h2 className='lx-p-enrollments-section-title'>Inscripciones</h2>
-                                <p className='lx-p-enrollments-section-description'>
-                                    Consulta tus inscripciones por estado
-                                </p>
-                            </div>
-                            <div className='lx-p-enrollments-filter'>
-                                <div className='lx-p-enrollments-filter-icon'>
-                                    <Icon name='instant_mix' size='m' />
-                                </div>
-                                <Select
-                                    label="Filtrar por estado"
-                                    options={statusOptions}
-                                    value={selectedStatus}
-                                    onChange={(e) => setSelectedStatus(e.target.value)}
-                                />
+        <>
+            <div className='lx-p-enrollments'>
+                <Loader loading={loading} background='special' />
+                <div className='lx-p-enrollments-header'>
+                    <div className='info'>
+                        <h1 className='--name'>Mis inscripciones</h1>
+                        <p className='--description'>Administra todas tus inscripciones</p>
+                        <div className='--overview'>
+                            <div className='summary'>
+                                {enrollments.length} inscripciones
                             </div>
                         </div>
-                        <Timeline events={events} onView={() => { }} />
                     </div>
                 </div>
+                <div className='lx-p-enrollments-content'>
+                    <div className='lx-p-enrollments-actions'>
+                        <TabGroup
+                            tabs={[
+                                <>Tarjetas <Icon name='square' /></>,
+                                <>Calendario <Icon name='calendar_month' /></>
+                            ]}
+                            options={['cards', 'calendar']}
+                            onClick={(option) => {
+                                setTab(option)
+                            }}
+                            active={tab}
+                        />
+                    </div>
+                    <div className='lx-p-enrollments-container'>
+                        {tab === 'cards' && (
+                            <div className='lx-p-enrollments-cards'>
+                                <div className='lx-p-enrollments-cards-header'>
+                                    <InputSearch context='.lx-c-enrollments-content' element='.lx-c-enrollment-card' />
+                                    <ButtonGroup
+                                        buttons={['Todas', 'Pendientes', 'Confirmadas', 'Canceladas']}
+                                        onClick={(option, index) => {
+                                            setStatus(index === 0 ? null : index === 1 ? 'PENDING' : index === 2 ? 'CONFIRMED' : 'CANCELLED')
+                                        }}
+                                        active={status}
+                                    />
+                                </div>
+                                <div className={`lx-p-enrollments-cards-results --${status}`}><div className='content'>{filteredEnrollments.length} inscripciones {status === 'CONFIRMED' ? 'confirmadas' : status === 'PENDING' ? 'pendientes' : 'en total'}</div></div>
+                                <EnrollmentCards enrollments={filteredEnrollments} onView={setEnrollment} />
+                            </div>
+                        )}
+                        {tab === 'calendar' && (
+                            <div className='lx-p-enrollments-calendar'>
+                                <EventsCalendar
+                                    events={events}
+                                    onView={(event) => { setEnrollment(enrollments.find(e => e.event?.id === event?.id)) }}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <Footer />
             </div>
 
-            <Footer />
-        </div>
+            <Modal
+                show={enrollment}
+                title='Inscripción'
+                size='max'
+                position='center'
+                onClose={() => setEnrollment(null)}
+                children={
+                    <div className='lx-p-enrollments-details'>
+                        <div className={`--qr --${enrollment?.enrollmentStatus}`}>
+                            <GeneratorQR value={enrollment?.id} />
+                        </div>
+                        <p className='--description'>Inscripción realizada al evento <i>{enrollment?.event?.name}</i> el <strong>{DateFormat.date(enrollment?.createdAt)}</strong>, <strong>{DateFormat.time(enrollment?.createdAt)}</strong> está en estado <span className={`--status --${enrollment?.enrollmentStatus}`}>{Constant.fromValue(EVENT.OPTIONS.ENROLLMENT_STATUS, enrollment?.enrollmentStatus)}</span></p>
+                        <Details event={enrollment?.event || null} />
+                    </div>
+                }
+            />
+        </>
     )
 }
 

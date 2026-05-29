@@ -1,17 +1,33 @@
 .lx-c-timeline-event-card {
-    background: var(--lx-color-background-primary);
+    background-color: var(--lx-color-background-primary);
+    background-image: radial-gradient(var(--lx-color-background-secondary) 8%, transparent 8%);
+    background-size: 1rem 1rem;
     padding: 20px;
-    border-radius: var(--lx-border-radius-m);
+    border-radius: 0 var(--lx-border-radius-m) var(--lx-border-radius-m) 0;
     color: var(--lx-color-text);
     border: var(--lx-primary-border);
-    box-shadow: var(--lx-box-shadow);
+    border-left: 0.2rem solid var(--lx-c-timeline-event-card-color);
     cursor: pointer;
     transition: all 0.3s ease;
+    --lx-c-timeline-event-card-color: var(--lx-color-accent);
+    position: relative;
+}
+
+.lx-c-timeline-event-card:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to left, var(--lx-c-timeline-event-card-color) -400%, rgba(var(--lx-inverse), 0.05) 60%);
+    z-index: 1;
+    border-radius: 0 var(--lx-border-radius-m) var(--lx-border-radius-m) 0;
 }
 
 .lx-c-timeline-event-card:hover {
-    border-color: var(--lx-color-primary);
-    box-shadow: var(--lx-box-shadow-hover);
+    transform: scale(1.01);
+    filter: brightness(1.2);
 }
 
 .lx-c-timeline-event-card-header {
