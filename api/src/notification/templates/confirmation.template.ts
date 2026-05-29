@@ -5,7 +5,6 @@ export interface ConfirmationTemplateData {
   eventName: string
   eventDate: string
   eventLocation: string
-  qrImageBase64: string
 }
 
 export function confirmationTemplate(data: ConfirmationTemplateData): string {
@@ -51,7 +50,7 @@ export function confirmationTemplate(data: ConfirmationTemplateData): string {
       </div>
       <div class="qr-section">
         <p>Presenta este código QR el día del evento para registrar tu asistencia.</p>
-        <img src="${data.qrImageBase64}" alt="Código QR de asistencia" width="200" height="200" />
+        <img src="cid:qr-code" alt="Código QR de asistencia" width="200" height="200" />
         <p><em>No compartas este código con otras personas.</em></p>
       </div>
       <p>¡Nos vemos en el evento!</p>

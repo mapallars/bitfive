@@ -62,14 +62,13 @@ class MailerService {
     }
 
     async sendEnrollmentConfirmation(data: EnrollmentConfirmationData): Promise<void> {
-        const qrImageBase64 = await QRCode.toDataURL(data.enrollmentId)
+        const qrBuffer = await QRCode.toBuffer(data.enrollmentId)
 
         const html = confirmationTemplate({
             userName: data.userName,
             eventName: data.eventName,
             eventDate: data.eventDate,
             eventLocation: data.eventLocation,
-            qrImageBase64,
         })
 
         await this.transporter.sendMail({
@@ -77,6 +76,13 @@ class MailerService {
             to: data.userEmail,
             subject: `Confirmación de inscripción — ${data.eventName}`,
             html,
+            attachments: [
+                {
+                    filename: 'qrcode.png',
+                    content: qrBuffer,
+                    cid: 'qr-code',
+                },
+            ],
         })
     }
 
